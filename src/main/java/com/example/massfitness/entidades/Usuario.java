@@ -13,15 +13,15 @@ public class Usuario {
     private int idUsuario;
 
     private String nombre;
-    private String correoElectronico;
+    private String corre_electronico;
     private String contrasena;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "datos_personales_id")
     private DatosPersonales datosPersonales;
 
-    private int progresoFitness = 0;
-    private int cantidadPuntos = 0;
+    private int progresoFitness;
+    private int cantidadPuntos;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "usuario_logro",
@@ -32,10 +32,10 @@ public class Usuario {
     public Usuario() {
     }
 
-    public Usuario(int idUsuario, String nombre, String correoElectronico, String contrasena, DatosPersonales datosPersonales, int progresoFitness, int cantidadPuntos, List<Logro> logrosConseguidos) {
+    public Usuario(int idUsuario, String nombre, String corre_electronico, String contrasena, DatosPersonales datosPersonales, int progresoFitness, int cantidadPuntos, List<Logro> logrosConseguidos) {
         this.idUsuario = idUsuario;
         this.nombre = nombre;
-        this.correoElectronico = correoElectronico;
+        this.corre_electronico = corre_electronico;
         this.contrasena = contrasena;
         this.datosPersonales = datosPersonales;
         this.progresoFitness = progresoFitness;
@@ -64,11 +64,11 @@ public class Usuario {
     }
 
     public String getCorreoElectronico() {
-        return correoElectronico;
+        return corre_electronico;
     }
 
-    public void setCorreoElectronico(String correoElectronico) {
-        this.correoElectronico = correoElectronico;
+    public void setCorreoElectronico(String corre_electronico) {
+        this.corre_electronico = corre_electronico;
     }
 
     public String getContrasena() {

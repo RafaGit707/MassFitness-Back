@@ -20,60 +20,80 @@ public class UsuarioController {
     }
 
     @GetMapping
-    public List<Usuario> obtenerUsuarios() {
-        return iUsuarioService.getUsuarios();
+    public ResponseEntity<List<Usuario>> obtenerUsuarios() {
+        List<Usuario> usuarios = iUsuarioService.getUsuarios();
+        return new ResponseEntity<>(usuarios, HttpStatus.OK);
     }
 
-    @PostMapping("/addUsuario")
-    public ResponseEntity<Integer> agregarUsuario(@RequestBody Usuario usuario) {
+    @PostMapping
+    public ResponseEntity<Void> agregarUsuario(@RequestBody Usuario usuario) {
         iUsuarioService.addUsuario(usuario);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public Usuario obtenerUsuarioPorId(@PathVariable int id) {
-        return iUsuarioService.buscarUsuarioPorId(id);
+    public ResponseEntity<Usuario> obtenerUsuarioPorId(@PathVariable int id) {
+        Usuario usuario = iUsuarioService.buscarUsuarioPorId(id);
+        if (usuario != null) {
+            return new ResponseEntity<>(usuario, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @PutMapping("/{id}")
-    public void actualizarUsuario(@PathVariable int id, @RequestBody Usuario usuario) {
+    public ResponseEntity<Void> actualizarUsuario(@PathVariable int id, @RequestBody Usuario usuario) {
         if (usuario.getIdUsuario() == id) {
             iUsuarioService.actualizarUsuario(usuario);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
     @DeleteMapping("/{id}")
-    public void eliminarUsuario(@PathVariable int id) {
+    public ResponseEntity<Void> eliminarUsuario(@PathVariable int id) {
         iUsuarioService.eliminarUsuario(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @GetMapping("/correo/{correoElectronico}")
-    public Usuario obtenerUsuarioPorCorreo(@PathVariable String correoElectronico) {
-        return iUsuarioService.buscarUsuarioPorCorreo(correoElectronico);
+    public ResponseEntity<Usuario> obtenerUsuarioPorCorreo(@PathVariable String correoElectronico) {
+        Usuario usuario = iUsuarioService.buscarUsuarioPorCorreo(correoElectronico);
+        if (usuario != null) {
+            return new ResponseEntity<>(usuario, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @GetMapping("/existe")
-    public boolean usuarioExiste(@RequestParam String correoElectronico, @RequestParam String contrasena) {
-        return iUsuarioService.usuarioExiste(correoElectronico, contrasena);
+    public ResponseEntity<Boolean> usuarioExiste(@RequestParam String correoElectronico, @RequestParam String contrasena) {
+        boolean existe = iUsuarioService.usuarioExiste(correoElectronico, contrasena);
+        return new ResponseEntity<>(existe, HttpStatus.OK);
     }
 
     @GetMapping("/{id}/progreso-fitness")
-    public int getProgresoFitnessUsuario(@PathVariable int id) {
-        return iUsuarioService.getProgresoFitnessUsuario(id);
+    public ResponseEntity<Integer> getProgresoFitnessUsuario(@PathVariable int id) {
+        int progreso = iUsuarioService.getProgresoFitnessUsuario(id);
+        return new ResponseEntity<>(progreso, HttpStatus.OK);
     }
 
     @PutMapping("/{id}/progreso-fitness")
-    public void actualizarProgresoFitnessUsuario(@PathVariable int id, @RequestParam int nuevoProgresoFitness) {
+    public ResponseEntity<Void> actualizarProgresoFitnessUsuario(@PathVariable int id, @RequestParam int nuevoProgresoFitness) {
         iUsuarioService.actualizarProgresoFitnessUsuario(id, nuevoProgresoFitness);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/{id}/cantidad-puntos")
-    public int getCantidadPuntosUsuario(@PathVariable int id) {
-        return iUsuarioService.getCantidadPuntosUsuario(id);
+    public ResponseEntity<Integer> getCantidadPuntosUsuario(@PathVariable int id) {
+        int puntos = iUsuarioService.getCantidadPuntosUsuario(id);
+        return new ResponseEntity<>(puntos, HttpStatus.OK);
     }
 
     @PutMapping("/{id}/cantidad-puntos")
-    public void actualizarCantidadPuntosUsuario(@PathVariable int id, @RequestParam int nuevaCantidadPuntos) {
+    public ResponseEntity<Void> actualizarCantidadPuntosUsuario(@PathVariable int id, @RequestParam int nuevaCantidadPuntos) {
         iUsuarioService.actualizarCantidadPuntosUsuario(id, nuevaCantidadPuntos);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
