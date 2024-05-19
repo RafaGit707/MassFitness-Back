@@ -1,0 +1,77 @@
+package com.example.massfitness.controladores;
+
+import com.example.massfitness.entidades.Usuario;
+import com.example.massfitness.servicios.UsuarioService;
+import com.example.massfitness.servicios.impl.IUsuarioService;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/massfitness/usuarios")
+public class UsuarioController {
+
+    private final IUsuarioService iUsuarioService;
+
+    public UsuarioController() {
+        IUsuarioService iUsuarioService = new UsuarioService();
+        this.iUsuarioService = iUsuarioService;
+    }
+
+    @GetMapping
+    public List<Usuario> obtenerUsuarios() {
+        return iUsuarioService.getUsuarios();
+    }
+
+    @PostMapping
+    public void agregarUsuario(@RequestBody Usuario usuario) {
+        iUsuarioService.addUsuario(usuario);
+    }
+
+    @GetMapping("/{id}")
+    public Usuario obtenerUsuarioPorId(@PathVariable int id) {
+        return iUsuarioService.buscarUsuarioPorId(id);
+    }
+
+    @PutMapping("/{id}")
+    public void actualizarUsuario(@PathVariable int id, @RequestBody Usuario usuario) {
+        if (usuario.getIdUsuario() == id) {
+            iUsuarioService.actualizarUsuario(usuario);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public void eliminarUsuario(@PathVariable int id) {
+        iUsuarioService.eliminarUsuario(id);
+    }
+
+    @GetMapping("/correo/{correoElectronico}")
+    public Usuario obtenerUsuarioPorCorreo(@PathVariable String correoElectronico) {
+        return iUsuarioService.buscarUsuarioPorCorreo(correoElectronico);
+    }
+
+    @GetMapping("/existe")
+    public boolean usuarioExiste(@RequestParam String correoElectronico, @RequestParam String contrasena) {
+        return iUsuarioService.usuarioExiste(correoElectronico, contrasena);
+    }
+
+    @GetMapping("/{id}/progreso-fitness")
+    public int getProgresoFitnessUsuario(@PathVariable int id) {
+        return iUsuarioService.getProgresoFitnessUsuario(id);
+    }
+
+    @PutMapping("/{id}/progreso-fitness")
+    public void actualizarProgresoFitnessUsuario(@PathVariable int id, @RequestParam int nuevoProgresoFitness) {
+        iUsuarioService.actualizarProgresoFitnessUsuario(id, nuevoProgresoFitness);
+    }
+
+    @GetMapping("/{id}/cantidad-puntos")
+    public int getCantidadPuntosUsuario(@PathVariable int id) {
+        return iUsuarioService.getCantidadPuntosUsuario(id);
+    }
+
+    @PutMapping("/{id}/cantidad-puntos")
+    public void actualizarCantidadPuntosUsuario(@PathVariable int id, @RequestParam int nuevaCantidadPuntos) {
+        iUsuarioService.actualizarCantidadPuntosUsuario(id, nuevaCantidadPuntos);
+    }
+}
