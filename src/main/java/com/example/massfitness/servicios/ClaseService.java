@@ -4,6 +4,7 @@ import com.example.massfitness.entidades.Clase;
 import com.example.massfitness.entidades.Entrenador;
 import com.example.massfitness.servicios.impl.IClaseService;
 import com.example.massfitness.util.AccesoBD;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.*;
@@ -13,8 +14,11 @@ import java.util.List;
 
 @Service
 public class ClaseService implements IClaseService {
-
-    private AccesoBD accesoBD;
+    private final AccesoBD accesoBD;
+    @Autowired
+    public ClaseService(AccesoBD accesoBD) {
+        this.accesoBD = accesoBD;
+    }
     public void addClase(Clase clase) {
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
             String insertSQL = "INSERT INTO Clases (id_Entrenador, nombre_Clase, descripcion, horario_Clase, capacidad_Maxima, capacidad_Actual) VALUES (?, ?, ?, ?, ?, ?)";

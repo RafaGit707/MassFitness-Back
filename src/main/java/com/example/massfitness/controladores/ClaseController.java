@@ -17,8 +17,7 @@ public class ClaseController {
 
     private final IClaseService iClaseService;
 
-    public ClaseController() {
-        IClaseService iClaseService = new ClaseService();
+    public ClaseController(IClaseService iClaseService) {
         this.iClaseService = iClaseService;
     }
 

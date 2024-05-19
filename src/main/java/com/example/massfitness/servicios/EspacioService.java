@@ -3,6 +3,7 @@ package com.example.massfitness.servicios;
 import com.example.massfitness.entidades.Espacio;
 import com.example.massfitness.servicios.impl.IEspacioService;
 import com.example.massfitness.util.AccesoBD;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.*;
@@ -12,7 +13,11 @@ import java.util.List;
 @Service
 public class EspacioService implements IEspacioService {
 
-    private AccesoBD accesoBD;
+    private final AccesoBD accesoBD;
+    @Autowired
+    public EspacioService(AccesoBD accesoBD) {
+        this.accesoBD = accesoBD;
+    }
 
     public void addEspacio(Espacio espacio) {
         try (Connection connection = accesoBD.conectarPostgreSQL()) {

@@ -15,8 +15,7 @@ public class EspacioController {
 
     private final IEspacioService iEspacioService;
 
-    public EspacioController() {
-        IEspacioService iEspacioService = new EspacioService();
+    public EspacioController(IEspacioService iEspacioService) {
         this.iEspacioService = iEspacioService;
     }
 

@@ -13,8 +13,7 @@ public class EntrenadorController {
 
     private final IEntrenadorService iEntrenadorService;
 
-    public EntrenadorController() {
-        IEntrenadorService iEntrenadorService = new EntrenadorService();
+    public EntrenadorController(IEntrenadorService iEntrenadorService) {
         this.iEntrenadorService = iEntrenadorService;
     }
 

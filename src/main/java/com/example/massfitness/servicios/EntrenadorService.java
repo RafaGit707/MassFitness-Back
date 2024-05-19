@@ -3,6 +3,7 @@ package com.example.massfitness.servicios;
 import com.example.massfitness.entidades.Entrenador;
 import com.example.massfitness.servicios.impl.IEntrenadorService;
 import com.example.massfitness.util.AccesoBD;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
@@ -15,8 +16,11 @@ import java.util.List;
 @Service
 public class EntrenadorService implements IEntrenadorService {
 
-    private AccesoBD accesoBD;
-
+    private final AccesoBD accesoBD;
+    @Autowired
+    public EntrenadorService(AccesoBD accesoBD) {
+        this.accesoBD = accesoBD;
+    }
     public void addEntrenador(Entrenador entrenador) {
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
             String insertSQL = "INSERT INTO Entrenadores (nombre_Entrenador, especializacion) VALUES (?, ?)";

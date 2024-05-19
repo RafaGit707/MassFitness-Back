@@ -13,8 +13,7 @@ public class UsuarioController {
 
     private final IUsuarioService iUsuarioService;
 
-    public UsuarioController() {
-        IUsuarioService iUsuarioService = new UsuarioService();
+    public UsuarioController(IUsuarioService iUsuarioService) {
         this.iUsuarioService = iUsuarioService;
     }
 

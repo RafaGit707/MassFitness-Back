@@ -16,8 +16,7 @@ import java.util.List;
 public class ReservaController {
     private final IReservaService iReservaService;
 
-    public ReservaController() {
-        IReservaService iReservaService = new ReservaService();
+    public ReservaController(IReservaService iReservaService) {
         this.iReservaService = iReservaService;
     }
 

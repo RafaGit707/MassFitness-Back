@@ -13,8 +13,7 @@ public class LogroController {
 
     private final ILogroService iLogroService;
 
-    public LogroController() {
-        ILogroService iLogroService = new LogroService();
+    public LogroController(ILogroService iLogroService) {
         this.iLogroService = iLogroService;
     }
 

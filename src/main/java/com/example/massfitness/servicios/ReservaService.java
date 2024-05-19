@@ -4,6 +4,7 @@ import com.example.massfitness.entidades.Reserva;
 import com.example.massfitness.entidades.Usuario;
 import com.example.massfitness.servicios.impl.IReservaService;
 import com.example.massfitness.util.AccesoBD;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.*;
@@ -12,7 +13,11 @@ import java.util.List;
 
 @Service
 public class ReservaService implements IReservaService {
-    private AccesoBD accesoBD;
+    private final AccesoBD accesoBD;
+    @Autowired
+    public ReservaService(AccesoBD accesoBD) {
+        this.accesoBD = accesoBD;
+    }
 
     public List<Reserva> getReservas() {
         List<Reserva> reservas = new ArrayList<>();

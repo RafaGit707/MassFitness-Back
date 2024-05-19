@@ -3,6 +3,7 @@ package com.example.massfitness.servicios;
 import com.example.massfitness.entidades.Logro;
 import com.example.massfitness.servicios.impl.ILogroService;
 import com.example.massfitness.util.AccesoBD;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
@@ -15,8 +16,11 @@ import java.util.List;
 @Service
 public class LogroService implements ILogroService {
 
-    private AccesoBD accesoBD;
-
+    private final AccesoBD accesoBD;
+    @Autowired
+    public LogroService(AccesoBD accesoBD) {
+        this.accesoBD = accesoBD;
+    }
     public void addLogro(Logro logro) {
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
             String insertSQL = "INSERT INTO Logros (nombre_Logro, descripcion, requisitos_Puntos, recompensa) VALUES (?, ?, ?, ?)";

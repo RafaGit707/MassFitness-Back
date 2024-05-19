@@ -4,6 +4,7 @@ import com.example.massfitness.entidades.DatosPersonales;
 import com.example.massfitness.entidades.Usuario;
 import com.example.massfitness.servicios.impl.IUsuarioService;
 import com.example.massfitness.util.AccesoBD;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.*;
@@ -12,7 +13,11 @@ import java.util.List;
 
 @Service
 public class UsuarioService implements IUsuarioService {
-    private AccesoBD accesoBD;
+    private final AccesoBD accesoBD;
+    @Autowired
+    public UsuarioService(AccesoBD accesoBD) {
+        this.accesoBD = accesoBD;
+    }
     public void addUsuario(Usuario usuario) {
         String insertSQL = "INSERT INTO Usuarios (nombre, correoElectronico, contrasena, edad, genero, progresoFitness, cantidadPuntos) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection connection = accesoBD.conectarPostgreSQL();
