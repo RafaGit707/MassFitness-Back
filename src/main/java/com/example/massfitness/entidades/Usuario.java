@@ -20,8 +20,8 @@ public class Usuario {
     @JoinColumn(name = "datos_personales_id")
     private DatosPersonales datosPersonales;
 
-    private int progresoFitness;
-    private int cantidadPuntos;
+    private int progresoFitness = 0;
+    private int cantidadPuntos = 0;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "usuario_logro",

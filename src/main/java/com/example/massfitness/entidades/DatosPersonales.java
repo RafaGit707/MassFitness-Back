@@ -10,8 +10,8 @@ public class DatosPersonales {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idDatosPersonales;
-    private int edad;
-    private String genero;
+    private int edad = 0;
+    private String genero = "";
 
     public DatosPersonales() {
     }
