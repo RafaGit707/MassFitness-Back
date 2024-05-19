@@ -16,7 +16,7 @@ import java.util.List;
 public class ClaseController {
 
     private final IClaseService iClaseService;
-
+    @Autowired
     public ClaseController(IClaseService iClaseService) {
         this.iClaseService = iClaseService;
     }

@@ -3,6 +3,7 @@ package com.example.massfitness.controladores;
 import com.example.massfitness.entidades.Logro;
 import com.example.massfitness.servicios.LogroService;
 import com.example.massfitness.servicios.impl.ILogroService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
 public class LogroController {
 
     private final ILogroService iLogroService;
-
+    @Autowired
     public LogroController(ILogroService iLogroService) {
         this.iLogroService = iLogroService;
     }

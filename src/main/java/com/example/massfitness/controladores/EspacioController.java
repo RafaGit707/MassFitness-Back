@@ -3,6 +3,7 @@ package com.example.massfitness.controladores;
 import com.example.massfitness.entidades.Espacio;
 import com.example.massfitness.servicios.EspacioService;
 import com.example.massfitness.servicios.impl.IEspacioService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +15,7 @@ import java.util.List;
 public class EspacioController {
 
     private final IEspacioService iEspacioService;
-
+    @Autowired
     public EspacioController(IEspacioService iEspacioService) {
         this.iEspacioService = iEspacioService;
     }

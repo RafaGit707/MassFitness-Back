@@ -15,7 +15,7 @@ import java.util.List;
 @RequestMapping("/massfitness/reservas")
 public class ReservaController {
     private final IReservaService iReservaService;
-
+    @Autowired
     public ReservaController(IReservaService iReservaService) {
         this.iReservaService = iReservaService;
     }

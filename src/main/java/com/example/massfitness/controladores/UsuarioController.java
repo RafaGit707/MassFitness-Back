@@ -1,8 +1,10 @@
 package com.example.massfitness.controladores;
 
 import com.example.massfitness.entidades.Usuario;
-import com.example.massfitness.servicios.UsuarioService;
 import com.example.massfitness.servicios.impl.IUsuarioService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,7 +14,7 @@ import java.util.List;
 public class UsuarioController {
 
     private final IUsuarioService iUsuarioService;
-
+    @Autowired
     public UsuarioController(IUsuarioService iUsuarioService) {
         this.iUsuarioService = iUsuarioService;
     }
@@ -22,9 +24,10 @@ public class UsuarioController {
         return iUsuarioService.getUsuarios();
     }
 
-    @PostMapping
-    public void agregarUsuario(@RequestBody Usuario usuario) {
+    @PostMapping("/addUsuario")
+    public ResponseEntity<Integer> agregarUsuario(@RequestBody Usuario usuario) {
         iUsuarioService.addUsuario(usuario);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")

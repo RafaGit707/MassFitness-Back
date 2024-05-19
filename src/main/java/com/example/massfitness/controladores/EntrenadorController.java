@@ -3,6 +3,7 @@ package com.example.massfitness.controladores;
 import com.example.massfitness.entidades.Entrenador;
 import com.example.massfitness.servicios.EntrenadorService;
 import com.example.massfitness.servicios.impl.IEntrenadorService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
 public class EntrenadorController {
 
     private final IEntrenadorService iEntrenadorService;
-
+    @Autowired
     public EntrenadorController(IEntrenadorService iEntrenadorService) {
         this.iEntrenadorService = iEntrenadorService;
     }
