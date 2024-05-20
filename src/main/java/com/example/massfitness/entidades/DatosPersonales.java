@@ -9,7 +9,7 @@ import jakarta.persistence.Id;
 public class DatosPersonales {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int idDatosPersonales;
+    private int id_datos_personales;
     private int edad;
     private String genero;
 
@@ -22,11 +22,11 @@ public class DatosPersonales {
     }
 
     public int getIdDatosPersonales() {
-        return idDatosPersonales;
+        return id_datos_personales;
     }
 
-    public void setIdDatosPersonales(int idDatosPersonales) {
-        this.idDatosPersonales = idDatosPersonales;
+    public void setIdDatosPersonales(int id_datos_personales) {
+        this.id_datos_personales = id_datos_personales;
     }
 
     public int getEdad() {
