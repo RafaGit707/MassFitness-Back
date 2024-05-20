@@ -26,11 +26,10 @@ public class UsuarioService implements IUsuarioService {
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
             connection.setAutoCommit(false);
 
-            // Insertar datos personales y obtener el ID generado
             int datosPersonalesId;
             try (PreparedStatement preparedStatementDatosPersonales = connection.prepareStatement(insertDatosPersonalesSQL)) {
                 preparedStatementDatosPersonales.setInt(1, 0);
-                preparedStatementDatosPersonales.setString(2, "");
+                preparedStatementDatosPersonales.setString(2, "A");
                 ResultSet rs = preparedStatementDatosPersonales.executeQuery();
 
                 if (rs.next()) {
@@ -40,7 +39,6 @@ public class UsuarioService implements IUsuarioService {
                 }
             }
 
-            // Insertar el usuario con el ID de DatosPersonales obtenido
             try (PreparedStatement preparedStatementUsuario = connection.prepareStatement(insertUsuarioSQL)) {
                 preparedStatementUsuario.setString(1, usuario.getNombre());
                 preparedStatementUsuario.setString(2, usuario.getCorreoElectronico());
@@ -66,13 +64,13 @@ public class UsuarioService implements IUsuarioService {
             while (resultSet.next()) {
                 int id = resultSet.getInt("id_usuario");
                 String nombre = resultSet.getString("nombre");
-                String correo_electronico = resultSet.getString("correo_electronico");
+                String correoElectronico = resultSet.getString("correo_electronico");
                 String contrasena = resultSet.getString("contrasena");
                 int datos_personales_id = resultSet.getInt("datos_personales_id");
                 int progresoFitness = resultSet.getInt("progreso_fitness");
                 int cantidadPuntos = resultSet.getInt("cantidad_puntos");
 
-                Usuario usuario = new Usuario(id, nombre, correo_electronico, contrasena, new DatosPersonales(datos_personales_id), progresoFitness, cantidadPuntos, null);
+                Usuario usuario = new Usuario(id, nombre, correoElectronico, contrasena, new DatosPersonales(datos_personales_id), progresoFitness, cantidadPuntos, null);
                 usuarios.add(usuario);
             }
         } catch (SQLException e) {

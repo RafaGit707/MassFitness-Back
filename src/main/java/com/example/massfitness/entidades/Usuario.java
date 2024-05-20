@@ -32,6 +32,16 @@ public class Usuario {
     public Usuario() {
     }
 
+    public Usuario(String nombre, String correo_electronico, String contrasena, DatosPersonales datos_personales, int progresoFitness, int cantidadPuntos, List<Logro> logrosConseguidos) {
+        this.nombre = nombre;
+        this.correo_electronico = correo_electronico;
+        this.contrasena = contrasena;
+        this.datos_personales = datos_personales;
+        this.progresoFitness = progresoFitness;
+        this.cantidadPuntos = cantidadPuntos;
+        this.logrosConseguidos = logrosConseguidos;
+    }
+
     public Usuario(int idUsuario, String nombre, String correo_electronico, String contrasena, DatosPersonales datos_personales, int progresoFitness, int cantidadPuntos, List<Logro> logrosConseguidos) {
         this.idUsuario = idUsuario;
         this.nombre = nombre;
