@@ -29,7 +29,7 @@ public class UsuarioService implements IUsuarioService {
             int datosPersonalesId;
             try (PreparedStatement preparedStatementDatosPersonales = connection.prepareStatement(insertDatosPersonalesSQL)) {
                 preparedStatementDatosPersonales.setInt(1, 0);
-                preparedStatementDatosPersonales.setString(2, "A");
+                preparedStatementDatosPersonales.setString(2, "");
                 ResultSet rs = preparedStatementDatosPersonales.executeQuery();
 
                 if (rs.next()) {

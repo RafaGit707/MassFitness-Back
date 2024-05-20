@@ -8,10 +8,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/massfitness/usuarios")
 public class UsuarioController {
+    private static final Logger logger = Logger.getLogger(UsuarioController.class.getName());
+
 
     private final IUsuarioService iUsuarioService;
     @Autowired
@@ -25,10 +28,14 @@ public class UsuarioController {
         return new ResponseEntity<>(usuarios, HttpStatus.OK);
     }
 
-    @PostMapping
+    @PostMapping("/addUsuario")
     public ResponseEntity<Void> agregarUsuario(@RequestBody Usuario usuario) {
-        iUsuarioService.addUsuario(usuario);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        try {
+            iUsuarioService.addUsuario(usuario);
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping("/{id}")
