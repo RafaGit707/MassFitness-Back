@@ -17,7 +17,7 @@ public class Usuario {
     private String contrasena;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "datos_personales_id")
+    @JoinColumn(name = "datos_personales_id", nullable = true)
     private DatosPersonales datosPersonales;
 
     private int progresoFitness;

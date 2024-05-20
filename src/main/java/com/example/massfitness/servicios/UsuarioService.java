@@ -20,16 +20,40 @@ public class UsuarioService implements IUsuarioService {
     }
     @Override
     public void addUsuario(Usuario usuario) {
-        String insertSQL = "INSERT INTO Usuarios (nombre, correo_electronico, contrasena, datos_personales_id, progreso_fitness, cantidad_puntos) VALUES (?, ?, ?, ?, ?, ?)";
-        try (Connection connection = accesoBD.conectarPostgreSQL();
-             PreparedStatement preparedStatement = connection.prepareStatement(insertSQL)) {
-            preparedStatement.setString(1, usuario.getNombre());
-            preparedStatement.setString(2, usuario.getCorreoElectronico());
-            preparedStatement.setString(3, usuario.getContrasena());
-            preparedStatement.setInt(4, 0);
-            preparedStatement.setInt(5, usuario.getProgresoFitness());
-            preparedStatement.setInt(6, usuario.getCantidadPuntos());
-            preparedStatement.executeUpdate();
+        String insertDatosPersonalesSQL = "INSERT INTO datos_personales (edad, genero) VALUES (?, ?) RETURNING id_datos_personales";
+        String insertUsuarioSQL = "INSERT INTO usuarios (nombre, correo_electronico, contrasena, datos_personales_id, progreso_fitness, cantidad_puntos) VALUES (?, ?, ?, ?, ?, ?)";
+
+        try (Connection connection = accesoBD.conectarPostgreSQL()) {
+            // Desactivar auto-commit para manejar la transacción manualmente
+            connection.setAutoCommit(false);
+
+            // Insertar datos personales y obtener el ID generado
+            int datosPersonalesId;
+            try (PreparedStatement preparedStatementDatosPersonales = connection.prepareStatement(insertDatosPersonalesSQL)) {
+                preparedStatementDatosPersonales.setInt(1, usuario.getDatosPersonales().getEdad());
+                preparedStatementDatosPersonales.setString(2, usuario.getDatosPersonales().getGenero());
+                ResultSet rs = preparedStatementDatosPersonales.executeQuery();
+
+                if (rs.next()) {
+                    datosPersonalesId = rs.getInt(1);
+                } else {
+                    throw new SQLException("No se pudo obtener el ID de DatosPersonales.");
+                }
+            }
+
+            // Insertar el usuario con el ID de DatosPersonales obtenido
+            try (PreparedStatement preparedStatementUsuario = connection.prepareStatement(insertUsuarioSQL)) {
+                preparedStatementUsuario.setString(1, usuario.getNombre());
+                preparedStatementUsuario.setString(2, usuario.getCorreoElectronico());
+                preparedStatementUsuario.setString(3, usuario.getContrasena());
+                preparedStatementUsuario.setInt(4, datosPersonalesId); // Usar el ID generado
+                preparedStatementUsuario.setInt(5, usuario.getProgresoFitness());
+                preparedStatementUsuario.setInt(6, usuario.getCantidadPuntos());
+                preparedStatementUsuario.executeUpdate();
+            }
+
+            // Commit de la transacción
+            connection.commit();
         } catch (SQLException e) {
             e.printStackTrace();
         }

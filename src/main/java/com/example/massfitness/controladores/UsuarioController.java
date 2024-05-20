@@ -1,5 +1,6 @@
 package com.example.massfitness.controladores;
 
+import com.example.massfitness.entidades.DatosPersonales;
 import com.example.massfitness.entidades.Usuario;
 import com.example.massfitness.servicios.impl.IUsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,10 @@ public class UsuarioController {
 
     @PostMapping
     public ResponseEntity<Void> agregarUsuario(@RequestBody Usuario usuario) {
+        DatosPersonales datosPersonales = new DatosPersonales();
+        datosPersonales.setEdad(0); // Valor por defecto, o puedes asignar otro valor
+        datosPersonales.setGenero(""); // Valor por defecto, o puedes asignar otro valor
+        usuario.setDatosPersonales(datosPersonales);
         iUsuarioService.addUsuario(usuario);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
