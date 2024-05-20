@@ -20,7 +20,9 @@ public class DatosPersonales {
         this.edad = edad;
         this.genero = genero;
     }
-
+    public DatosPersonales(int id_datos_personales) {
+        this.id_datos_personales = id_datos_personales;
+    }
     public int getIdDatosPersonales() {
         return id_datos_personales;
     }

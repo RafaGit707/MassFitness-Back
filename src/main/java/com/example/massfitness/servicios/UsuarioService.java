@@ -69,12 +69,11 @@ public class UsuarioService implements IUsuarioService {
                 String nombre = resultSet.getString("nombre");
                 String correo_electronico = resultSet.getString("correo_electronico");
                 String contrasena = resultSet.getString("contrasena");
-                int edad = resultSet.getInt("edad");
-                String genero = resultSet.getString("genero");
+                int id_datos_personales = resultSet.getInt("id_datos_personales");
                 int progresoFitness = resultSet.getInt("progreso_fitness");
                 int cantidadPuntos = resultSet.getInt("cantidad_puntos");
 
-                Usuario usuario = new Usuario(id, nombre, correo_electronico, contrasena, new DatosPersonales(edad, genero), progresoFitness, cantidadPuntos, null);
+                Usuario usuario = new Usuario(id, nombre, correo_electronico, contrasena, new DatosPersonales(id_datos_personales), progresoFitness, cantidadPuntos, null);
                 usuarios.add(usuario);
             }
         } catch (SQLException e) {
