@@ -45,13 +45,12 @@ public class UsuarioService implements IUsuarioService {
                 preparedStatementUsuario.setString(1, usuario.getNombre());
                 preparedStatementUsuario.setString(2, usuario.getCorreoElectronico());
                 preparedStatementUsuario.setString(3, usuario.getContrasena());
-                preparedStatementUsuario.setInt(4, datosPersonalesId); // Usar el ID generado
+                preparedStatementUsuario.setInt(4, datosPersonalesId);
                 preparedStatementUsuario.setInt(5, usuario.getProgresoFitness());
                 preparedStatementUsuario.setInt(6, usuario.getCantidadPuntos());
                 preparedStatementUsuario.executeUpdate();
             }
 
-            // Commit de la transacción
             connection.commit();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -69,11 +68,11 @@ public class UsuarioService implements IUsuarioService {
                 String nombre = resultSet.getString("nombre");
                 String correo_electronico = resultSet.getString("correo_electronico");
                 String contrasena = resultSet.getString("contrasena");
-                int id_datos_personales = resultSet.getInt("id_datos_personales");
+                int datos_personales_id = resultSet.getInt("datos_personales_id");
                 int progresoFitness = resultSet.getInt("progreso_fitness");
                 int cantidadPuntos = resultSet.getInt("cantidad_puntos");
 
-                Usuario usuario = new Usuario(id, nombre, correo_electronico, contrasena, new DatosPersonales(id_datos_personales), progresoFitness, cantidadPuntos, null);
+                Usuario usuario = new Usuario(id, nombre, correo_electronico, contrasena, new DatosPersonales(datos_personales_id), progresoFitness, cantidadPuntos, null);
                 usuarios.add(usuario);
             }
         } catch (SQLException e) {
