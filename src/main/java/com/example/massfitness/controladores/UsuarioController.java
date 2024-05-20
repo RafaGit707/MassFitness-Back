@@ -26,12 +26,8 @@ public class UsuarioController {
 
     @PostMapping("/addUsuario")
     public ResponseEntity<Void> agregarUsuario(@RequestBody Usuario usuario) {
-        try {
-            iUsuarioService.addUsuario(usuario);
-            return new ResponseEntity<>(HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        iUsuarioService.addUsuario(usuario);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
