@@ -24,14 +24,13 @@ public class UsuarioService implements IUsuarioService {
         String insertUsuarioSQL = "INSERT INTO usuarios (nombre, correo_electronico, contrasena, datos_personales_id, progreso_fitness, cantidad_puntos) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
-            // Desactivar auto-commit para manejar la transacción manualmente
             connection.setAutoCommit(false);
 
             // Insertar datos personales y obtener el ID generado
             int datosPersonalesId;
             try (PreparedStatement preparedStatementDatosPersonales = connection.prepareStatement(insertDatosPersonalesSQL)) {
-                preparedStatementDatosPersonales.setInt(1, usuario.getDatosPersonales().getEdad());
-                preparedStatementDatosPersonales.setString(2, usuario.getDatosPersonales().getGenero());
+                preparedStatementDatosPersonales.setInt(1, 0);
+                preparedStatementDatosPersonales.setString(2, "");
                 ResultSet rs = preparedStatementDatosPersonales.executeQuery();
 
                 if (rs.next()) {
