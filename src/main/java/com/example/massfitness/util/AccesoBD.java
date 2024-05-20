@@ -41,6 +41,12 @@ public class AccesoBD {
     public void initializeDatabase() {
         try (Connection connection = conectarPostgreSQL()) {
             // Crear las tablas si no existen
+            String createDatosPersonalesTableSQL = "CREATE TABLE IF NOT EXISTS DatosPersonales (" +
+                    "id_datos_personales SERIAL PRIMARY KEY," +
+                    "edad INTEGER," +
+                    "genero TEXT)";
+            connection.createStatement().executeUpdate(createDatosPersonalesTableSQL);
+
             String createUsuariosTableSQL = "CREATE TABLE IF NOT EXISTS Usuarios (" +
                     "id SERIAL PRIMARY KEY," +
                     "nombre TEXT NOT NULL," +
@@ -51,12 +57,6 @@ public class AccesoBD {
                     "cantidad_puntos INTEGER DEFAULT 0," +
                     "FOREIGN KEY (datos_personales_id) REFERENCES DatosPersonales(id_datos_personales))";
             connection.createStatement().executeUpdate(createUsuariosTableSQL);
-
-            String createDatosPersonalesTableSQL = "CREATE TABLE IF NOT EXISTS DatosPersonales (" +
-                    "id_datos_personales SERIAL PRIMARY KEY," +
-                    "edad INTEGER," +
-                    "genero TEXT)";
-            connection.createStatement().executeUpdate(createDatosPersonalesTableSQL);
 
             String createReservasTableSQL = "CREATE TABLE IF NOT EXISTS Reservas (" +
                     "id_Reserva SERIAL PRIMARY KEY," +
