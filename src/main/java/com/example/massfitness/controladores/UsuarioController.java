@@ -8,14 +8,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/massfitness/usuarios")
 public class UsuarioController {
-    private static final Logger logger = Logger.getLogger(UsuarioController.class.getName());
-
-
     private final IUsuarioService iUsuarioService;
     @Autowired
     public UsuarioController(IUsuarioService iUsuarioService) {
