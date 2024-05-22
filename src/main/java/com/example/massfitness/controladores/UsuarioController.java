@@ -25,7 +25,7 @@ public class UsuarioController {
     }
 
     @PostMapping("/addUsuario")
-    public ResponseEntity<Void> agregarUsuario(@RequestBody Usuario usuario) {
+    public ResponseEntity<Integer> agregarUsuario(@RequestBody Usuario usuario) {
         iUsuarioService.addUsuario(usuario);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

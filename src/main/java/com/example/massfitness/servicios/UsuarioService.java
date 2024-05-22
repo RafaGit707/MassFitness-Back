@@ -6,6 +6,7 @@ import com.example.massfitness.servicios.impl.IUsuarioService;
 import com.example.massfitness.util.AccesoBD;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ public class UsuarioService implements IUsuarioService {
         this.accesoBD = accesoBD;
     }
     @Override
+    @Transactional
     public void addUsuario(Usuario usuario) {
         String insertDatosPersonalesSQL = "INSERT INTO datos_personales (edad, genero) VALUES (?, ?) RETURNING id_datos_personales";
         String insertUsuarioSQL = "INSERT INTO usuarios (nombre, correo_electronico, contrasena, datos_personales_id, progreso_fitness, cantidad_puntos) VALUES (?, ?, ?, ?, ?, ?)";
@@ -52,6 +54,7 @@ public class UsuarioService implements IUsuarioService {
             connection.commit();
         } catch (SQLException e) {
             e.printStackTrace();
+            throw new RuntimeException("Error al agregar usuario", e);
         }
     }
     @Override
@@ -216,15 +219,17 @@ public class UsuarioService implements IUsuarioService {
         return cantidadPuntos;
     }
     @Override
+    @Transactional
     public void actualizarCantidadPuntosUsuario(int idUsuario, int nuevaCantidadPuntos) {
-        try (Connection connection = accesoBD.conectarPostgreSQL()) {
-            String updateSQL = "UPDATE Usuarios SET cantidad_puntos = ? WHERE id_usuario = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(updateSQL);
+        String updateSQL = "UPDATE Usuarios SET cantidad_puntos = ? WHERE id_usuario = ?";
+        try (Connection connection = accesoBD.conectarPostgreSQL();
+             PreparedStatement preparedStatement = connection.prepareStatement(updateSQL)) {
             preparedStatement.setInt(1, nuevaCantidadPuntos);
             preparedStatement.setInt(2, idUsuario);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+            throw new RuntimeException("Error al actualizar cantidad de puntos de usuario", e);
         }
     }
 }
