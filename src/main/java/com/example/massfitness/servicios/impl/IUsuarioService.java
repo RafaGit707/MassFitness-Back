@@ -5,7 +5,7 @@ import com.example.massfitness.entidades.Usuario;
 import java.util.List;
 
 public interface IUsuarioService {
-    void addUsuario(Usuario usuario);
+    int addUsuario(Usuario usuario);
     List<Usuario> getUsuarios();
     void actualizarUsuario(Usuario usuario);
     void eliminarUsuario(int idUsuario);

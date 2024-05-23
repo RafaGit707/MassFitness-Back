@@ -4,9 +4,10 @@ import com.example.massfitness.entidades.DatosPersonales;
 import com.example.massfitness.entidades.Usuario;
 import com.example.massfitness.servicios.impl.IUsuarioService;
 import com.example.massfitness.util.AccesoBD;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -15,19 +16,18 @@ import java.util.List;
 @Service
 public class UsuarioService implements IUsuarioService {
     private final AccesoBD accesoBD;
+    private static final Logger logger = LoggerFactory.getLogger(UsuarioService.class);
     @Autowired
     public UsuarioService(AccesoBD accesoBD) {
         this.accesoBD = accesoBD;
     }
     @Override
-    @Transactional
-    public void addUsuario(Usuario usuario) {
+    public int addUsuario(Usuario usuario) {
+        logger.info("Agregando nuevo usuario a la base de datos: {}", usuario);
         String insertDatosPersonalesSQL = "INSERT INTO datos_personales (edad, genero) VALUES (?, ?) RETURNING id_datos_personales";
-        String insertUsuarioSQL = "INSERT INTO usuarios (nombre, correo_electronico, contrasena, datos_personales_id, progreso_fitness, cantidad_puntos) VALUES (?, ?, ?, ?, ?, ?)";
+        String insertUsuarioSQL = "INSERT INTO usuarios (nombre, correo_electronico, contrasena, datos_personales_id, progreso_fitness, cantidad_puntos) VALUES (?, ?, ?, ?, ?, ?) RETURNING id_usuario";
 
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
-            connection.setAutoCommit(false);
-
             int datosPersonalesId;
             try (PreparedStatement preparedStatementDatosPersonales = connection.prepareStatement(insertDatosPersonalesSQL)) {
                 preparedStatementDatosPersonales.setInt(1, 0);
@@ -41,22 +41,30 @@ public class UsuarioService implements IUsuarioService {
                 }
             }
 
+            int usuarioId;
             try (PreparedStatement preparedStatementUsuario = connection.prepareStatement(insertUsuarioSQL)) {
                 preparedStatementUsuario.setString(1, usuario.getNombre());
                 preparedStatementUsuario.setString(2, usuario.getCorreoElectronico());
+                logger.info("Agregando nuevo usuario a la base de datos: {}", usuario.getCorreoElectronico() + " - NOMBRE:" + usuario.getNombre());
                 preparedStatementUsuario.setString(3, usuario.getContrasena());
                 preparedStatementUsuario.setInt(4, datosPersonalesId);
                 preparedStatementUsuario.setInt(5, usuario.getProgresoFitness());
                 preparedStatementUsuario.setInt(6, usuario.getCantidadPuntos());
-                preparedStatementUsuario.executeUpdate();
-            }
+                ResultSet rs = preparedStatementUsuario.executeQuery();
 
-            connection.commit();
+                if (rs.next()) {
+                    usuarioId = rs.getInt(1);
+                } else {
+                    throw new SQLException("No se pudo obtener el ID del Usuario.");
+                }
+            }
+            return usuarioId;
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException("Error al agregar usuario", e);
         }
     }
+
     @Override
     public List<Usuario> getUsuarios() {
         List<Usuario> usuarios = new ArrayList<>();
@@ -67,13 +75,13 @@ public class UsuarioService implements IUsuarioService {
             while (resultSet.next()) {
                 int id = resultSet.getInt("id_usuario");
                 String nombre = resultSet.getString("nombre");
-                String correoElectronico = resultSet.getString("correo_electronico");
+                String correo_electronico = resultSet.getString("correo_electronico");
                 String contrasena = resultSet.getString("contrasena");
                 int datos_personales_id = resultSet.getInt("datos_personales_id");
                 int progresoFitness = resultSet.getInt("progreso_fitness");
                 int cantidadPuntos = resultSet.getInt("cantidad_puntos");
 
-                Usuario usuario = new Usuario(id, nombre, correoElectronico, contrasena, new DatosPersonales(datos_personales_id), progresoFitness, cantidadPuntos, null);
+                Usuario usuario = new Usuario(id, nombre, correo_electronico, contrasena, new DatosPersonales(datos_personales_id), progresoFitness, cantidadPuntos, null);
                 usuarios.add(usuario);
             }
         } catch (SQLException e) {
@@ -120,13 +128,13 @@ public class UsuarioService implements IUsuarioService {
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 String nombre = resultSet.getString("nombre");
-                String correoElectronico = resultSet.getString("correo_electronico");
+                String correo_electronico = resultSet.getString("correo_electronico");
                 String contrasena = resultSet.getString("contrasena");
                 int edad = resultSet.getInt("edad");
                 String genero = resultSet.getString("genero");
                 int progresoFitness = resultSet.getInt("progreso_fitness");
                 int cantidadPuntos = resultSet.getInt("cantidad_puntos");
-                usuario = new Usuario(idUsuario, nombre, correoElectronico, contrasena, new DatosPersonales(edad, genero), progresoFitness, cantidadPuntos, null);
+                usuario = new Usuario(idUsuario, nombre, correo_electronico, contrasena, new DatosPersonales(edad, genero), progresoFitness, cantidadPuntos, null);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -219,7 +227,6 @@ public class UsuarioService implements IUsuarioService {
         return cantidadPuntos;
     }
     @Override
-    @Transactional
     public void actualizarCantidadPuntosUsuario(int idUsuario, int nuevaCantidadPuntos) {
         String updateSQL = "UPDATE Usuarios SET cantidad_puntos = ? WHERE id_usuario = ?";
         try (Connection connection = accesoBD.conectarPostgreSQL();

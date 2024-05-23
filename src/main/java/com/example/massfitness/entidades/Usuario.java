@@ -1,5 +1,6 @@
 package com.example.massfitness.entidades;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -13,6 +14,7 @@ public class Usuario {
     private int idUsuario;
 
     private String nombre;
+    @JsonProperty("correo_electronico")
     private String correo_electronico;
     private String contrasena;
 

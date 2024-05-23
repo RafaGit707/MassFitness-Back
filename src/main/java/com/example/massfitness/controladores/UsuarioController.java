@@ -2,6 +2,8 @@ package com.example.massfitness.controladores;
 
 import com.example.massfitness.entidades.Usuario;
 import com.example.massfitness.servicios.impl.IUsuarioService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,7 @@ import java.util.List;
 @RequestMapping("/massfitness/usuarios")
 public class UsuarioController {
     private final IUsuarioService iUsuarioService;
+    private static final Logger logger = LoggerFactory.getLogger(UsuarioController.class);
     @Autowired
     public UsuarioController(IUsuarioService iUsuarioService) {
         this.iUsuarioService = iUsuarioService;
@@ -26,8 +29,10 @@ public class UsuarioController {
 
     @PostMapping("/addUsuario")
     public ResponseEntity<Integer> agregarUsuario(@RequestBody Usuario usuario) {
-        iUsuarioService.addUsuario(usuario);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        logger.info("Recibiendo solicitud para agregar un nuevo usuario: {}", usuario);
+        int idCreado = iUsuarioService.addUsuario(usuario);
+        logger.info("ID del usuario creado: {}", idCreado);
+        return new ResponseEntity<>(idCreado, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
