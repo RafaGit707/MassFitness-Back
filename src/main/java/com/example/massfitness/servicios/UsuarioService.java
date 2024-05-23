@@ -45,7 +45,6 @@ public class UsuarioService implements IUsuarioService {
             try (PreparedStatement preparedStatementUsuario = connection.prepareStatement(insertUsuarioSQL)) {
                 preparedStatementUsuario.setString(1, usuario.getNombre());
                 preparedStatementUsuario.setString(2, usuario.getCorreoElectronico());
-                logger.info("Agregando nuevo usuario a la base de datos: {}", usuario.getCorreoElectronico() + " - NOMBRE:" + usuario.getNombre());
                 preparedStatementUsuario.setString(3, usuario.getContrasena());
                 preparedStatementUsuario.setInt(4, datosPersonalesId);
                 preparedStatementUsuario.setInt(5, usuario.getProgresoFitness());
@@ -130,11 +129,10 @@ public class UsuarioService implements IUsuarioService {
                 String nombre = resultSet.getString("nombre");
                 String correo_electronico = resultSet.getString("correo_electronico");
                 String contrasena = resultSet.getString("contrasena");
-                int edad = resultSet.getInt("edad");
-                String genero = resultSet.getString("genero");
+                int datos_personales_id = resultSet.getInt("datos_personales_id");
                 int progresoFitness = resultSet.getInt("progreso_fitness");
                 int cantidadPuntos = resultSet.getInt("cantidad_puntos");
-                usuario = new Usuario(idUsuario, nombre, correo_electronico, contrasena, new DatosPersonales(edad, genero), progresoFitness, cantidadPuntos, null);
+                usuario = new Usuario(idUsuario, nombre, correo_electronico, contrasena, new DatosPersonales(datos_personales_id), progresoFitness, cantidadPuntos, null);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -142,12 +140,12 @@ public class UsuarioService implements IUsuarioService {
         return usuario;
     }
     @Override
-    public Usuario buscarUsuarioPorCorreo(String correoElectronico) {
+    public Usuario buscarUsuarioPorCorreo(String correo_electronico) {
         Usuario usuario = null;
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
             String selectSQL = "SELECT * FROM Usuarios WHERE correo_electronico = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(selectSQL);
-            preparedStatement.setString(1, correoElectronico);
+            preparedStatement.setString(1, correo_electronico);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 int id = resultSet.getInt("id_usuario");
@@ -157,7 +155,7 @@ public class UsuarioService implements IUsuarioService {
                 String genero = resultSet.getString("genero");
                 int progresoFitness = resultSet.getInt("progreso_fitness");
                 int cantidadPuntos = resultSet.getInt("cantidad_puntos");
-                usuario = new Usuario(id, nombre, correoElectronico, contrasena, new DatosPersonales(edad, genero), progresoFitness, cantidadPuntos, null);
+                usuario = new Usuario(id, nombre, correo_electronico, contrasena, new DatosPersonales(edad, genero), progresoFitness, cantidadPuntos, null);
             }
         } catch (SQLException e) {
             e.printStackTrace();

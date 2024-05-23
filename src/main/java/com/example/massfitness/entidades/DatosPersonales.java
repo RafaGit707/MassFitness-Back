@@ -1,5 +1,6 @@
 package com.example.massfitness.entidades;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,7 +11,9 @@ public class DatosPersonales {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id_datos_personales;
+    @JsonProperty("edad")
     private int edad;
+    @JsonProperty("genero")
     private String genero;
 
     public DatosPersonales() {

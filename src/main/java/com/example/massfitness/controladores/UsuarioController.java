@@ -29,9 +29,7 @@ public class UsuarioController {
 
     @PostMapping("/addUsuario")
     public ResponseEntity<Integer> agregarUsuario(@RequestBody Usuario usuario) {
-        logger.info("Recibiendo solicitud para agregar un nuevo usuario: {}", usuario);
         int idCreado = iUsuarioService.addUsuario(usuario);
-        logger.info("ID del usuario creado: {}", idCreado);
         return new ResponseEntity<>(idCreado, HttpStatus.CREATED);
     }
 
