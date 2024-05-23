@@ -44,7 +44,7 @@ public class UsuarioService implements IUsuarioService {
             int usuarioId;
             try (PreparedStatement preparedStatementUsuario = connection.prepareStatement(insertUsuarioSQL)) {
                 preparedStatementUsuario.setString(1, usuario.getNombre());
-                preparedStatementUsuario.setString(2, usuario.getCorreoElectronico());
+                preparedStatementUsuario.setString(2, usuario.getCorreo_electronico());
                 preparedStatementUsuario.setString(3, usuario.getContrasena());
                 preparedStatementUsuario.setInt(4, datosPersonalesId);
                 preparedStatementUsuario.setInt(5, usuario.getProgresoFitness());
@@ -94,7 +94,7 @@ public class UsuarioService implements IUsuarioService {
             String updateSQL = "UPDATE Usuarios SET nombre = ?, correo_electronico = ?, contrasena = ?, edad = ?, genero = ?, progreso_fitness = ?, cantidad_puntos = ? WHERE id_usuario = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(updateSQL);
             preparedStatement.setString(1, usuario.getNombre());
-            preparedStatement.setString(2, usuario.getCorreoElectronico());
+            preparedStatement.setString(2, usuario.getCorreo_electronico());
             preparedStatement.setString(3, usuario.getContrasena());
             preparedStatement.setInt(4, usuario.getDatosPersonales().getEdad());
             preparedStatement.setString(5, usuario.getDatosPersonales().getGenero());

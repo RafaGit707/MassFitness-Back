@@ -10,8 +10,8 @@ public interface IUsuarioService {
     void actualizarUsuario(Usuario usuario);
     void eliminarUsuario(int idUsuario);
     Usuario buscarUsuarioPorId(int idUsuario);
-    Usuario buscarUsuarioPorCorreo(String correoElectronico);
-    boolean usuarioExiste(String correoElectronico, String contrasena);
+    Usuario buscarUsuarioPorCorreo(String correo_electronico);
+    boolean usuarioExiste(String correo_electronico, String contrasena);
     int getProgresoFitnessUsuario(int idUsuario);
     void actualizarProgresoFitnessUsuario(int idUsuario, int nuevoProgresoFitness);
     int getCantidadPuntosUsuario(int idUsuario);
