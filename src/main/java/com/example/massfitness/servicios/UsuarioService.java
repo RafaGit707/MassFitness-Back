@@ -162,12 +162,12 @@ public class UsuarioService implements IUsuarioService {
         return usuario;
     }
     @Override
-    public boolean usuarioExiste(String correoElectronico, String contrasena) {
+    public boolean usuarioExiste(String correo_electronico, String contrasena) {
         boolean existe = false;
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
             String selectSQL = "SELECT COUNT(*) AS count FROM Usuarios WHERE correo_electronico = ? AND contrasena = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(selectSQL);
-            preparedStatement.setString(1, correoElectronico);
+            preparedStatement.setString(1, correo_electronico);
             preparedStatement.setString(2, contrasena);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {

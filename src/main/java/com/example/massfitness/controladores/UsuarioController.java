@@ -59,9 +59,9 @@ public class UsuarioController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @GetMapping("/correo/{correoElectronico}")
-    public ResponseEntity<Usuario> obtenerUsuarioPorCorreo(@PathVariable String correoElectronico) {
-        Usuario usuario = iUsuarioService.buscarUsuarioPorCorreo(correoElectronico);
+    @GetMapping("/correo/{correo_electronico}")
+    public ResponseEntity<Usuario> obtenerUsuarioPorCorreo(@PathVariable String correo_electronico) {
+        Usuario usuario = iUsuarioService.buscarUsuarioPorCorreo(correo_electronico);
         if (usuario != null) {
             return new ResponseEntity<>(usuario, HttpStatus.OK);
         } else {
@@ -70,8 +70,8 @@ public class UsuarioController {
     }
 
     @GetMapping("/existe")
-    public ResponseEntity<Boolean> usuarioExiste(@RequestParam String correoElectronico, @RequestParam String contrasena) {
-        boolean existe = iUsuarioService.usuarioExiste(correoElectronico, contrasena);
+    public ResponseEntity<Boolean> usuarioExiste(@RequestParam String correo_electronico, @RequestParam String contrasena) {
+        boolean existe = iUsuarioService.usuarioExiste(correo_electronico, contrasena);
         return new ResponseEntity<>(existe, HttpStatus.OK);
     }
 
