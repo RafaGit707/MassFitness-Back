@@ -15,7 +15,9 @@ public class Reserva {
     @ManyToOne
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
-
+    @ManyToOne
+    @JoinColumn(name = "espacio_id")
+    private Espacio espacio;
     private String tipoReserva;
     private Date horarioReserva;
     private String estadoReserva;
@@ -44,6 +46,13 @@ public class Reserva {
 
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
+    }
+    public Espacio getEspacio() {
+        return espacio;
+    }
+
+    public void setEspacio(Espacio espacio) {
+        this.espacio = espacio;
     }
 
     public String getTipoReserva() {

@@ -2,6 +2,8 @@ package com.example.massfitness.entidades;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "entrenadores")
 public class Entrenador {
@@ -9,9 +11,10 @@ public class Entrenador {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idEntrenador;
-
     private String nombre;
     private String especializacion;
+    @OneToMany(mappedBy = "entrenador")
+    private List<Clase> clases;
 
     public Entrenador() {
     }

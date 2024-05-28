@@ -15,6 +15,9 @@ public class Clase {
     @ManyToOne
     @JoinColumn(name = "entrenador_id")
     private Entrenador entrenador;
+    @ManyToOne
+    @JoinColumn(name = "espacio_id")
+    private Espacio espacio;
 
     private String nombre;
     private String descripcion;

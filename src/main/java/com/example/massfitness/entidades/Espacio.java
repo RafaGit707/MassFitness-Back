@@ -2,6 +2,7 @@ package com.example.massfitness.entidades;
 
 import jakarta.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "espacios")
@@ -17,6 +18,11 @@ public class Espacio {
 
     @Temporal(TemporalType.TIME)
     private Date horarioReserva;
+
+    @OneToMany(mappedBy = "espacio")
+    private List<Reserva> reservas;
+    @OneToMany(mappedBy = "espacio")
+    private List<Clase> clases;
 
     public Espacio() {
     }
@@ -67,5 +73,12 @@ public class Espacio {
 
     public void setHorarioReserva(Date horarioReserva) {
         this.horarioReserva = horarioReserva;
+    }
+    public List<Reserva> getReservas() {
+        return reservas;
+    }
+
+    public void setReservas(List<Reserva> reservas) {
+        this.reservas = reservas;
     }
 }
