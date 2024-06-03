@@ -25,13 +25,15 @@ public class Reserva {
     public Reserva() {
     }
 
-    public Reserva(int idReserva, Usuario usuario, String tipoReserva, Date horarioReserva, String estadoReserva) {
+    public Reserva(int idReserva, Usuario usuario, Espacio espacio, String tipoReserva, Date horarioReserva, String estadoReserva) {
         this.idReserva = idReserva;
         this.usuario = usuario;
+        this.espacio = espacio;
         this.tipoReserva = tipoReserva;
         this.horarioReserva = horarioReserva;
         this.estadoReserva = estadoReserva;
     }
+
     public int getIdReserva() {
         return idReserva;
     }

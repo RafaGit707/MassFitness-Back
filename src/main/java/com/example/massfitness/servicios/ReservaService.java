@@ -1,5 +1,6 @@
 package com.example.massfitness.servicios;
 
+import com.example.massfitness.entidades.Espacio;
 import com.example.massfitness.entidades.Reserva;
 import com.example.massfitness.entidades.Usuario;
 import com.example.massfitness.servicios.impl.IReservaService;
@@ -22,18 +23,20 @@ public class ReservaService implements IReservaService {
     public List<Reserva> getReservas() {
         List<Reserva> reservas = new ArrayList<>();
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
-            String selectSQL = "SELECT * FROM Reservas";
+            String selectSQL = "SELECT * FROM reservas";
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(selectSQL);
             while (resultSet.next()) {
-                int idReserva = resultSet.getInt("id_Reserva");
+                int idReserva = resultSet.getInt("id_reserva");
                 int idUsuario = resultSet.getInt("usuario_id");
-                String tipoReserva = resultSet.getString("tipo_Reserva");
-                Timestamp timestamp = resultSet.getTimestamp("horario_Reserva");
+                int idEspacio = resultSet.getInt("espacio_id");
+                String tipoReserva = resultSet.getString("tipo_reserva");
+                Timestamp timestamp = resultSet.getTimestamp("horario_reserva");
                 Date horarioReserva = new Date(timestamp.getTime());
-                String estadoReserva = resultSet.getString("estado_Reserva");
+                String estadoReserva = resultSet.getString("estado_reserva");
                 Usuario usuario = new Usuario(idUsuario);
-                Reserva reserva = new Reserva(idReserva, usuario, tipoReserva, horarioReserva, estadoReserva);
+                Espacio espacio = new Espacio(idEspacio);
+                Reserva reserva = new Reserva(idReserva, usuario, espacio, tipoReserva, horarioReserva, estadoReserva);
                 reservas.add(reserva);
             }
         } catch (SQLException e) {
@@ -44,12 +47,13 @@ public class ReservaService implements IReservaService {
 
     public void addReserva(Reserva reserva) {
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
-            String insertSQL = "INSERT INTO Reservas (usuario_id, tipo_Reserva, horario_Reserva, estado_Reserva) VALUES (?, ?, ?, ?)";
+            String insertSQL = "INSERT INTO reservas (usuario_id, espacio_id, tipo_reserva, horario_reserva, estado_reserva) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement preparedStatement = connection.prepareStatement(insertSQL);
             preparedStatement.setInt(1, reserva.getUsuario().getIdUsuario());
-            preparedStatement.setString(2, reserva.getTipoReserva());
-            preparedStatement.setTimestamp(3, new Timestamp(reserva.getHorarioReserva().getTime()));
-            preparedStatement.setString(4, reserva.getEstadoReserva());
+            preparedStatement.setInt(2, reserva.getEspacio().getIdEspacio());
+            preparedStatement.setString(3, reserva.getTipoReserva());
+            preparedStatement.setTimestamp(4, new Timestamp(reserva.getHorarioReserva().getTime()));
+            preparedStatement.setString(5, reserva.getEstadoReserva());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -58,13 +62,14 @@ public class ReservaService implements IReservaService {
 
     public void actualizarReserva(Reserva reserva) {
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
-            String updateSQL = "UPDATE Reservas SET usuario_id = ?, tipo_Reserva = ?, horario_Reserva = ?, estado_Reserva = ? WHERE id_Reserva = ?";
+            String updateSQL = "UPDATE reservas SET usuario_id = ?, espacio_id = ?, tipo_reserva = ?, horario_reserva = ?, estado_reserva = ? WHERE id_reserva = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(updateSQL);
             preparedStatement.setInt(1, reserva.getUsuario().getIdUsuario());
-            preparedStatement.setString(2, reserva.getTipoReserva());
-            preparedStatement.setTimestamp(3, new Timestamp(reserva.getHorarioReserva().getTime()));
-            preparedStatement.setString(4, reserva.getEstadoReserva());
-            preparedStatement.setInt(5, reserva.getIdReserva());
+            preparedStatement.setInt(2, reserva.getEspacio().getIdEspacio());
+            preparedStatement.setString(3, reserva.getTipoReserva());
+            preparedStatement.setTimestamp(4, new Timestamp(reserva.getHorarioReserva().getTime()));
+            preparedStatement.setString(5, reserva.getEstadoReserva());
+            preparedStatement.setInt(6, reserva.getIdReserva());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -73,7 +78,7 @@ public class ReservaService implements IReservaService {
 
     public void eliminarReserva(int idReserva) {
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
-            String deleteSQL = "DELETE FROM Reservas WHERE id_Reserva = ?";
+            String deleteSQL = "DELETE FROM reservas WHERE id_reserva = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(deleteSQL);
             preparedStatement.setInt(1, idReserva);
             preparedStatement.executeUpdate();
@@ -85,17 +90,18 @@ public class ReservaService implements IReservaService {
     public Reserva buscarReservaPorId(int idReserva) {
         Reserva reserva = null;
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
-            String selectSQL = "SELECT * FROM Reservas WHERE id_Reserva = ?";
+            String selectSQL = "SELECT * FROM reservas WHERE id_reserva = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(selectSQL);
             preparedStatement.setInt(1, idReserva);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 int idUsuario = resultSet.getInt("usuario_id");
-                String tipoReserva = resultSet.getString("tipo_Reserva");
-                Timestamp timestamp = resultSet.getTimestamp("horario_Reserva");
+                int idEspacio = resultSet.getInt("espacio_id");
+                String tipoReserva = resultSet.getString("tipo_reserva");
+                Timestamp timestamp = resultSet.getTimestamp("horario_reserva");
                 Date horarioReserva = new Date(timestamp.getTime());
-                String estadoReserva = resultSet.getString("estado_Reserva");
-                reserva = new Reserva(idReserva, new Usuario(idUsuario), tipoReserva, horarioReserva, estadoReserva);
+                String estadoReserva = resultSet.getString("estado_reserva");
+                reserva = new Reserva(idReserva, new Usuario(idUsuario), new Espacio(idEspacio), tipoReserva, horarioReserva, estadoReserva);
             }
         } catch (SQLException e) {
             e.printStackTrace();

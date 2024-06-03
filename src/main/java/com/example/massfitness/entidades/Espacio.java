@@ -28,6 +28,10 @@ public class Espacio {
     private List<Reserva> reservas;
     public Espacio() {}
 
+    public Espacio(int id_Espacio) {
+        this.id_Espacio = id_Espacio;
+    }
+
     public Espacio(int id_Espacio, String nombre, String descripcion, int capacidadMaxima, int capacidadActual, Date horarioReserva) {
         this.id_Espacio = id_Espacio;
         this.nombre = nombre;
