@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/massfitness/reservas")
@@ -45,4 +46,10 @@ public class ReservaController {
     public List<Reserva> getReservas() {
         return iReservaService.getReservas();
     }
+    @GetMapping("/usuario/{idUsuario}")
+    public List<Reserva> getReservasPorUsuario(@PathVariable int idUsuario) {
+        List<Reserva> reservas = iReservaService.getReservas();
+        return reservas.stream().filter(reserva -> reserva.getUsuario().getIdUsuario() == idUsuario).collect(Collectors.toList());
+    }
+
 }
