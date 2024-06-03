@@ -10,45 +10,63 @@ public class Espacio {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int idEspacio;
+    private int id_Espacio;
 
-    private String tipoEspacio;
+    private String nombre;
+    private String descripcion;
     private int capacidadMaxima;
     private int capacidadActual;
 
     @Temporal(TemporalType.TIME)
     private Date horarioReserva;
 
-    @OneToMany(mappedBy = "espacio")
-    private List<Reserva> reservas;
-    @OneToMany(mappedBy = "espacio")
-    private List<Clase> clases;
+    @ManyToOne
+    @JoinColumn(name = "entrenador_id")
+    private Entrenador entrenador;
 
-    public Espacio() {
+    @OneToMany(mappedBy = "espacio", cascade = CascadeType.ALL)
+    private List<Reserva> reservas;
+    public Espacio() {}
+
+    public Espacio(int id_Espacio, String nombre, String descripcion, int capacidadMaxima, int capacidadActual, Date horarioReserva) {
+        this.id_Espacio = id_Espacio;
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.capacidadMaxima = capacidadMaxima;
+        this.capacidadActual = capacidadActual;
+        this.horarioReserva = horarioReserva;
     }
 
-    public Espacio(int idEspacio, String tipoEspacio, int capacidadMaxima, int capacidadActual, Date horarioReserva) {
-        this.idEspacio = idEspacio;
-        this.tipoEspacio = tipoEspacio;
+    public Espacio(String nombre, String descripcion, int capacidadMaxima, int capacidadActual, Date horarioReserva) {
+        this.nombre = nombre;
+        this.descripcion = descripcion;
         this.capacidadMaxima = capacidadMaxima;
         this.capacidadActual = capacidadActual;
         this.horarioReserva = horarioReserva;
     }
 
     public int getIdEspacio() {
-        return idEspacio;
+        return id_Espacio;
     }
 
-    public void setIdEspacio(int idEspacio) {
-        this.idEspacio = idEspacio;
+    public void setIdEspacio(int id_Espacio) {
+        this.id_Espacio = id_Espacio;
     }
 
-    public String getTipoEspacio() {
-        return tipoEspacio;
+    public String getNombre() {
+        return nombre;
     }
 
-    public void setTipoEspacio(String tipoEspacio) {
-        this.tipoEspacio = tipoEspacio;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
     public int getCapacidadMaxima() {
@@ -74,6 +92,15 @@ public class Espacio {
     public void setHorarioReserva(Date horarioReserva) {
         this.horarioReserva = horarioReserva;
     }
+
+    public Entrenador getEntrenador() {
+        return entrenador;
+    }
+
+    public void setEntrenador(Entrenador entrenador) {
+        this.entrenador = entrenador;
+    }
+
     public List<Reserva> getReservas() {
         return reservas;
     }

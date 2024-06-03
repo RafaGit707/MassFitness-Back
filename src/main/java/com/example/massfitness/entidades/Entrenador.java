@@ -13,8 +13,8 @@ public class Entrenador {
     private int idEntrenador;
     private String nombre;
     private String especializacion;
-    @OneToMany(mappedBy = "entrenador")
-    private List<Clase> clases;
+    @OneToMany(mappedBy = "entrenador", cascade = CascadeType.ALL)
+    private List<Espacio> espacios;
 
     public Entrenador() {
     }
@@ -51,5 +51,13 @@ public class Entrenador {
 
     public void setEspecializacion(String especializacion) {
         this.especializacion = especializacion;
+    }
+
+    public List<Espacio> getEspacios() {
+        return espacios;
+    }
+
+    public void setEspacios(List<Espacio> espacios) {
+        this.espacios = espacios;
     }
 }

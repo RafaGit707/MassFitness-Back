@@ -21,12 +21,13 @@ public class EspacioService implements IEspacioService {
 
     public void addEspacio(Espacio espacio) {
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
-            String insertSQL = "INSERT INTO Espacios (tipo_Espacio, capacidad_Maxima, capacidad_Actual, horario_Reserva_Espacio) VALUES (?, ?, ?, ?)";
+            String insertSQL = "INSERT INTO Espacios (nombre, descripcion, capacidad_Maxima, capacidad_Actual, horario_Reserva) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement preparedStatement = connection.prepareStatement(insertSQL);
-            preparedStatement.setString(1, espacio.getTipoEspacio());
-            preparedStatement.setInt(2, espacio.getCapacidadMaxima());
-            preparedStatement.setInt(3, espacio.getCapacidadActual());
-            preparedStatement.setTimestamp(4, new Timestamp(espacio.getHorarioReserva().getTime()));
+            preparedStatement.setString(1, espacio.getNombre());
+            preparedStatement.setString(2, espacio.getDescripcion());
+            preparedStatement.setInt(3, espacio.getCapacidadMaxima());
+            preparedStatement.setInt(4, espacio.getCapacidadActual());
+            preparedStatement.setTimestamp(5, new Timestamp(espacio.getHorarioReserva().getTime()));
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -35,13 +36,14 @@ public class EspacioService implements IEspacioService {
 
     public void actualizarEspacio(Espacio espacio) {
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
-            String updateSQL = "UPDATE Espacios SET tipo_Espacio = ?, capacidad_Maxima = ?, capacidad_Actual = ?, horario_Reserva_Espacio = ? WHERE id_Espacio = ?";
+            String updateSQL = "UPDATE Espacios SET nombre = ?, descripcion = ?, capacidad_Maxima = ?, capacidad_Actual = ?, horario_Reserva = ? WHERE id_Espacio = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(updateSQL);
-            preparedStatement.setString(1, espacio.getTipoEspacio());
-            preparedStatement.setInt(2, espacio.getCapacidadMaxima());
-            preparedStatement.setInt(3, espacio.getCapacidadActual());
-            preparedStatement.setTimestamp(4, new Timestamp(espacio.getHorarioReserva().getTime()));
-            preparedStatement.setInt(5, espacio.getIdEspacio());
+            preparedStatement.setString(1, espacio.getNombre());
+            preparedStatement.setString(2, espacio.getDescripcion());
+            preparedStatement.setInt(3, espacio.getCapacidadMaxima());
+            preparedStatement.setInt(4, espacio.getCapacidadActual());
+            preparedStatement.setTimestamp(5, new Timestamp(espacio.getHorarioReserva().getTime()));
+            preparedStatement.setInt(6, espacio.getIdEspacio());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -65,12 +67,13 @@ public class EspacioService implements IEspacioService {
             String selectSQL = "SELECT * FROM Espacios";
             ResultSet resultSet = connection.createStatement().executeQuery(selectSQL);
             while (resultSet.next()) {
-                int idEspacio = resultSet.getInt("id_Espacio");
-                String tipoEspacio = resultSet.getString("tipo_Espacio");
+                int id_Espacio = resultSet.getInt("id_Espacio");
+                String nombre = resultSet.getString("nombre");
+                String descripcion = resultSet.getString("descripcion");
                 int capacidadMaxima = resultSet.getInt("capacidad_Maxima");
                 int capacidadActual = resultSet.getInt("capacidad_Actual");
-                Timestamp horarioReserva = resultSet.getTimestamp("horario_Reserva_Espacio");
-                Espacio espacio = new Espacio(idEspacio, tipoEspacio, capacidadMaxima, capacidadActual, horarioReserva);
+                Timestamp horarioReserva = resultSet.getTimestamp("horario_Reserva");
+                Espacio espacio = new Espacio(id_Espacio, nombre, descripcion, capacidadMaxima, capacidadActual, horarioReserva);
                 espacios.add(espacio);
             }
         } catch (SQLException e) {
@@ -87,11 +90,12 @@ public class EspacioService implements IEspacioService {
             preparedStatement.setInt(1, idEspacio);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                String tipoEspacio = resultSet.getString("tipo_Espacio");
+                String nombre = resultSet.getString("nombre");
+                String descripcion = resultSet.getString("descripcion");
                 int capacidadMaxima = resultSet.getInt("capacidad_Maxima");
                 int capacidadActual = resultSet.getInt("capacidad_Actual");
-                java.util.Date horarioReserva = resultSet.getTimestamp("horario_Reserva_Espacio");
-                espacio = new Espacio(idEspacio, tipoEspacio, capacidadMaxima, capacidadActual, horarioReserva);
+                java.util.Date horarioReserva = resultSet.getTimestamp("horario_Reserva");
+                espacio = new Espacio(nombre, descripcion, capacidadMaxima, capacidadActual, horarioReserva);
             }
         } catch (SQLException e) {
             e.printStackTrace();
