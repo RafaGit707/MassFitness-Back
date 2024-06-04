@@ -49,14 +49,31 @@ public class ReservaService implements IReservaService {
 
     @Override
     public int addReserva(Reserva reserva) {
+        String insertSQLEspacios = "INSERT INTO espacios (nombre, descripcion, capacidad_Maxima, capacidad_Actual, horario_Reserva) VALUES (?, ?, ?, ?, ?) RETURNING id_espacio";
         String insertSQL = "INSERT INTO reservas (usuario_id, espacio_id, tipo_reserva, horario_reserva, estado_reserva) VALUES (?, ?, ?, ?, ?) RETURNING id_reserva";
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
+            int espacioId;
+            Espacio espacio = new Espacio();
+            try (PreparedStatement preparedStatementEspacios = connection.prepareStatement(insertSQLEspacios);) {
+                preparedStatementEspacios.setString(1, "Boxeo");
+                preparedStatementEspacios.setString(2, "espacio.getDescripcion()");
+                preparedStatementEspacios.setInt(3, 30);
+                preparedStatementEspacios.setInt(4, 12);
+                preparedStatementEspacios.setTimestamp(5, new Timestamp(reserva.getHorarioReserva().getTime()));
+                ResultSet rs = preparedStatementEspacios.executeQuery();
+
+                if (rs.next()) {
+                    espacioId = rs.getInt(1);
+                } else {
+                    throw new SQLException("No se pudo obtener el ID de Espacios.");
+                }
+            }
+
             int idReserva;
             Usuario usuario = new Usuario();
-            Espacio espacio = new Espacio();
             try (PreparedStatement preparedStatement = connection.prepareStatement(insertSQL)) {
                 preparedStatement.setInt(1, usuario.getIdUsuario());
-                preparedStatement.setInt(2, espacio.getIdEspacio());
+                preparedStatement.setInt(2, espacioId);
                 preparedStatement.setString(3, reserva.getTipoReserva());
                 preparedStatement.setTimestamp(4, new Timestamp(reserva.getHorarioReserva().getTime()));
                 preparedStatement.setString(5, reserva.getEstadoReserva());

@@ -28,7 +28,6 @@ public class ReservaController {
     public ResponseEntity<Integer> addReserva(@RequestBody Reserva reserva) {
         int idCreado = iReservaService.addReserva(reserva);
         return new ResponseEntity<>(idCreado, HttpStatus.CREATED);
-
     }
     @GetMapping
     public ResponseEntity<List<Reserva>> getReservas() {

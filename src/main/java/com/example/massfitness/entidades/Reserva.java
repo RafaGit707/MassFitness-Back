@@ -1,5 +1,6 @@
 package com.example.massfitness.entidades;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -19,6 +20,7 @@ public class Reserva {
     @JoinColumn(name = "espacio_id")
     private Espacio espacio;
     private String tipoReserva;
+    @JsonProperty("horario_reserva")
     private Date horarioReserva;
     private String estadoReserva;
 
