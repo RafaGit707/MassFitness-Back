@@ -48,7 +48,7 @@ public class AccesoBD {
             connection.createStatement().executeUpdate(createDatosPersonalesTableSQL);
 
             String createUsuariosTableSQL = "CREATE TABLE IF NOT EXISTS usuarios (" +
-                    "id SERIAL PRIMARY KEY," +
+                    "id_usuario SERIAL PRIMARY KEY," +
                     "nombre TEXT NOT NULL," +
                     "correo_electronico TEXT NOT NULL," +
                     "contrasena TEXT NOT NULL," +
@@ -59,18 +59,18 @@ public class AccesoBD {
             connection.createStatement().executeUpdate(createUsuariosTableSQL);
 
             String createReservasTableSQL = "CREATE TABLE IF NOT EXISTS reservas (" +
-                    "id_Reserva SERIAL PRIMARY KEY," +
+                    "id_reserva SERIAL PRIMARY KEY," +
                     "usuario_id INTEGER," +
                     "espacio_id INTEGER," +
                     "tipo_reserva TEXT," +
                     "horario_reserva TIMESTAMP," +
                     "estado_reserva TEXT," +
-                    "FOREIGN KEY (usuario_id) REFERENCES usuarios(id)," +
+                    "FOREIGN KEY (usuario_id) REFERENCES usuarios(id_usuario)," +
                     "FOREIGN KEY (espacio_id) REFERENCES espacios(id_espacio))";
             connection.createStatement().executeUpdate(createReservasTableSQL);
 
             String createEspaciosTableSQL = "CREATE TABLE IF NOT EXISTS espacios (" +
-                    "id_Espacio SERIAL PRIMARY KEY," +
+                    "id_espacio SERIAL PRIMARY KEY," +
                     "nombre TEXT," +
                     "descripcion TEXT," +
                     "horario TIMESTAMP," +
@@ -78,11 +78,11 @@ public class AccesoBD {
                     "capacidad_actual INTEGER DEFAULT 0," +
                     "entrenador_id INTEGER," +
                     "tipo TEXT," +
-                    "FOREIGN KEY (entrenador_id) REFERENCES entrenadores(id_Entrenador))";
+                    "FOREIGN KEY (entrenador_id) REFERENCES entrenadores(id_entrenador))";
             connection.createStatement().executeUpdate(createEspaciosTableSQL);
 
             String createEntrenadoresTableSQL = "CREATE TABLE IF NOT EXISTS entrenadores (" +
-                    "id_Entrenador SERIAL PRIMARY KEY," +
+                    "id_entrenador SERIAL PRIMARY KEY," +
                     "nombre_Entrenador TEXT," +
                     "especializacion TEXT)";
             connection.createStatement().executeUpdate(createEntrenadoresTableSQL);

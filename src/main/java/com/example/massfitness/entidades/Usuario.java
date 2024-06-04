@@ -11,7 +11,7 @@ public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private int id_usuario;
     private String nombre;
     @JsonProperty("correo_electronico")
     private String correo_electronico;
@@ -42,8 +42,8 @@ public class Usuario {
         this.logrosConseguidos = logrosConseguidos;
     }
 
-    public Usuario(int id, String nombre, String correo_electronico, String contrasena, DatosPersonales datos_personales, int progresoFitness, int cantidadPuntos, List<Logro> logrosConseguidos) {
-        this.id = id;
+    public Usuario(int id_usuario, String nombre, String correo_electronico, String contrasena, DatosPersonales datos_personales, int progresoFitness, int cantidadPuntos, List<Logro> logrosConseguidos) {
+        this.id_usuario = id_usuario;
         this.nombre = nombre;
         this.correo_electronico = correo_electronico;
         this.contrasena = contrasena;
@@ -53,16 +53,16 @@ public class Usuario {
         this.logrosConseguidos = logrosConseguidos;
     }
 
-    public Usuario(int id) {
-        this.id = id;
+    public Usuario(int id_usuario) {
+        this.id_usuario = id_usuario;
     }
 
     public int getIdUsuario() {
-        return id;
+        return id_usuario;
     }
 
-    public void setIdUsuario(int id) {
-        this.id = id;
+    public void setIdUsuario(int id_usuario) {
+        this.id_usuario = id_usuario;
     }
 
     public String getNombre() {
