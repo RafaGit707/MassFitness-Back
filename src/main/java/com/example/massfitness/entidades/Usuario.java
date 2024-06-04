@@ -11,22 +11,18 @@ public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int idUsuario;
-    @ManyToOne
-    @JoinColumn(name = "idReserva")
-    private Usuario idReserva;
+    private int id;
     private String nombre;
     @JsonProperty("correo_electronico")
     private String correo_electronico;
     private String contrasena;
-
+    private int progresoFitness;
+    private int cantidadPuntos;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "datos_personales_id")
     private DatosPersonales datos_personales;
-
-    private int progresoFitness;
-    private int cantidadPuntos;
-
+    @OneToMany(mappedBy = "usuario")
+    private List<Reserva> reservas;
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "usuario_logro",
             joinColumns = @JoinColumn(name = "usuario_id"),
@@ -46,8 +42,8 @@ public class Usuario {
         this.logrosConseguidos = logrosConseguidos;
     }
 
-    public Usuario(int idUsuario, String nombre, String correo_electronico, String contrasena, DatosPersonales datos_personales, int progresoFitness, int cantidadPuntos, List<Logro> logrosConseguidos) {
-        this.idUsuario = idUsuario;
+    public Usuario(int id, String nombre, String correo_electronico, String contrasena, DatosPersonales datos_personales, int progresoFitness, int cantidadPuntos, List<Logro> logrosConseguidos) {
+        this.id = id;
         this.nombre = nombre;
         this.correo_electronico = correo_electronico;
         this.contrasena = contrasena;
@@ -57,16 +53,16 @@ public class Usuario {
         this.logrosConseguidos = logrosConseguidos;
     }
 
-    public Usuario(int idUsuario) {
-        this.idUsuario = idUsuario;
+    public Usuario(int id) {
+        this.id = id;
     }
 
     public int getIdUsuario() {
-        return idUsuario;
+        return id;
     }
 
-    public void setIdUsuario(int idUsuario) {
-        this.idUsuario = idUsuario;
+    public void setIdUsuario(int id) {
+        this.id = id;
     }
 
     public String getNombre() {

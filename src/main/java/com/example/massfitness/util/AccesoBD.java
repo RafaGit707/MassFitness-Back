@@ -49,26 +49,24 @@ public class AccesoBD {
 
             String createUsuariosTableSQL = "CREATE TABLE IF NOT EXISTS usuarios (" +
                     "id SERIAL PRIMARY KEY," +
-                    "reserva_id INTEGER," +
                     "nombre TEXT NOT NULL," +
                     "correo_electronico TEXT NOT NULL," +
                     "contrasena TEXT NOT NULL," +
                     "datos_personales_id INTEGER," +
                     "progreso_fitness INTEGER DEFAULT 0," +
                     "cantidad_puntos INTEGER DEFAULT 0," +
-                    "FOREIGN KEY (datos_personales_id) REFERENCES datos_personales(id_datos_personales)," +
-                    "FOREIGN KEY (reserva_id) REFERENCES reservas(id_Reserva))";
+                    "FOREIGN KEY (datos_personales_id) REFERENCES datos_personales(id_datos_personales))";
             connection.createStatement().executeUpdate(createUsuariosTableSQL);
 
             String createReservasTableSQL = "CREATE TABLE IF NOT EXISTS reservas (" +
                     "id_Reserva SERIAL PRIMARY KEY," +
                     "usuario_id INTEGER," +
                     "espacio_id INTEGER," +
-                    "tipo_Reserva TEXT," +
-                    "horario_Reserva TIMESTAMP," +
-                    "estado_Reserva TEXT," +
+                    "tipo_reserva TEXT," +
+                    "horario_reserva TIMESTAMP," +
+                    "estado_reserva TEXT," +
                     "FOREIGN KEY (usuario_id) REFERENCES usuarios(id)," +
-                    "FOREIGN KEY (espacio_id) REFERENCES espacios(id_Espacio))";
+                    "FOREIGN KEY (espacio_id) REFERENCES espacios(id_espacio))";
             connection.createStatement().executeUpdate(createReservasTableSQL);
 
             String createEspaciosTableSQL = "CREATE TABLE IF NOT EXISTS espacios (" +
@@ -76,8 +74,8 @@ public class AccesoBD {
                     "nombre TEXT," +
                     "descripcion TEXT," +
                     "horario TIMESTAMP," +
-                    "capacidad_Maxima INTEGER," +
-                    "capacidad_Actual INTEGER DEFAULT 0," +
+                    "capacidad_maxima INTEGER," +
+                    "capacidad_actual INTEGER DEFAULT 0," +
                     "entrenador_id INTEGER," +
                     "tipo TEXT," +
                     "FOREIGN KEY (entrenador_id) REFERENCES entrenadores(id_Entrenador))";
@@ -90,10 +88,10 @@ public class AccesoBD {
             connection.createStatement().executeUpdate(createEntrenadoresTableSQL);
 
             String createLogrosTableSQL = "CREATE TABLE IF NOT EXISTS logros (" +
-                    "id_Logro SERIAL PRIMARY KEY," +
-                    "nombre_Logro TEXT," +
+                    "id_logro SERIAL PRIMARY KEY," +
+                    "nombre_logro TEXT," +
                     "descripcion TEXT," +
-                    "requisitos_Puntos INTEGER," +
+                    "requisitos_puntos INTEGER," +
                     "recompensa TEXT)";
             connection.createStatement().executeUpdate(createLogrosTableSQL);
 
