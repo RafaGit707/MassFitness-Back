@@ -10,7 +10,7 @@ public class Espacio {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id_Espacio;
+    private int idEspacio;
 
     private String nombre;
     private String descripcion;
@@ -28,12 +28,12 @@ public class Espacio {
     private List<Reserva> reservas;
     public Espacio() {}
 
-    public Espacio(int id_Espacio) {
-        this.id_Espacio = id_Espacio;
+    public Espacio(int idEspacio) {
+        this.idEspacio = idEspacio;
     }
 
-    public Espacio(int id_Espacio, String nombre, String descripcion, int capacidadMaxima, int capacidadActual, Date horarioReserva) {
-        this.id_Espacio = id_Espacio;
+    public Espacio(int idEspacio, String nombre, String descripcion, int capacidadMaxima, int capacidadActual, Date horarioReserva) {
+        this.idEspacio = idEspacio;
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.capacidadMaxima = capacidadMaxima;
@@ -50,11 +50,11 @@ public class Espacio {
     }
 
     public int getIdEspacio() {
-        return id_Espacio;
+        return idEspacio;
     }
 
-    public void setIdEspacio(int id_Espacio) {
-        this.id_Espacio = id_Espacio;
+    public void setIdEspacio(int idEspacio) {
+        this.idEspacio = idEspacio;
     }
 
     public String getNombre() {

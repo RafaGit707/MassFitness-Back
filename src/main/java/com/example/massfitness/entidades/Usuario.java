@@ -11,7 +11,7 @@ public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id_usuario;
+    private int idUsuario;
     private String nombre;
     @JsonProperty("correo_electronico")
     private String correo_electronico;
@@ -42,8 +42,8 @@ public class Usuario {
         this.logrosConseguidos = logrosConseguidos;
     }
 
-    public Usuario(int id_usuario, String nombre, String correo_electronico, String contrasena, DatosPersonales datos_personales, int progresoFitness, int cantidadPuntos, List<Logro> logrosConseguidos) {
-        this.id_usuario = id_usuario;
+    public Usuario(int idUsuario, String nombre, String correo_electronico, String contrasena, DatosPersonales datos_personales, int progresoFitness, int cantidadPuntos, List<Logro> logrosConseguidos) {
+        this.idUsuario = idUsuario;
         this.nombre = nombre;
         this.correo_electronico = correo_electronico;
         this.contrasena = contrasena;
@@ -53,16 +53,16 @@ public class Usuario {
         this.logrosConseguidos = logrosConseguidos;
     }
 
-    public Usuario(int id_usuario) {
-        this.id_usuario = id_usuario;
+    public Usuario(int idUsuario) {
+        this.idUsuario = idUsuario;
     }
 
     public int getIdUsuario() {
-        return id_usuario;
+        return idUsuario;
     }
 
-    public void setIdUsuario(int id_usuario) {
-        this.id_usuario = id_usuario;
+    public void setIdUsuario(int idUsuario) {
+        this.idUsuario = idUsuario;
     }
 
     public String getNombre() {
@@ -119,5 +119,21 @@ public class Usuario {
 
     public void setLogrosConseguidos(List<Logro> logrosConseguidos) {
         this.logrosConseguidos = logrosConseguidos;
+    }
+
+    public DatosPersonales getDatos_personales() {
+        return datos_personales;
+    }
+
+    public void setDatos_personales(DatosPersonales datos_personales) {
+        this.datos_personales = datos_personales;
+    }
+
+    public List<Reserva> getReservas() {
+        return reservas;
+    }
+
+    public void setReservas(List<Reserva> reservas) {
+        this.reservas = reservas;
     }
 }

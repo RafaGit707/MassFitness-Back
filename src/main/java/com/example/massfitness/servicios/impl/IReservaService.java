@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface IReservaService {
     List<Reserva> getReservas();
-    void addReserva(Reserva reserva);
+    int addReserva(Reserva reserva);
     void actualizarReserva(Reserva reserva);
     void eliminarReserva(int idReserva);
     Reserva buscarReservaPorId(int idReserva);

@@ -15,6 +15,7 @@ import java.util.List;
 @Service
 public class ReservaService implements IReservaService {
     private final AccesoBD accesoBD;
+
     @Autowired
     public ReservaService(AccesoBD accesoBD) {
         this.accesoBD = accesoBD;
@@ -45,20 +46,34 @@ public class ReservaService implements IReservaService {
         return reservas;
     }
 
-    public void addReserva(Reserva reserva) {
+    @Override
+    public int addReserva(Reserva reserva) {
+        String insertSQL = "INSERT INTO reservas (usuario_id, espacio_id, tipo_reserva, horario_reserva, estado_reserva) VALUES (?, ?, ?, ?, ?) RETURNING id_reserva";
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
-            String insertSQL = "INSERT INTO reservas (usuario_id, espacio_id, tipo_reserva, horario_reserva, estado_reserva) VALUES (?, ?, ?, ?, ?)";
-            PreparedStatement preparedStatement = connection.prepareStatement(insertSQL);
-            preparedStatement.setInt(1, reserva.getUsuario().getIdUsuario());
-            preparedStatement.setInt(2, reserva.getEspacio().getIdEspacio());
-            preparedStatement.setString(3, reserva.getTipoReserva());
-            preparedStatement.setTimestamp(4, new Timestamp(reserva.getHorarioReserva().getTime()));
-            preparedStatement.setString(5, reserva.getEstadoReserva());
-            preparedStatement.executeUpdate();
+            int idReserva;
+            Usuario usuario = new Usuario();
+            Espacio espacio = new Espacio();
+            try (PreparedStatement preparedStatement = connection.prepareStatement(insertSQL)) {
+                preparedStatement.setInt(1, usuario.getIdUsuario());
+                preparedStatement.setInt(2, espacio.getIdEspacio());
+                preparedStatement.setString(3, reserva.getTipoReserva());
+                preparedStatement.setTimestamp(4, new Timestamp(reserva.getHorarioReserva().getTime()));
+                preparedStatement.setString(5, reserva.getEstadoReserva());
+                ResultSet rs = preparedStatement.executeQuery();
+
+                if (rs.next()) {
+                    idReserva = rs.getInt(1);
+                } else {
+                    throw new SQLException("No se pudo obtener el ID de la Reserva.");
+                }
+            }
+            return idReserva;
         } catch (SQLException e) {
             e.printStackTrace();
+            throw new RuntimeException("Error al agregar Reserva", e);
         }
     }
+
 
     public void actualizarReserva(Reserva reserva) {
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
