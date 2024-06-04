@@ -70,9 +70,8 @@ public class ReservaService implements IReservaService {
             }
 
             int idReserva;
-            Usuario usuario = new Usuario();
             try (PreparedStatement preparedStatement = connection.prepareStatement(insertSQL)) {
-                preparedStatement.setInt(1, usuario.getIdUsuario());
+                preparedStatement.setInt(1, 1);
                 preparedStatement.setInt(2, espacioId);
                 preparedStatement.setString(3, reserva.getTipoReserva());
                 preparedStatement.setTimestamp(4, new Timestamp(reserva.getHorarioReserva().getTime()));

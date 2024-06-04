@@ -19,9 +19,11 @@ public class Reserva {
     @ManyToOne
     @JoinColumn(name = "espacio_id")
     private Espacio espacio;
+    @JsonProperty("tipo_reserva")
     private String tipoReserva;
     @JsonProperty("horario_reserva")
     private Date horarioReserva;
+    @JsonProperty("estado_reserva")
     private String estadoReserva;
 
     public Reserva() {
