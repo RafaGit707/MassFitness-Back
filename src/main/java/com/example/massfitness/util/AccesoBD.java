@@ -49,6 +49,7 @@ public class AccesoBD {
 
             String createUsuariosTableSQL = "CREATE TABLE IF NOT EXISTS usuarios (" +
                     "id SERIAL PRIMARY KEY," +
+                    "reserva_id INTEGER," +
                     "nombre TEXT NOT NULL," +
                     "correo_electronico TEXT NOT NULL," +
                     "contrasena TEXT NOT NULL," +
@@ -56,7 +57,7 @@ public class AccesoBD {
                     "progreso_fitness INTEGER DEFAULT 0," +
                     "cantidad_puntos INTEGER DEFAULT 0," +
                     "FOREIGN KEY (datos_personales_id) REFERENCES datos_personales(id_datos_personales)," +
-                    "FOREIGN KEY (id) REFERENCES reservas(usuario_id))";
+                    "FOREIGN KEY (reserva_id) REFERENCES reservas(id_Reserva))";
             connection.createStatement().executeUpdate(createUsuariosTableSQL);
 
             String createReservasTableSQL = "CREATE TABLE IF NOT EXISTS reservas (" +

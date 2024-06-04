@@ -12,7 +12,9 @@ public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idUsuario;
-
+    @ManyToOne
+    @JoinColumn(name = "idReserva")
+    private Usuario idReserva;
     private String nombre;
     @JsonProperty("correo_electronico")
     private String correo_electronico;
