@@ -1,5 +1,6 @@
 package com.example.massfitness.servicios;
 
+import com.example.massfitness.entidades.DatosPersonales;
 import com.example.massfitness.entidades.Espacio;
 import com.example.massfitness.entidades.Reserva;
 import com.example.massfitness.entidades.Usuario;
@@ -21,10 +22,11 @@ public class ReservaService implements IReservaService {
         this.accesoBD = accesoBD;
     }
 
+    @Override
     public List<Reserva> getReservas() {
         List<Reserva> reservas = new ArrayList<>();
+        String selectSQL = "SELECT * FROM reservas";
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
-            String selectSQL = "SELECT * FROM reservas";
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(selectSQL);
             while (resultSet.next()) {
@@ -35,9 +37,8 @@ public class ReservaService implements IReservaService {
                 Timestamp timestamp = resultSet.getTimestamp("horario_reserva");
                 Date horarioReserva = new Date(timestamp.getTime());
                 String estadoReserva = resultSet.getString("estado_reserva");
-                Usuario usuario = new Usuario(idUsuario);
-                Espacio espacio = new Espacio(idEspacio);
-                Reserva reserva = new Reserva(idReserva, usuario, espacio, tipoReserva, horarioReserva, estadoReserva);
+
+                Reserva reserva = new Reserva(idReserva, new Usuario(idUsuario), new Espacio(idEspacio), tipoReserva, horarioReserva, estadoReserva);
                 reservas.add(reserva);
             }
         } catch (SQLException e) {

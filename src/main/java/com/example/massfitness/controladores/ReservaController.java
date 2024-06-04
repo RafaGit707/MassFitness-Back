@@ -30,7 +30,11 @@ public class ReservaController {
         return new ResponseEntity<>(idCreado, HttpStatus.CREATED);
 
     }
-
+    @GetMapping
+    public ResponseEntity<List<Reserva>> getReservas() {
+        List<Reserva> reservas = iReservaService.getReservas();
+        return new ResponseEntity<>(reservas, HttpStatus.OK);
+    }
     @GetMapping("/{id}")
     public Reserva getReservaPorId(@PathVariable int id) {
         return iReservaService.buscarReservaPorId(id);
@@ -47,10 +51,6 @@ public class ReservaController {
         iReservaService.eliminarReserva(id);
     }
 
-    @GetMapping
-    public List<Reserva> getReservas() {
-        return iReservaService.getReservas();
-    }
     @GetMapping("/usuario/{idUsuario}")
     public List<Reserva> getReservasPorUsuario(@PathVariable int idUsuario) {
         List<Reserva> reservas = iReservaService.getReservas();
