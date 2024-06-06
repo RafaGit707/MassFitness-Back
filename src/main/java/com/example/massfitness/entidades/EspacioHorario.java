@@ -14,7 +14,6 @@ public class EspacioHorario {
     @ManyToOne
     @JoinColumn(name = "espacio_id")
     private Espacio espacio;
-
     @JsonProperty("horario_reserva")
     private Date horarioReserva;
     @JsonProperty("capacidad_actual")

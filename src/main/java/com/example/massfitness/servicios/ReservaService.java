@@ -56,9 +56,8 @@ public class ReservaService implements IReservaService {
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
 
             int espacioId;
-            Espacio espacio = new Espacio();
             try (PreparedStatement preparedStatementEspacios = connection.prepareStatement(insertSQLEspacios);) {
-                preparedStatementEspacios.setInt(1, 2);
+                preparedStatementEspacios.setInt(1, 1);
                 preparedStatementEspacios.setString(2, reserva.getTipoReserva());
                 ResultSet rs = preparedStatementEspacios.executeQuery();
 
@@ -94,7 +93,7 @@ public class ReservaService implements IReservaService {
             // Insertar reserva
             int idReserva;
             try (PreparedStatement insertStmt = connection.prepareStatement(insertSQL)) {
-                insertStmt.setInt(1, 1);
+                insertStmt.setInt(1, reserva.getUsuario().getIdUsuario());
                 insertStmt.setInt(2, espacioId);
                 insertStmt.setString(3, reserva.getTipoReserva());
                 insertStmt.setTimestamp(4, new Timestamp(reserva.getHorarioReserva().getTime()));
