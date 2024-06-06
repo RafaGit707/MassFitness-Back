@@ -1,5 +1,6 @@
 package com.example.massfitness.entidades;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.util.Date;
 import java.util.List;
@@ -12,8 +13,9 @@ public class Espacio {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idEspacio;
     private String nombre;
+    @JsonProperty("capacidad_maxima")
     private int capacidadMaxima;
-    @Temporal(TemporalType.TIME)
+    @JsonProperty("horario_reserva")
     private Date horarioReserva;
     @ManyToOne
     @JoinColumn(name = "entrenador_id")

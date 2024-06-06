@@ -48,7 +48,7 @@ public class ReservaService implements IReservaService {
     }
     public int addReserva(Reserva reserva) {
         String insertSQLEspacios = "INSERT INTO espacios (capacidad_maxima, nombre) VALUES (?, ?) RETURNING id_espacio";
-        String selectCapacitySQL = "SELECT capacidad_actual, capacidad_maxima FROM espacio_horario WHERE espacio_id = ? AND horario_reserva = ?";
+        String selectCapacitySQL = "SELECT capacidad_actual, capacidad_maxima FROM espacio_horario eh INNER JOIN espacios e ON eh.espacio_id = e.id_espacio WHERE eh.espacio_id = ? AND eh.horario_reserva = ?";
         String insertEspacioHorarioSQL = "INSERT INTO espacio_horario (espacio_id, horario_reserva, capacidad_actual) VALUES (?, ?, ?)";
         String updateCapacitySQL = "UPDATE espacio_horario SET capacidad_actual = capacidad_actual + 1 WHERE espacio_id = ? AND horario_reserva = ?";
         String insertSQL = "INSERT INTO reservas (usuario_id, espacio_id, tipo_reserva, horario_reserva, estado_reserva) VALUES (?, ?, ?, ?, ?) RETURNING id_reserva";

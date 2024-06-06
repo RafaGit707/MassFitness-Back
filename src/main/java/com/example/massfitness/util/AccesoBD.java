@@ -40,7 +40,6 @@ public class AccesoBD {
     @PostConstruct
     public void initializeDatabase() {
         try (Connection connection = conectarPostgreSQL()) {
-            // Crear las tablas si no existen
             String createDatosPersonalesTableSQL = "CREATE TABLE IF NOT EXISTS datos_personales (" +
                     "id_datos_personales SERIAL PRIMARY KEY," +
                     "edad INTEGER," +
@@ -87,7 +86,7 @@ public class AccesoBD {
 
             String createEntrenadoresTableSQL = "CREATE TABLE IF NOT EXISTS entrenadores (" +
                     "id_entrenador SERIAL PRIMARY KEY," +
-                    "nombre_Entrenador TEXT," +
+                    "nombre_entrenador TEXT," +
                     "especializacion TEXT)";
             connection.createStatement().executeUpdate(createEntrenadoresTableSQL);
 
