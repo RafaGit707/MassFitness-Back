@@ -63,7 +63,7 @@ public class AccesoBD {
                     "usuario_id INTEGER," +
                     "espacio_id INTEGER," +
                     "tipo_reserva TEXT," +
-                    "horario_reserva TIMESTAMP," +
+                    "horario_reserva TIMESTAMP WITHOUT TIME ZONE," +
                     "estado_reserva TEXT," +
                     "FOREIGN KEY (usuario_id) REFERENCES usuarios(id_usuario)," +
                     "FOREIGN KEY (espacio_id) REFERENCES espacios(id_espacio))";
@@ -72,14 +72,18 @@ public class AccesoBD {
             String createEspaciosTableSQL = "CREATE TABLE IF NOT EXISTS espacios (" +
                     "id_espacio SERIAL PRIMARY KEY," +
                     "nombre TEXT," +
-                    "descripcion TEXT," +
-                    "horario TIMESTAMP," +
-                    "capacidad_maxima INTEGER," +
-                    "capacidad_actual INTEGER DEFAULT 0," +
                     "entrenador_id INTEGER," +
-                    "tipo TEXT," +
                     "FOREIGN KEY (entrenador_id) REFERENCES entrenadores(id_entrenador))";
             connection.createStatement().executeUpdate(createEspaciosTableSQL);
+
+            String createEspacioHorarioTableSQL = "CREATE TABLE IF NOT EXISTS espacio_horario (" +
+                    "id_espacio_horario SERIAL PRIMARY KEY," +
+                    "espacio_id INTEGER," +
+                    "horario_reserva TIMESTAMP WITHOUT TIME ZONE," +
+                    "capacidad_actual INTEGER DEFAULT 0," +
+                    "capacidad_maxima INTEGER," +
+                    "FOREIGN KEY (espacio_id) REFERENCES espacios(id_espacio))";
+            connection.createStatement().executeUpdate(createEspacioHorarioTableSQL);
 
             String createEntrenadoresTableSQL = "CREATE TABLE IF NOT EXISTS entrenadores (" +
                     "id_entrenador SERIAL PRIMARY KEY," +

@@ -11,15 +11,10 @@ public class Espacio {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idEspacio;
-
     private String nombre;
-    private String descripcion;
     private int capacidadMaxima;
-    private int capacidadActual;
-
     @Temporal(TemporalType.TIME)
     private Date horarioReserva;
-
     @ManyToOne
     @JoinColumn(name = "entrenador_id")
     private Entrenador entrenador;
@@ -32,20 +27,25 @@ public class Espacio {
         this.idEspacio = idEspacio;
     }
 
-    public Espacio(int idEspacio, String nombre, String descripcion, int capacidadMaxima, int capacidadActual, Date horarioReserva) {
+    public Espacio(int idEspacio, String nombre, int capacidadMaxima, Date horarioReserva, Entrenador entrenador, List<Reserva> reservas) {
         this.idEspacio = idEspacio;
         this.nombre = nombre;
-        this.descripcion = descripcion;
         this.capacidadMaxima = capacidadMaxima;
-        this.capacidadActual = capacidadActual;
+        this.horarioReserva = horarioReserva;
+        this.entrenador = entrenador;
+        this.reservas = reservas;
+    }
+
+    public Espacio(int idEspacio, String nombre, int capacidadMaxima, Date horarioReserva) {
+        this.idEspacio = idEspacio;
+        this.nombre = nombre;
+        this.capacidadMaxima = capacidadMaxima;
         this.horarioReserva = horarioReserva;
     }
 
-    public Espacio(String nombre, String descripcion, int capacidadMaxima, int capacidadActual, Date horarioReserva) {
+    public Espacio(String nombre, int capacidadMaxima, Date horarioReserva) {
         this.nombre = nombre;
-        this.descripcion = descripcion;
         this.capacidadMaxima = capacidadMaxima;
-        this.capacidadActual = capacidadActual;
         this.horarioReserva = horarioReserva;
     }
 
@@ -65,12 +65,8 @@ public class Espacio {
         this.nombre = nombre;
     }
 
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
+    public Date getHorarioReserva() {
+        return horarioReserva;
     }
 
     public int getCapacidadMaxima() {
@@ -79,18 +75,6 @@ public class Espacio {
 
     public void setCapacidadMaxima(int capacidadMaxima) {
         this.capacidadMaxima = capacidadMaxima;
-    }
-
-    public int getCapacidadActual() {
-        return capacidadActual;
-    }
-
-    public void setCapacidadActual(int capacidadActual) {
-        this.capacidadActual = capacidadActual;
-    }
-
-    public Date getHorarioReserva() {
-        return horarioReserva;
     }
 
     public void setHorarioReserva(Date horarioReserva) {
