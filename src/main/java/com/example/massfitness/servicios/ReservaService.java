@@ -46,79 +46,157 @@ public class ReservaService implements IReservaService {
         }
         return reservas;
     }
-    public int addReserva(Reserva reserva) {
-        String insertSQLEspacios = "INSERT INTO espacios (capacidad_maxima, nombre) VALUES (?, ?) RETURNING id_espacio";
-        String selectCapacitySQL = "SELECT capacidad_actual, capacidad_maxima FROM espacio_horario eh INNER JOIN espacios e ON eh.espacio_id = e.id_espacio WHERE eh.espacio_id = ? AND eh.horario_reserva = ?";
-        String insertEspacioHorarioSQL = "INSERT INTO espacio_horario (espacio_id, horario_reserva, capacidad_actual) VALUES (?, ?, ?)";
-        String updateCapacitySQL = "UPDATE espacio_horario SET capacidad_actual = capacidad_actual + 1 WHERE espacio_id = ? AND horario_reserva = ?";
-        String insertSQL = "INSERT INTO reservas (usuario_id, espacio_id, tipo_reserva, horario_reserva, estado_reserva) VALUES (?, ?, ?, ?, ?) RETURNING id_reserva";
-
-        try (Connection connection = accesoBD.conectarPostgreSQL()) {
-
-            int espacioId;
-            try (PreparedStatement preparedStatementEspacios = connection.prepareStatement(insertSQLEspacios);) {
-                preparedStatementEspacios.setInt(1, 1);
-                preparedStatementEspacios.setString(2, reserva.getTipoReserva());
-                ResultSet rs = preparedStatementEspacios.executeQuery();
-
-                if (rs.next()) {
-                    espacioId = rs.getInt(1);
-                } else {
-                    throw new SQLException("No se pudo obtener el ID de Espacios.");
-                }
-            }
-
-            // Verificar capacidad actual
-            try (PreparedStatement selectCapacityStmt = connection.prepareStatement(selectCapacitySQL)) {
-                selectCapacityStmt.setInt(1, 1);
-                selectCapacityStmt.setTimestamp(2, new Timestamp(reserva.getHorarioReserva().getTime()));
-                ResultSet rs = selectCapacityStmt.executeQuery();
-                if (rs.next()) {
-                    int capacidadActual = rs.getInt("capacidad_actual");
-                    int capacidadMaxima = rs.getInt("capacidad_maxima");
-                    if (capacidadActual >= capacidadMaxima) {
-                        throw new RuntimeException("La capacidad máxima del espacio en ese horario se ha alcanzado.");
-                    }
-                } else {
-                    // Insertar nuevo registro de capacidad para el espacio en el horario específico
-                    try (PreparedStatement insertEspacioHorarioStmt = connection.prepareStatement(insertEspacioHorarioSQL)) {
-                        insertEspacioHorarioStmt.setInt(1, espacioId);
-                        insertEspacioHorarioStmt.setTimestamp(2, new Timestamp(reserva.getHorarioReserva().getTime()));
-                        insertEspacioHorarioStmt.setInt(3, 0); // Capacidad actual inicial
-                        insertEspacioHorarioStmt.executeUpdate();
-                    }
-                }
-            }
-
-            // Insertar reserva
-            int idReserva;
-            try (PreparedStatement insertStmt = connection.prepareStatement(insertSQL)) {
-                insertStmt.setInt(1, reserva.getUsuario().getIdUsuario());
-                insertStmt.setInt(2, espacioId);
-                insertStmt.setString(3, reserva.getTipoReserva());
-                insertStmt.setTimestamp(4, new Timestamp(reserva.getHorarioReserva().getTime()));
-                insertStmt.setString(5, reserva.getEstadoReserva());
-                ResultSet rs = insertStmt.executeQuery();
-                if (rs.next()) {
-                    idReserva = rs.getInt(1);
-                } else {
-                    throw new SQLException("No se pudo obtener el ID de la Reserva.");
-                }
-            }
-
-            // Actualizar capacidad actual
-            try (PreparedStatement updateCapacityStmt = connection.prepareStatement(updateCapacitySQL)) {
-                updateCapacityStmt.setInt(1, espacioId);
-                updateCapacityStmt.setTimestamp(2, new Timestamp(reserva.getHorarioReserva().getTime()));
-                updateCapacityStmt.executeUpdate();
-            }
-
-            return idReserva;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Error al agregar Reserva", e);
-        }
+//    public int addReserva(Reserva reserva) {
+//        String insertSQLEspacios = "INSERT INTO espacios (capacidad_maxima, nombre) VALUES (?, ?) RETURNING id_espacio";
+//        String selectCapacitySQL = "SELECT capacidad_actual, capacidad_maxima FROM espacio_horario eh INNER JOIN espacios e ON eh.espacio_id = e.id_espacio WHERE eh.espacio_id = ? AND eh.horario_reserva = ?";
+//        String insertEspacioHorarioSQL = "INSERT INTO espacio_horario (espacio_id, horario_reserva, capacidad_actual) VALUES (?, ?, ?)";
+//        String updateCapacitySQL = "UPDATE espacio_horario SET capacidad_actual = capacidad_actual + 1 WHERE espacio_id = ? AND horario_reserva = ?";
+//        String insertSQL = "INSERT INTO reservas (usuario_id, espacio_id, tipo_reserva, horario_reserva, estado_reserva) VALUES (?, ?, ?, ?, ?) RETURNING id_reserva";
+//
+//        try (Connection connection = accesoBD.conectarPostgreSQL()) {
+//
+//            int espacioId;
+//            try (PreparedStatement preparedStatementEspacios = connection.prepareStatement(insertSQLEspacios);) {
+//                preparedStatementEspacios.setInt(1, 1);
+//                preparedStatementEspacios.setString(2, reserva.getTipoReserva());
+//                ResultSet rs = preparedStatementEspacios.executeQuery();
+//
+//                if (rs.next()) {
+//                    espacioId = rs.getInt(1);
+//                } else {
+//                    throw new SQLException("No se pudo obtener el ID de Espacios.");
+//                }
+//            }
+//
+//            // Verificar capacidad actual
+//            try (PreparedStatement selectCapacityStmt = connection.prepareStatement(selectCapacitySQL)) {
+//                selectCapacityStmt.setInt(1, 1);
+//                selectCapacityStmt.setTimestamp(2, new Timestamp(reserva.getHorarioReserva().getTime()));
+//                ResultSet rs = selectCapacityStmt.executeQuery();
+//                if (rs.next()) {
+//                    int capacidadActual = rs.getInt("capacidad_actual");
+//                    int capacidadMaxima = rs.getInt("capacidad_maxima");
+//                    if (capacidadActual >= capacidadMaxima) {
+//                        throw new RuntimeException("La capacidad máxima del espacio en ese horario se ha alcanzado.");
+//                    }
+//                } else {
+//                    // Insertar nuevo registro de capacidad para el espacio en el horario específico
+//                    try (PreparedStatement insertEspacioHorarioStmt = connection.prepareStatement(insertEspacioHorarioSQL)) {
+//                        insertEspacioHorarioStmt.setInt(1, espacioId);
+//                        insertEspacioHorarioStmt.setTimestamp(2, new Timestamp(reserva.getHorarioReserva().getTime()));
+//                        insertEspacioHorarioStmt.setInt(3, 0); // Capacidad actual inicial
+//                        insertEspacioHorarioStmt.executeUpdate();
+//                    }
+//                }
+//            }
+//
+//            // Insertar reserva
+//            int idReserva;
+//            try (PreparedStatement insertStmt = connection.prepareStatement(insertSQL)) {
+//                insertStmt.setInt(1, reserva.getUsuario().getIdUsuario());
+//                insertStmt.setInt(2, espacioId);
+//                insertStmt.setString(3, reserva.getTipoReserva());
+//                insertStmt.setTimestamp(4, new Timestamp(reserva.getHorarioReserva().getTime()));
+//                insertStmt.setString(5, reserva.getEstadoReserva());
+//                ResultSet rs = insertStmt.executeQuery();
+//                if (rs.next()) {
+//                    idReserva = rs.getInt(1);
+//                } else {
+//                    throw new SQLException("No se pudo obtener el ID de la Reserva.");
+//                }
+//            }
+//
+//            // Actualizar capacidad actual
+//            try (PreparedStatement updateCapacityStmt = connection.prepareStatement(updateCapacitySQL)) {
+//                updateCapacityStmt.setInt(1, espacioId);
+//                updateCapacityStmt.setTimestamp(2, new Timestamp(reserva.getHorarioReserva().getTime()));
+//                updateCapacityStmt.executeUpdate();
+//            }
+//
+//            return idReserva;
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//            throw new RuntimeException("Error al agregar Reserva", e);
+//        }
+//    }
+public int addReserva(Reserva reserva) {
+    if (reserva == null || reserva.getUsuario() == null) {
+        throw new IllegalArgumentException("Reserva o Usuario no pueden ser nulos");
     }
+
+    String insertSQLEspacios = "INSERT INTO espacios (capacidad_maxima, nombre) VALUES (?, ?) RETURNING id_espacio";
+    String selectCapacitySQL = "SELECT capacidad_actual, capacidad_maxima FROM espacio_horario eh INNER JOIN espacios e ON eh.espacio_id = e.id_espacio WHERE eh.espacio_id = ? AND eh.horario_reserva = ?";
+    String insertEspacioHorarioSQL = "INSERT INTO espacio_horario (espacio_id, horario_reserva, capacidad_actual) VALUES (?, ?, ?)";
+    String updateCapacitySQL = "UPDATE espacio_horario SET capacidad_actual = capacidad_actual + 1 WHERE espacio_id = ? AND horario_reserva = ?";
+    String insertSQL = "INSERT INTO reservas (usuario_id, espacio_id, tipo_reserva, horario_reserva, estado_reserva) VALUES (?, ?, ?, ?, ?) RETURNING id_reserva";
+
+    try (Connection connection = accesoBD.conectarPostgreSQL()) {
+
+        int espacioId;
+        try (PreparedStatement preparedStatementEspacios = connection.prepareStatement(insertSQLEspacios);) {
+            preparedStatementEspacios.setInt(1, 1);
+            preparedStatementEspacios.setString(2, reserva.getTipoReserva());
+            ResultSet rs = preparedStatementEspacios.executeQuery();
+
+            if (rs.next()) {
+                espacioId = rs.getInt(1);
+            } else {
+                throw new SQLException("No se pudo obtener el ID de Espacios.");
+            }
+        }
+
+        // Verificar capacidad actual
+        try (PreparedStatement selectCapacityStmt = connection.prepareStatement(selectCapacitySQL)) {
+            selectCapacityStmt.setInt(1, 1);
+            selectCapacityStmt.setTimestamp(2, new Timestamp(reserva.getHorarioReserva().getTime()));
+            ResultSet rs = selectCapacityStmt.executeQuery();
+            if (rs.next()) {
+                int capacidadActual = rs.getInt("capacidad_actual");
+                int capacidadMaxima = rs.getInt("capacidad_maxima");
+                if (capacidadActual >= capacidadMaxima) {
+                    throw new RuntimeException("La capacidad máxima del espacio en ese horario se ha alcanzado.");
+                }
+            } else {
+                // Insertar nuevo registro de capacidad para el espacio en el horario específico
+                try (PreparedStatement insertEspacioHorarioStmt = connection.prepareStatement(insertEspacioHorarioSQL)) {
+                    insertEspacioHorarioStmt.setInt(1, espacioId);
+                    insertEspacioHorarioStmt.setTimestamp(2, new Timestamp(reserva.getHorarioReserva().getTime()));
+                    insertEspacioHorarioStmt.setInt(3, 0); // Capacidad actual inicial
+                    insertEspacioHorarioStmt.executeUpdate();
+                }
+            }
+        }
+
+        // Insertar reserva
+        int idReserva;
+        try (PreparedStatement insertStmt = connection.prepareStatement(insertSQL)) {
+            insertStmt.setInt(1, reserva.getUsuario().getIdUsuario());
+            insertStmt.setInt(2, espacioId);
+            insertStmt.setString(3, reserva.getTipoReserva());
+            insertStmt.setTimestamp(4, new Timestamp(reserva.getHorarioReserva().getTime()));
+            insertStmt.setString(5, reserva.getEstadoReserva());
+            ResultSet rs = insertStmt.executeQuery();
+            if (rs.next()) {
+                idReserva = rs.getInt(1);
+            } else {
+                throw new SQLException("No se pudo obtener el ID de la Reserva.");
+            }
+        }
+
+        // Actualizar capacidad actual
+        try (PreparedStatement updateCapacityStmt = connection.prepareStatement(updateCapacitySQL)) {
+            updateCapacityStmt.setInt(1, espacioId);
+            updateCapacityStmt.setTimestamp(2, new Timestamp(reserva.getHorarioReserva().getTime()));
+            updateCapacityStmt.executeUpdate();
+        }
+
+        return idReserva;
+    } catch (SQLException e) {
+        e.printStackTrace();
+        throw new RuntimeException("Error al agregar Reserva", e);
+    }
+}
+
 
     public void actualizarReserva(Reserva reserva) {
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
