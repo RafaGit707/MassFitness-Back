@@ -62,7 +62,7 @@ public class AccesoBD {
                     "usuario_id INTEGER," +
                     "espacio_id INTEGER," +
                     "tipo_reserva TEXT," +
-                    "horario_reserva TIMESTAMP WITHOUT TIME ZONE," +
+                    "horario_reserva TIMESTAMP," +
                     "estado_reserva TEXT," +
                     "FOREIGN KEY (usuario_id) REFERENCES usuarios(id_usuario)," +
                     "FOREIGN KEY (espacio_id) REFERENCES espacios(id_espacio))";
@@ -78,7 +78,7 @@ public class AccesoBD {
             String createEspacioHorarioTableSQL = "CREATE TABLE IF NOT EXISTS espacio_horario (" +
                     "id_espacio_horario SERIAL PRIMARY KEY," +
                     "espacio_id INTEGER," +
-                    "horario_reserva TIMESTAMP WITHOUT TIME ZONE," +
+                    "horario_reserva TIMESTAMP," +
                     "capacidad_actual INTEGER DEFAULT 0," +
                     "capacidad_maxima INTEGER," +
                     "FOREIGN KEY (espacio_id) REFERENCES espacios(id_espacio))";

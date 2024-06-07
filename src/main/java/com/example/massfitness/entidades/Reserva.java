@@ -3,6 +3,7 @@ package com.example.massfitness.entidades;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 @Entity
@@ -22,14 +23,15 @@ public class Reserva {
     @JsonProperty("tipo_reserva")
     private String tipoReserva;
     @JsonProperty("horario_reserva")
-    private Date horarioReserva;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Timestamp horarioReserva;
     @JsonProperty("estado_reserva")
     private String estadoReserva;
 
     public Reserva() {
     }
 
-    public Reserva(int idReserva, Usuario usuario, Espacio espacio, String tipoReserva, Date horarioReserva, String estadoReserva) {
+    public Reserva(int idReserva, Usuario usuario, Espacio espacio, String tipoReserva, Timestamp horarioReserva, String estadoReserva) {
         this.idReserva = idReserva;
         this.usuario = usuario;
         this.espacio = espacio;
@@ -69,11 +71,11 @@ public class Reserva {
         this.tipoReserva = tipoReserva;
     }
 
-    public Date getHorarioReserva() {
+    public Timestamp getHorarioReserva() {
         return horarioReserva;
     }
 
-    public void setHorarioReserva(Date horarioReserva) {
+    public void setHorarioReserva(Timestamp horarioReserva) {
         this.horarioReserva = horarioReserva;
     }
 

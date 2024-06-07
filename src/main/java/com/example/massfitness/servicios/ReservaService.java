@@ -34,8 +34,7 @@ public class ReservaService implements IReservaService {
                 int idUsuario = resultSet.getInt("usuario_id");
                 int idEspacio = resultSet.getInt("espacio_id");
                 String tipoReserva = resultSet.getString("tipo_reserva");
-                Timestamp timestamp = resultSet.getTimestamp("horario_reserva");
-                Date horarioReserva = new Date(timestamp.getTime());
+                Timestamp horarioReserva = resultSet.getTimestamp("horario_reserva");
                 String estadoReserva = resultSet.getString("estado_reserva");
 
                 Reserva reserva = new Reserva(idReserva, new Usuario(idUsuario), new Espacio(idEspacio), tipoReserva, horarioReserva, estadoReserva);
@@ -236,8 +235,7 @@ public int addReserva(Reserva reserva) {
                 int idUsuario = resultSet.getInt("usuario_id");
                 int idEspacio = resultSet.getInt("espacio_id");
                 String tipoReserva = resultSet.getString("tipo_reserva");
-                Timestamp timestamp = resultSet.getTimestamp("horario_reserva");
-                Date horarioReserva = new Date(timestamp.getTime());
+                Timestamp horarioReserva = resultSet.getTimestamp("horario_reserva");
                 String estadoReserva = resultSet.getString("estado_reserva");
                 reserva = new Reserva(idReserva, new Usuario(idUsuario), new Espacio(idEspacio), tipoReserva, horarioReserva, estadoReserva);
             }

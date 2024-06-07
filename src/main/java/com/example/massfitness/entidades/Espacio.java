@@ -15,12 +15,9 @@ public class Espacio {
     private String nombre;
     @JsonProperty("capacidad_maxima")
     private int capacidadMaxima;
-    @JsonProperty("horario_reserva")
-    private Date horarioReserva;
     @ManyToOne
     @JoinColumn(name = "entrenador_id")
     private Entrenador entrenador;
-
     @OneToMany(mappedBy = "espacio", cascade = CascadeType.ALL)
     private List<Reserva> reservas;
     public Espacio() {}
@@ -29,26 +26,23 @@ public class Espacio {
         this.idEspacio = idEspacio;
     }
 
-    public Espacio(int idEspacio, String nombre, int capacidadMaxima, Date horarioReserva, Entrenador entrenador, List<Reserva> reservas) {
+    public Espacio(int idEspacio, String nombre, int capacidadMaxima, Entrenador entrenador, List<Reserva> reservas) {
         this.idEspacio = idEspacio;
         this.nombre = nombre;
         this.capacidadMaxima = capacidadMaxima;
-        this.horarioReserva = horarioReserva;
         this.entrenador = entrenador;
         this.reservas = reservas;
     }
 
-    public Espacio(int idEspacio, String nombre, int capacidadMaxima, Date horarioReserva) {
+    public Espacio(int idEspacio, String nombre, int capacidadMaxima) {
         this.idEspacio = idEspacio;
         this.nombre = nombre;
         this.capacidadMaxima = capacidadMaxima;
-        this.horarioReserva = horarioReserva;
     }
 
-    public Espacio(String nombre, int capacidadMaxima, Date horarioReserva) {
+    public Espacio(String nombre, int capacidadMaxima) {
         this.nombre = nombre;
         this.capacidadMaxima = capacidadMaxima;
-        this.horarioReserva = horarioReserva;
     }
 
     public int getIdEspacio() {
@@ -67,9 +61,6 @@ public class Espacio {
         this.nombre = nombre;
     }
 
-    public Date getHorarioReserva() {
-        return horarioReserva;
-    }
 
     public int getCapacidadMaxima() {
         return capacidadMaxima;
@@ -77,10 +68,6 @@ public class Espacio {
 
     public void setCapacidadMaxima(int capacidadMaxima) {
         this.capacidadMaxima = capacidadMaxima;
-    }
-
-    public void setHorarioReserva(Date horarioReserva) {
-        this.horarioReserva = horarioReserva;
     }
 
     public Entrenador getEntrenador() {

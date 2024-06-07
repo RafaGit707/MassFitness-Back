@@ -21,13 +21,10 @@ public class EspacioService implements IEspacioService {
 
     public void addEspacio(Espacio espacio) {
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
-            String insertSQL = "INSERT INTO Espacios (nombre, descripcion, capacidad_Maxima, capacidad_Actual, horario_Reserva) VALUES (?, ?, ?, ?, ?)";
+            String insertSQL = "INSERT INTO Espacios (nombre, capacidad_maxima) VALUES (?, ?)";
             PreparedStatement preparedStatement = connection.prepareStatement(insertSQL);
             preparedStatement.setString(1, espacio.getNombre());
-            preparedStatement.setString(2, "");
-            preparedStatement.setInt(3, espacio.getCapacidadMaxima());
-            preparedStatement.setInt(4, 0);
-            preparedStatement.setTimestamp(5, new Timestamp(espacio.getHorarioReserva().getTime()));
+            preparedStatement.setInt(2, espacio.getCapacidadMaxima());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -36,14 +33,11 @@ public class EspacioService implements IEspacioService {
 
     public void actualizarEspacio(Espacio espacio) {
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
-            String updateSQL = "UPDATE Espacios SET nombre = ?, descripcion = ?, capacidad_Maxima = ?, capacidad_Actual = ?, horario_Reserva = ? WHERE id_Espacio = ?";
+            String updateSQL = "UPDATE Espacios SET nombre = ?, capacidad_maxima = ? WHERE id_Espacio = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(updateSQL);
             preparedStatement.setString(1, espacio.getNombre());
-            preparedStatement.setString(2, "");
-            preparedStatement.setInt(3, espacio.getCapacidadMaxima());
-            preparedStatement.setInt(4, 0);
-            preparedStatement.setTimestamp(5, new Timestamp(espacio.getHorarioReserva().getTime()));
-            preparedStatement.setInt(6, espacio.getIdEspacio());
+            preparedStatement.setInt(2, espacio.getCapacidadMaxima());
+            preparedStatement.setInt(3, espacio.getIdEspacio());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -67,11 +61,10 @@ public class EspacioService implements IEspacioService {
             String selectSQL = "SELECT * FROM Espacios";
             ResultSet resultSet = connection.createStatement().executeQuery(selectSQL);
             while (resultSet.next()) {
-                int id_Espacio = resultSet.getInt("id_Espacio");
+                int id_Espacio = resultSet.getInt("id_espacio");
                 String nombre = resultSet.getString("nombre");
-                int capacidadMaxima = resultSet.getInt("capacidad_Maxima");
-                Timestamp horarioReserva = resultSet.getTimestamp("horario_Reserva");
-                Espacio espacio = new Espacio(id_Espacio, nombre, capacidadMaxima, horarioReserva);
+                int capacidadMaxima = resultSet.getInt("capacidad_maxima");
+                Espacio espacio = new Espacio(id_Espacio, nombre, capacidadMaxima);
                 espacios.add(espacio);
             }
         } catch (SQLException e) {
@@ -83,15 +76,14 @@ public class EspacioService implements IEspacioService {
     public Espacio buscarEspacioPorId(int idEspacio) {
         Espacio espacio = null;
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
-            String selectSQL = "SELECT * FROM Espacios WHERE id_Espacio = ?";
+            String selectSQL = "SELECT * FROM Espacios WHERE id_espacio = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(selectSQL);
             preparedStatement.setInt(1, idEspacio);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 String nombre = resultSet.getString("nombre");
-                int capacidadMaxima = resultSet.getInt("capacidad_Maxima");
-                java.util.Date horarioReserva = resultSet.getTimestamp("horario_Reserva");
-                espacio = new Espacio(nombre, capacidadMaxima, horarioReserva);
+                int capacidadMaxima = resultSet.getInt("capacidad_maxima");
+                espacio = new Espacio(nombre, capacidadMaxima);
             }
         } catch (SQLException e) {
             e.printStackTrace();
