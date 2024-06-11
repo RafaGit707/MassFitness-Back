@@ -58,7 +58,7 @@ public class ReservaService implements IReservaService {
             try (PreparedStatement preparedStatementEspacios = connection.prepareStatement(insertSQLEspacios);) {
                 preparedStatementEspacios.setInt(1, 1);
                 preparedStatementEspacios.setString(2, reserva.getTipoReserva());
-                preparedStatementEspacios.setInt(1, reserva.getEspacio().getEntrenador().getIdEntrenador());
+                preparedStatementEspacios.setInt(3, reserva.getEspacio().getEntrenador().getIdEntrenador());
                 ResultSet rs = preparedStatementEspacios.executeQuery();
 
                 if (rs.next()) {
@@ -68,27 +68,27 @@ public class ReservaService implements IReservaService {
                 }
             }
 
-//            // Verificar capacidad actual
-//            try (PreparedStatement selectCapacityStmt = connection.prepareStatement(selectCapacitySQL)) {
-//                selectCapacityStmt.setInt(1, 1);
-//                selectCapacityStmt.setTimestamp(2, new Timestamp(reserva.getHorarioReserva().getTime()));
-//                ResultSet rs = selectCapacityStmt.executeQuery();
-//                if (rs.next()) {
-//                    int capacidadActual = rs.getInt("capacidad_actual");
-//                    int capacidadMaxima = rs.getInt("capacidad_maxima");
-//                    if (capacidadActual >= capacidadMaxima) {
-//                        throw new RuntimeException("La capacidad máxima del espacio en ese horario se ha alcanzado.");
-//                    }
-//                } else {
-//                    // Insertar nuevo registro de capacidad para el espacio en el horario específico
-//                    try (PreparedStatement insertEspacioHorarioStmt = connection.prepareStatement(insertEspacioHorarioSQL)) {
-//                        insertEspacioHorarioStmt.setInt(1, espacioId);
-//                        insertEspacioHorarioStmt.setTimestamp(2, new Timestamp(reserva.getHorarioReserva().getTime()));
-//                        insertEspacioHorarioStmt.setInt(3, 0); // Capacidad actual inicial
-//                        insertEspacioHorarioStmt.executeUpdate();
-//                    }
-//                }
-//            }
+            // Verificar capacidad actual
+            try (PreparedStatement selectCapacityStmt = connection.prepareStatement(selectCapacitySQL)) {
+                selectCapacityStmt.setInt(1, 1);
+                selectCapacityStmt.setTimestamp(2, new Timestamp(reserva.getHorarioReserva().getTime()));
+                ResultSet rs = selectCapacityStmt.executeQuery();
+                if (rs.next()) {
+                    int capacidadActual = rs.getInt("capacidad_actual");
+                    int capacidadMaxima = rs.getInt("capacidad_maxima");
+                    if (capacidadActual >= capacidadMaxima) {
+                        throw new RuntimeException("La capacidad máxima del espacio en ese horario se ha alcanzado.");
+                    }
+                } else {
+                    // Insertar nuevo registro de capacidad para el espacio en el horario específico
+                    try (PreparedStatement insertEspacioHorarioStmt = connection.prepareStatement(insertEspacioHorarioSQL)) {
+                        insertEspacioHorarioStmt.setInt(1, espacioId);
+                        insertEspacioHorarioStmt.setTimestamp(2, new Timestamp(reserva.getHorarioReserva().getTime()));
+                        insertEspacioHorarioStmt.setInt(3, 0); // Capacidad actual inicial
+                        insertEspacioHorarioStmt.executeUpdate();
+                    }
+                }
+            }
             // Verificar capacidad actual
             int capacidadActual = 0;
             int capacidadMaxima = 0;

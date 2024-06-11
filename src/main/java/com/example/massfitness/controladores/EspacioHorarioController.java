@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,7 +25,8 @@ public class EspacioHorarioController {
     @GetMapping("/{salaNombre}/{horarioReserva}")
     public ResponseEntity<Map<String, Integer>> obtenerCapacidad(@PathVariable String salaNombre, @PathVariable String horarioReserva) {
         try {
-            int capacidadActual = iEspacioHorarioService.obtenerCapacidadActual(salaNombre, horarioReserva);
+            Timestamp timestamp = Timestamp.valueOf(horarioReserva + ":00"); // Asegura el formato correcto
+            int capacidadActual = iEspacioHorarioService.obtenerCapacidadActual(salaNombre, timestamp);
             int capacidadMaxima = iEspacioHorarioService.obtenerCapacidadMaxima(salaNombre);
             Map<String, Integer> response = new HashMap<>();
             response.put("capacidad_actual", capacidadActual);
@@ -34,4 +36,5 @@ public class EspacioHorarioController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
 }
