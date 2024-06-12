@@ -58,7 +58,7 @@ public class ReservaService implements IReservaService {
             try (PreparedStatement preparedStatementEspacios = connection.prepareStatement(insertSQLEspacios);) {
                 preparedStatementEspacios.setInt(1, 1);
                 preparedStatementEspacios.setString(2, reserva.getTipoReserva());
-                preparedStatementEspacios.setInt(3, reserva.getEspacio().getEntrenador().getIdEntrenador());
+                preparedStatementEspacios.setInt(3, 0);
                 ResultSet rs = preparedStatementEspacios.executeQuery();
 
                 if (rs.next()) {
@@ -70,8 +70,9 @@ public class ReservaService implements IReservaService {
 
             // Verificar capacidad actual
             try (PreparedStatement selectCapacityStmt = connection.prepareStatement(selectCapacitySQL)) {
+                Timestamp timestamp = Timestamp.valueOf(reserva.getHorarioReserva().getTime() + ":00"); // Asegura el formato correcto
                 selectCapacityStmt.setInt(1, 1);
-                selectCapacityStmt.setTimestamp(2, new Timestamp(reserva.getHorarioReserva().getTime()));
+                selectCapacityStmt.setTimestamp(2, timestamp);
                 ResultSet rs = selectCapacityStmt.executeQuery();
                 if (rs.next()) {
                     int capacidadActual = rs.getInt("capacidad_actual");
@@ -83,7 +84,7 @@ public class ReservaService implements IReservaService {
                     // Insertar nuevo registro de capacidad para el espacio en el horario específico
                     try (PreparedStatement insertEspacioHorarioStmt = connection.prepareStatement(insertEspacioHorarioSQL)) {
                         insertEspacioHorarioStmt.setInt(1, espacioId);
-                        insertEspacioHorarioStmt.setTimestamp(2, new Timestamp(reserva.getHorarioReserva().getTime()));
+                        insertEspacioHorarioStmt.setTimestamp(2, timestamp);
                         insertEspacioHorarioStmt.setInt(3, 0); // Capacidad actual inicial
                         insertEspacioHorarioStmt.executeUpdate();
                     }
@@ -96,7 +97,7 @@ public class ReservaService implements IReservaService {
 
             try (PreparedStatement selectCapacityStmt = connection.prepareStatement(selectCapacitySQL)) {
                 selectCapacityStmt.setInt(1, espacioId);
-                selectCapacityStmt.setTimestamp(2, new Timestamp(reserva.getHorarioReserva().getTime()));
+                selectCapacityStmt.setTimestamp(2, Timestamp.valueOf(reserva.getHorarioReserva().getTime() + ":00"));
                 ResultSet rs = selectCapacityStmt.executeQuery();
                 if (rs.next()) {
                     capacidadActual = rs.getInt("capacidad_actual");
@@ -109,7 +110,7 @@ public class ReservaService implements IReservaService {
                 // Insertar nuevo registro de espacio_horario
                 try (PreparedStatement insertEspacioHorarioStmt = connection.prepareStatement(insertEspacioHorarioSQL)) {
                     insertEspacioHorarioStmt.setInt(1, espacioId);
-                    insertEspacioHorarioStmt.setTimestamp(2, new Timestamp(reserva.getHorarioReserva().getTime()));
+                    insertEspacioHorarioStmt.setTimestamp(2, Timestamp.valueOf(reserva.getHorarioReserva().getTime() + ":00"));
                     insertEspacioHorarioStmt.setInt(3, 0); // Capacidad actual inicial
                     insertEspacioHorarioStmt.executeUpdate();
                 }
@@ -120,10 +121,10 @@ public class ReservaService implements IReservaService {
             // Insertar reserva
             int idReserva;
             try (PreparedStatement insertStmt = connection.prepareStatement(insertSQL)) {
-                insertStmt.setInt(1, reserva.getUsuario().getIdUsuario());
+                insertStmt.setInt(1, 1);
                 insertStmt.setInt(2, espacioId);
                 insertStmt.setString(3, reserva.getTipoReserva());
-                insertStmt.setTimestamp(4, new Timestamp(reserva.getHorarioReserva().getTime()));
+                insertStmt.setTimestamp(4, Timestamp.valueOf(reserva.getHorarioReserva().getTime() + ":00"));
                 insertStmt.setString(5, reserva.getEstadoReserva());
                 ResultSet rs = insertStmt.executeQuery();
                 if (rs.next()) {
@@ -136,7 +137,7 @@ public class ReservaService implements IReservaService {
             // Actualizar capacidad actual
             try (PreparedStatement updateCapacityStmt = connection.prepareStatement(updateCapacitySQL)) {
                 updateCapacityStmt.setInt(1, espacioId);
-                updateCapacityStmt.setTimestamp(2, new Timestamp(reserva.getHorarioReserva().getTime()));
+                updateCapacityStmt.setTimestamp(2, Timestamp.valueOf(reserva.getHorarioReserva().getTime() + ":00"));
                 updateCapacityStmt.executeUpdate();
             }
 

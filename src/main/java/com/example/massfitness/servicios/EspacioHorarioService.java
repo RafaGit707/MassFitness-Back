@@ -39,6 +39,24 @@ public class EspacioHorarioService implements IEspacioHorarioService {
         }
         return 0;
     }
+    private static final Logger logger = LoggerFactory.getLogger(UsuarioService.class);
+    @Override
+    public int obtenerCapacidadMaxima(String salaNombre) {
+//        obtenerCapacidad(salaNombre);
+//        logger.info("Agregando nuevo usuario a la base de datos: {}", salaNombre + "  " + capacidadMaxima);
+        String query = "SELECT capacidad_maxima FROM espacios WHERE nombre = ?";
+        try (Connection connection = accesoBD.conectarPostgreSQL();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, salaNombre);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt("capacidad_maxima");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
     private int obtenerCapacidad(String tipoReserva) {
         switch (tipoReserva) {
             case "Boxeo":
@@ -59,23 +77,5 @@ public class EspacioHorarioService implements IEspacioHorarioService {
             default:
                 return 0;
         }
-    }
-    private static final Logger logger = LoggerFactory.getLogger(UsuarioService.class);
-    @Override
-    public int obtenerCapacidadMaxima(String salaNombre) {
-        obtenerCapacidad(salaNombre);
-        logger.info("Agregando nuevo usuario a la base de datos: {}", salaNombre + "  " + capacidadMaxima);
-        String query = "SELECT capacidad_maxima FROM espacios WHERE nombre = ?";
-        try (Connection connection = accesoBD.conectarPostgreSQL();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setString(1, capacidadMaxima+"");
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                return resultSet.getInt("capacidad_maxima");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return 0;
     }
 }

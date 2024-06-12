@@ -25,7 +25,7 @@ public class EspacioHorarioController {
     @GetMapping("/{salaNombre}/{horarioReserva}")
     public ResponseEntity<Map<String, Integer>> obtenerCapacidad(@PathVariable String salaNombre, @PathVariable String horarioReserva) {
         try {
-            Timestamp timestamp = Timestamp.valueOf(horarioReserva + ":00"); // Asegura el formato correcto
+            Timestamp timestamp = Timestamp.valueOf(horarioReserva + ":00");
             int capacidadActual = iEspacioHorarioService.obtenerCapacidadActual(salaNombre, timestamp);
             int capacidadMaxima = iEspacioHorarioService.obtenerCapacidadMaxima(salaNombre);
             Map<String, Integer> response = new HashMap<>();
