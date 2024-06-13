@@ -1,6 +1,7 @@
 package com.example.massfitness.servicios;
 
 import com.example.massfitness.controladores.UsuarioController;
+import com.example.massfitness.entidades.EspacioHorario;
 import com.example.massfitness.entidades.Reserva;
 import com.example.massfitness.servicios.impl.IEspacioHorarioService;
 import com.example.massfitness.util.AccesoBD;
