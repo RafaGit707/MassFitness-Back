@@ -16,7 +16,7 @@ public class EspacioHorario {
     @JoinColumn(name = "espacio_id")
     private Espacio espacio;
     @JsonProperty("horario_reserva")
-    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "horario_reserva", columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private Timestamp horarioReserva;
     @JsonProperty("capacidad_actual")
     private int capacidadActual;

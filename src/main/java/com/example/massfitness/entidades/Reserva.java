@@ -13,17 +13,16 @@ public class Reserva {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idReserva;
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "espacio_id")
     private Espacio espacio;
     @JsonProperty("tipo_reserva")
     private String tipoReserva;
     @JsonProperty("horario_reserva")
-    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "horario_reserva", columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private Timestamp horarioReserva;
     @JsonProperty("estado_reserva")
     private String estadoReserva;
