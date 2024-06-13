@@ -1,5 +1,6 @@
 package com.example.massfitness.servicios;
 
+import com.example.massfitness.controladores.UsuarioController;
 import com.example.massfitness.entidades.Reserva;
 import com.example.massfitness.servicios.impl.IEspacioHorarioService;
 import com.example.massfitness.util.AccesoBD;
@@ -17,12 +18,11 @@ public class EspacioHorarioService implements IEspacioHorarioService {
 
     private final AccesoBD accesoBD;
     private int capacidadMaxima;
-
+    private static final Logger logger = LoggerFactory.getLogger(UsuarioService.class);
     @Autowired
     public EspacioHorarioService(AccesoBD accesoBD) {
         this.accesoBD = accesoBD;
     }
-
     @Override
     public int obtenerCapacidadActual(String salaNombre, Timestamp horarioReserva) {
         String query = "SELECT eh.capacidad_actual FROM espacio_horario eh INNER JOIN espacios e ON eh.espacio_id = e.id_espacio WHERE e.nombre = ? AND eh.horario_reserva = ?";
@@ -31,6 +31,9 @@ public class EspacioHorarioService implements IEspacioHorarioService {
             preparedStatement.setString(1, salaNombre);
             preparedStatement.setTimestamp(2, horarioReserva);
             ResultSet resultSet = preparedStatement.executeQuery();
+
+            logger.info(salaNombre + "  " + horarioReserva);
+
             if (resultSet.next()) {
                 return resultSet.getInt("capacidad_actual");
             }
@@ -39,11 +42,12 @@ public class EspacioHorarioService implements IEspacioHorarioService {
         }
         return 0;
     }
-    private static final Logger logger = LoggerFactory.getLogger(UsuarioService.class);
     @Override
     public int obtenerCapacidadMaxima(String salaNombre) {
-//        obtenerCapacidad(salaNombre);
-//        logger.info("Agregando nuevo usuario a la base de datos: {}", salaNombre + "  " + capacidadMaxima);
+        obtenerCapacidad(salaNombre);
+
+        logger.info(salaNombre + "  " + capacidadMaxima);
+
         String query = "SELECT capacidad_maxima FROM espacios WHERE nombre = ?";
         try (Connection connection = accesoBD.conectarPostgreSQL();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
