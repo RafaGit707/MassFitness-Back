@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 import java.sql.Timestamp;
-import java.util.Date;
 
 @Entity
 @Table(name = "espacio_horario")

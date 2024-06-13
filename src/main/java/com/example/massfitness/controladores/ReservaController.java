@@ -1,12 +1,7 @@
 package com.example.massfitness.controladores;
 
 import com.example.massfitness.entidades.Reserva;
-import com.example.massfitness.entidades.Usuario;
-import com.example.massfitness.servicios.ReservaService;
-import com.example.massfitness.servicios.UsuarioService;
 import com.example.massfitness.servicios.impl.IReservaService;
-import com.example.massfitness.servicios.impl.IUsuarioService;
-import com.example.massfitness.util.AccesoBD;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
