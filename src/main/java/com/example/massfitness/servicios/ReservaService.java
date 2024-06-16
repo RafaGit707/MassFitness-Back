@@ -7,6 +7,8 @@ import com.example.massfitness.entidades.Reserva;
 import com.example.massfitness.repositories.UsuarioRepository;
 import com.example.massfitness.servicios.impl.IReservaService;
 import com.example.massfitness.util.AccesoBD;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +30,7 @@ public class ReservaService implements IReservaService {
     public ReservaService(AccesoBD accesoBD) {
         this.accesoBD = accesoBD;
     }
-
+    private static final Logger logger = LoggerFactory.getLogger(UsuarioService.class);
     @Override
     public List<Reserva> getReservas() {
         List<Reserva> reservas = new ArrayList<>();
@@ -43,7 +45,7 @@ public class ReservaService implements IReservaService {
                 String tipoReserva = resultSet.getString("tipo_reserva");
                 Timestamp horarioReserva = resultSet.getTimestamp("horario_reserva");
                 String estadoReserva = resultSet.getString("estado_reserva");
-
+                logger.info("Añadiendo reserva: Horario = {}", horarioReserva);
                 Reserva reserva = new Reserva(idReserva, idUsuario, idEspacio, tipoReserva, horarioReserva, estadoReserva);
                 reservas.add(reserva);
             }

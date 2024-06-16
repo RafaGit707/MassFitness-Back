@@ -33,15 +33,6 @@ public class ReservaController {
     public ReservaController(IReservaService iReservaService) {
         this.iReservaService = iReservaService;
     }
-
-//    @GetMapping("/{id}")
-//    public Reserva getReserva(@PathVariable int id) {
-//        // Obtener la reserva de la base de datos, usando un servicio o repositorio de Reserva
-//        Reserva reserva = new Reserva(); // Suponiendo que has obtenido la reserva
-//        reservaService.associateUsuario(reserva);
-//        reservaService.associateEspacio(reserva);
-//        return reserva;
-//    }
     private static final Logger logger = LoggerFactory.getLogger(UsuarioService.class);
     @PostMapping("/addReserva")
     public ResponseEntity<Integer> addReserva(@RequestParam("usuario_id") Integer usuarioId,
@@ -78,7 +69,7 @@ public class ReservaController {
     @GetMapping("/usuario/{idUsuario}")
     public List<Reserva> getReservasPorUsuario(@PathVariable int idUsuario) {
         List<Reserva> reservas = iReservaService.getReservas();
-        return reservas.stream().filter(reserva -> reserva.getUsuario().getIdUsuario() == idUsuario).collect(Collectors.toList());
+        return reservas.stream().filter(reserva -> reserva.getUsuarioId() == idUsuario).collect(Collectors.toList());
     }
 
 }
