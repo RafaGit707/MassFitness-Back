@@ -63,9 +63,9 @@ public class AccesoBD {
                     "espacio_id INTEGER," +
                     "tipo_reserva TEXT," +
                     "horario_reserva TIMESTAMP WITH TIME ZONE," +
-                    "estado_reserva TEXT)";
-//                    "FOREIGN KEY (usuario_id) REFERENCES usuarios(id_usuario)," +
-//                    "FOREIGN KEY (espacio_id) REFERENCES espacios(id_espacio))";
+                    "estado_reserva TEXT,"+
+                    "FOREIGN KEY (usuario_id) REFERENCES usuarios(id_usuario)," +
+                    "FOREIGN KEY (espacio_id) REFERENCES espacios(id_espacio))";
             connection.createStatement().executeUpdate(createReservasTableSQL);
 
             String createEspaciosTableSQL = "CREATE TABLE IF NOT EXISTS espacios (" +
