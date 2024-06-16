@@ -1,6 +1,7 @@
 package com.example.massfitness.servicios;
 
 import com.example.massfitness.entidades.Espacio;
+import com.example.massfitness.repositories.EspacioRepository;
 import com.example.massfitness.servicios.impl.IEspacioService;
 import com.example.massfitness.util.AccesoBD;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,12 @@ import java.util.List;
 public class EspacioService implements IEspacioService {
 
     private final AccesoBD accesoBD;
+    @Autowired
+    private EspacioRepository espacioRepository;
+
+    public Espacio findById(int id) {
+        return espacioRepository.findById(id).orElse(null);
+    }
     @Autowired
     public EspacioService(AccesoBD accesoBD) {
         this.accesoBD = accesoBD;

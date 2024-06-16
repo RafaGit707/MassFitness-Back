@@ -25,7 +25,7 @@ public class EntrenadorService implements IEntrenadorService {
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
             String insertSQL = "INSERT INTO Entrenadores (nombre_Entrenador, especializacion) VALUES (?, ?)";
             PreparedStatement preparedStatement = connection.prepareStatement(insertSQL);
-            preparedStatement.setString(1, entrenador.getNombre());
+            preparedStatement.setString(1, entrenador.getNombreEntrenador());
             preparedStatement.setString(2, entrenador.getEspecializacion());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -37,7 +37,7 @@ public class EntrenadorService implements IEntrenadorService {
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
             String updateSQL = "UPDATE Entrenadores SET nombre_Entrenador = ?, especializacion = ? WHERE id_Entrenador = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(updateSQL);
-            preparedStatement.setString(1, entrenador.getNombre());
+            preparedStatement.setString(1, entrenador.getNombreEntrenador());
             preparedStatement.setString(2, entrenador.getEspecializacion());
             preparedStatement.setInt(3, entrenador.getIdEntrenador());
             preparedStatement.executeUpdate();

@@ -1,29 +1,25 @@
 package com.example.massfitness.servicios;
 
-import com.example.massfitness.controladores.UsuarioController;
-import com.example.massfitness.entidades.EspacioHorario;
-import com.example.massfitness.entidades.Reserva;
 import com.example.massfitness.servicios.impl.IEspacioHorarioService;
 import com.example.massfitness.util.AccesoBD;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
 import java.sql.*;
-import java.util.List;
 
 @Service
 public class EspacioHorarioService implements IEspacioHorarioService {
 
     private final AccesoBD accesoBD;
-    private int capacidadMaxima;
-    private static final Logger logger = LoggerFactory.getLogger(UsuarioService.class);
+    private static final Logger logger = LoggerFactory.getLogger(EspacioHorarioService.class);
+
     @Autowired
     public EspacioHorarioService(AccesoBD accesoBD) {
         this.accesoBD = accesoBD;
     }
+
     @Override
     public int obtenerCapacidadActual(String salaNombre, Timestamp horarioReserva) {
         String query = "SELECT eh.capacidad_actual FROM espacio_horario eh INNER JOIN espacios e ON eh.espacio_id = e.id_espacio WHERE e.nombre = ? AND eh.horario_reserva = ?";
@@ -33,51 +29,91 @@ public class EspacioHorarioService implements IEspacioHorarioService {
             preparedStatement.setTimestamp(2, horarioReserva);
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            logger.info(salaNombre + "  " + horarioReserva);
+            logger.info("Query executed: {}, Parameters: [salaNombre={}, horarioReserva={}]", query, salaNombre, horarioReserva);
 
             if (resultSet.next()) {
-                return resultSet.getInt("capacidad_actual");
+                int capacidadActual = resultSet.getInt("capacidad_actual");
+                logger.info("Capacidad Actual found: {}", capacidadActual);
+                return capacidadActual;
+            } else {
+                logger.info("No records found for salaNombre={} and horarioReserva={}", salaNombre, horarioReserva);
+                // Insert default record
+                insertDefaultRecord(connection, salaNombre, horarioReserva);
+                return 0;  // Default capacity for new records
             }
         } catch (SQLException e) {
+            logger.error("Error executing query: {}", e.getMessage());
             e.printStackTrace();
         }
         return 0;
     }
     @Override
     public int obtenerCapacidadMaxima(String salaNombre) {
-        obtenerCapacidad(salaNombre);
-
-        logger.info(salaNombre + "  " + capacidadMaxima);
-
         String query = "SELECT capacidad_maxima FROM espacios WHERE nombre = ?";
         try (Connection connection = accesoBD.conectarPostgreSQL();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, salaNombre);
             ResultSet resultSet = preparedStatement.executeQuery();
+
+            logger.info("Query executed: {}, Parameters: [salaNombre={}]", query, salaNombre);
+
             if (resultSet.next()) {
-                return resultSet.getInt("capacidad_maxima");
+                int capacidadMaxima = resultSet.getInt("capacidad_maxima");
+                logger.info("Capacidad Maxima found: {}", capacidadMaxima);
+                return capacidadMaxima;
+            } else {
+                logger.info("No records found for salaNombre={}", salaNombre);
+                // Return default capacity based on salaNombre
+                return getDefaultCapacidadMaxima(salaNombre);
             }
         } catch (SQLException e) {
+            logger.error("Error executing query: {}", e.getMessage());
             e.printStackTrace();
         }
         return 0;
     }
+    private void insertDefaultRecord(Connection connection, String salaNombre, Timestamp horarioReserva) {
+        int espacioId = obtenerCapacidad(salaNombre);
+        int capacidadMaxima = getDefaultCapacidadMaxima(salaNombre);
+
+        String insertQuery = "INSERT INTO espacio_horario (espacio_id, horario_reserva, capacidad_actual) VALUES (?, ?, 0)";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(insertQuery)) {
+            preparedStatement.setInt(1, espacioId);
+            preparedStatement.setTimestamp(2, horarioReserva);
+            preparedStatement.executeUpdate();
+            logger.info("Inserted default record for salaNombre={} and horarioReserva={}", salaNombre, horarioReserva);
+        } catch (SQLException e) {
+            logger.error("Error inserting default record: {}", e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    private int getDefaultCapacidadMaxima(String salaNombre) {
+        switch (salaNombre) {
+            case "Boxeo":
+                return 15;
+            case "Pilates":
+                return 20;
+            case "Sala de Musculación":
+                return 50;
+            case "Sala de Abdominales":
+                return 15;
+            case "Yoga":
+                return 20;
+            default:
+                return 0;
+        }
+    }
     private int obtenerCapacidad(String tipoReserva) {
         switch (tipoReserva) {
             case "Boxeo":
-                capacidadMaxima = 15;
                 return 1;
             case "Pilates":
-                capacidadMaxima = 20;
                 return 2;
-            case "Sala de Musculación":
-                capacidadMaxima = 50;
+            case "Musculación":
                 return 3;
-            case "Sala de Abdominales":
-                capacidadMaxima = 15;
+            case "Abdominales":
                 return 4;
             case "Yoga":
-                capacidadMaxima = 20;
                 return 5;
             default:
                 return 0;

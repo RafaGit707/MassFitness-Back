@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "espacios")
@@ -18,15 +19,15 @@ public class Espacio {
     @ManyToOne
     @JoinColumn(name = "entrenador_id")
     private Entrenador entrenador;
-    @OneToMany(mappedBy = "espacio", cascade = CascadeType.ALL)
-    private List<Reserva> reservas;
+    @OneToMany(mappedBy = "espacio", fetch = FetchType.LAZY)
+    private Set<Reserva> reservas;
     public Espacio() {}
 
     public Espacio(int idEspacio) {
         this.idEspacio = idEspacio;
     }
 
-    public Espacio(int idEspacio, String nombre, int capacidadMaxima, Entrenador entrenador, List<Reserva> reservas) {
+    public Espacio(int idEspacio, String nombre, int capacidadMaxima, Entrenador entrenador, Set<Reserva> reservas) {
         this.idEspacio = idEspacio;
         this.nombre = nombre;
         this.capacidadMaxima = capacidadMaxima;
@@ -78,11 +79,11 @@ public class Espacio {
         this.entrenador = entrenador;
     }
 
-    public List<Reserva> getReservas() {
+    public Set<Reserva> getReservas() {
         return reservas;
     }
 
-    public void setReservas(List<Reserva> reservas) {
+    public void setReservas(Set<Reserva> reservas) {
         this.reservas = reservas;
     }
 }

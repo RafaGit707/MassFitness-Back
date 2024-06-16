@@ -1,5 +1,6 @@
 package com.example.massfitness.entidades;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 @Entity
@@ -9,8 +10,8 @@ public class Logro {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idLogro;
-
-    private String nombre;
+    @JsonProperty("nombre_logro")
+    private String nombreLogro;
     private String descripcion;
     private int requisitosPuntos;
     private String recompensa;
@@ -18,9 +19,9 @@ public class Logro {
     public Logro() {
     }
 
-    public Logro(int idLogro, String nombre, String descripcion, int requisitosPuntos, String recompensa) {
+    public Logro(int idLogro, String nombreLogro, String descripcion, int requisitosPuntos, String recompensa) {
         this.idLogro = idLogro;
-        this.nombre = nombre;
+        this.nombreLogro = nombreLogro;
         this.descripcion = descripcion;
         this.requisitosPuntos = requisitosPuntos;
         this.recompensa = recompensa;
@@ -34,12 +35,12 @@ public class Logro {
         this.idLogro = idLogro;
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getNombreLogro() {
+        return nombreLogro;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setNombreLogro(String nombreLogro) {
+        this.nombreLogro = nombreLogro;
     }
 
     public String getDescripcion() {

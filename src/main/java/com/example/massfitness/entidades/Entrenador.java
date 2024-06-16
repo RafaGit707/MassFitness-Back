@@ -1,5 +1,6 @@
 package com.example.massfitness.entidades;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -11,7 +12,8 @@ public class Entrenador {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idEntrenador;
-    private String nombre;
+    @JsonProperty("nombre_entrenador")
+    private String nombreEntrenador;
     private String especializacion;
     @OneToMany(mappedBy = "entrenador", cascade = CascadeType.ALL)
     private List<Espacio> espacios;
@@ -19,9 +21,9 @@ public class Entrenador {
     public Entrenador() {
     }
 
-    public Entrenador(int idEntrenador, String nombre, String especializacion) {
+    public Entrenador(int idEntrenador, String nombreEntrenador, String especializacion) {
         this.idEntrenador = idEntrenador;
-        this.nombre = nombre;
+        this.nombreEntrenador = nombreEntrenador;
         this.especializacion = especializacion;
     }
 
@@ -37,12 +39,12 @@ public class Entrenador {
         this.idEntrenador = idEntrenador;
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getNombreEntrenador() {
+        return nombreEntrenador;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setNombreEntrenador(String nombreEntrenador) {
+        this.nombreEntrenador = nombreEntrenador;
     }
 
     public String getEspecializacion() {

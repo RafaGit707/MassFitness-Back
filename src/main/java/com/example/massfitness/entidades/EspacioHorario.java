@@ -11,8 +11,11 @@ public class EspacioHorario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idEspacioHorario;
-    @ManyToOne
-    @JoinColumn(name = "espacio_id")
+    @Column(name = "espacio_id")
+    @JsonProperty("espacio_id")
+    private int espacioId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "espacio_id", referencedColumnName = "idEspacio", insertable = false, updatable = false)
     private Espacio espacio;
     @JsonProperty("horario_reserva")
     @Column(name = "horario_reserva", columnDefinition = "TIMESTAMP WITH TIME ZONE")
@@ -23,9 +26,9 @@ public class EspacioHorario {
     public EspacioHorario() {
 
     }
-    public EspacioHorario(int idEspacioHorario, Espacio espacio, Timestamp horarioReserva, int capacidadActual) {
+    public EspacioHorario(int idEspacioHorario, int espacioId, Timestamp horarioReserva, int capacidadActual) {
         this.idEspacioHorario = idEspacioHorario;
-        this.espacio = espacio;
+        this.espacioId = espacioId;
         this.horarioReserva = horarioReserva;
         this.capacidadActual = capacidadActual;
     }
@@ -44,6 +47,14 @@ public class EspacioHorario {
 
     public void setEspacio(Espacio espacio) {
         this.espacio = espacio;
+    }
+
+    public int getEspacioId() {
+        return espacioId;
+    }
+
+    public void setEspacioId(int espacioId) {
+        this.espacioId = espacioId;
     }
 
     public Timestamp getHorarioReserva() {

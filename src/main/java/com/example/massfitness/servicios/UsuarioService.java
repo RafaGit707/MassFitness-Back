@@ -1,5 +1,6 @@
 package com.example.massfitness.servicios;
 
+import com.example.massfitness.repositories.UsuarioRepository;
 import com.example.massfitness.entidades.DatosPersonales;
 import com.example.massfitness.entidades.Usuario;
 import com.example.massfitness.servicios.impl.IUsuarioService;
@@ -11,12 +12,19 @@ import org.springframework.stereotype.Service;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 @Service
 public class UsuarioService implements IUsuarioService {
     private final AccesoBD accesoBD;
     private static final Logger logger = LoggerFactory.getLogger(UsuarioService.class);
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    public Usuario findById(int id) {
+        return usuarioRepository.findById(id).orElse(null);
+    }
     @Autowired
     public UsuarioService(AccesoBD accesoBD) {
         this.accesoBD = accesoBD;
@@ -80,7 +88,7 @@ public class UsuarioService implements IUsuarioService {
                 int progresoFitness = resultSet.getInt("progreso_fitness");
                 int cantidadPuntos = resultSet.getInt("cantidad_puntos");
 
-                Usuario usuario = new Usuario(id, nombre, correo_electronico, contrasena, new DatosPersonales(datos_personales_id), progresoFitness, cantidadPuntos, null);
+                Usuario usuario = new Usuario(id, nombre, correo_electronico, contrasena, progresoFitness, cantidadPuntos, new DatosPersonales(datos_personales_id), new HashSet<>(), new ArrayList<>());
                 usuarios.add(usuario);
             }
         } catch (SQLException e) {
@@ -132,8 +140,7 @@ public class UsuarioService implements IUsuarioService {
                 int datos_personales_id = resultSet.getInt("datos_personales_id");
                 int progresoFitness = resultSet.getInt("progreso_fitness");
                 int cantidadPuntos = resultSet.getInt("cantidad_puntos");
-                usuario = new Usuario(idUsuario, nombre, correo_electronico, contrasena, new DatosPersonales(datos_personales_id), progresoFitness, cantidadPuntos, null);
-            }
+                usuario = new Usuario(nombre, correo_electronico, contrasena, progresoFitness, cantidadPuntos, new DatosPersonales(datos_personales_id), new HashSet<>(), new ArrayList<>());            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -154,8 +161,7 @@ public class UsuarioService implements IUsuarioService {
                 int datos_personales_id = resultSet.getInt("datos_personales_id");
                 int progresoFitness = resultSet.getInt("progreso_fitness");
                 int cantidadPuntos = resultSet.getInt("cantidad_puntos");
-                usuario = new Usuario(idUsuario, nombre, correo_electronico, contrasena, new DatosPersonales(datos_personales_id), progresoFitness, cantidadPuntos, null);
-            }
+                usuario = new Usuario(idUsuario, nombre, correo_electronico, contrasena, progresoFitness, cantidadPuntos, new DatosPersonales(datos_personales_id), new HashSet<>(), new ArrayList<>());            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

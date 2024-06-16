@@ -3,7 +3,10 @@ package com.example.massfitness.entidades;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "usuarios")
@@ -21,8 +24,8 @@ public class Usuario {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "datos_personales_id")
     private DatosPersonales datos_personales;
-    @OneToMany(mappedBy = "usuario")
-    private List<Reserva> reservas;
+    @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY)
+    private Set<Reserva> reservas;
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "usuario_logro",
             joinColumns = @JoinColumn(name = "usuario_id"),
@@ -32,25 +35,27 @@ public class Usuario {
     public Usuario() {
     }
 
-    public Usuario(String nombre, String correo_electronico, String contrasena, DatosPersonales datos_personales, int progresoFitness, int cantidadPuntos, List<Logro> logrosConseguidos) {
+    public Usuario(String nombre, String correo_electronico, String contrasena, int progresoFitness, int cantidadPuntos, DatosPersonales datos_personales, Set<Reserva> reservas, List<Logro> logrosConseguidos) {
         this.nombre = nombre;
         this.correo_electronico = correo_electronico;
         this.contrasena = contrasena;
-        this.datos_personales = datos_personales;
         this.progresoFitness = progresoFitness;
         this.cantidadPuntos = cantidadPuntos;
+        this.datos_personales = datos_personales;
+        this.reservas = reservas;
         this.logrosConseguidos = logrosConseguidos;
     }
 
-    public Usuario(int idUsuario, String nombre, String correo_electronico, String contrasena, DatosPersonales datos_personales, int progresoFitness, int cantidadPuntos, List<Logro> logrosConseguidos) {
+    public Usuario(int idUsuario, String nombre, String correo_electronico, String contrasena, int progresoFitness, int cantidadPuntos, DatosPersonales datos_personales, Set<Reserva> reservas, List<Logro> logrosConseguidos) {
         this.idUsuario = idUsuario;
         this.nombre = nombre;
         this.correo_electronico = correo_electronico;
         this.contrasena = contrasena;
-        this.datos_personales = datos_personales;
         this.progresoFitness = progresoFitness;
         this.cantidadPuntos = cantidadPuntos;
-        this.logrosConseguidos = logrosConseguidos;
+        this.datos_personales = datos_personales;
+        this.reservas = new HashSet<>();
+        this.logrosConseguidos = new ArrayList<>();
     }
 
     public Usuario(int idUsuario) {
@@ -129,11 +134,11 @@ public class Usuario {
         this.datos_personales = datos_personales;
     }
 
-    public List<Reserva> getReservas() {
+    public Set<Reserva> getReservas() {
         return reservas;
     }
 
-    public void setReservas(List<Reserva> reservas) {
+    public void setReservas(Set<Reserva> reservas) {
         this.reservas = reservas;
     }
 }

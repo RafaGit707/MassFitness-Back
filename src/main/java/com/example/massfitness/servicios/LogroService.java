@@ -25,7 +25,7 @@ public class LogroService implements ILogroService {
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
             String insertSQL = "INSERT INTO Logros (nombre_Logro, descripcion, requisitos_Puntos, recompensa) VALUES (?, ?, ?, ?)";
             PreparedStatement preparedStatement = connection.prepareStatement(insertSQL);
-            preparedStatement.setString(1, logro.getNombre());
+            preparedStatement.setString(1, logro.getNombreLogro());
             preparedStatement.setString(2, logro.getDescripcion());
             preparedStatement.setInt(3, logro.getRequisitosPuntos());
             preparedStatement.setString(4, logro.getRecompensa());
@@ -39,7 +39,7 @@ public class LogroService implements ILogroService {
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
             String updateSQL = "UPDATE Logros SET nombre_Logro = ?, descripcion = ?, requisitos_Puntos = ?, recompensa = ? WHERE id_Logro = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(updateSQL);
-            preparedStatement.setString(1, logro.getNombre());
+            preparedStatement.setString(1, logro.getNombreLogro());
             preparedStatement.setString(2, logro.getDescripcion());
             preparedStatement.setInt(3, logro.getRequisitosPuntos());
             preparedStatement.setString(4, logro.getRecompensa());
