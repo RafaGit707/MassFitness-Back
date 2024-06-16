@@ -109,9 +109,9 @@ public class EspacioHorarioService implements IEspacioHorarioService {
                 return 1;
             case "Pilates":
                 return 2;
-            case "Musculación":
+            case "Sala de Musculación":
                 return 3;
-            case "Abdominales":
+            case "Sala de Abdominales":
                 return 4;
             case "Yoga":
                 return 5;
