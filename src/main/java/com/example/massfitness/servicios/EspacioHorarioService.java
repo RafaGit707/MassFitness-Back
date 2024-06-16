@@ -76,6 +76,10 @@ public class EspacioHorarioService implements IEspacioHorarioService {
         int espacioId = obtenerCapacidad(salaNombre);
         int capacidadMaxima = getDefaultCapacidadMaxima(salaNombre);
 
+        if (espacioId <= 0) {
+            throw new IllegalArgumentException("El espacio con el nombre " + salaNombre + " no existe.");
+        }
+
         String insertQuery = "INSERT INTO espacio_horario (espacio_id, horario_reserva, capacidad_actual) VALUES (?, ?, 0)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(insertQuery)) {
             preparedStatement.setInt(1, espacioId);
