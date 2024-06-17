@@ -13,6 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.*;
+import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -45,7 +49,7 @@ public class ReservaService implements IReservaService {
                 String tipoReserva = resultSet.getString("tipo_reserva");
                 Timestamp horarioReserva = resultSet.getTimestamp("horario_reserva");
                 String estadoReserva = resultSet.getString("estado_reserva");
-                logger.info("Añadiendo reserva: Horario = {}", horarioReserva);
+                logger.info("Horario enviado: Horario = {}", horarioReserva);
                 Reserva reserva = new Reserva(idReserva, idUsuario, idEspacio, tipoReserva, horarioReserva, estadoReserva);
                 reservas.add(reserva);
             }
@@ -54,7 +58,6 @@ public class ReservaService implements IReservaService {
         }
         return reservas;
     }
-
     @Override
     public int addReserva(Integer usuarioId, Integer espacioId, String tipoReserva, Timestamp horarioReserva, String estadoReserva) {
         Optional<Usuario> usuario = usuarioRepository.findById(usuarioId);
