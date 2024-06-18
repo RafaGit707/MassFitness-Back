@@ -61,7 +61,7 @@ public class ReservaController {
         reserva.setIdReserva(id);
         iReservaService.actualizarReserva(reserva);
     }
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/eliminar/{id}")
     public void eliminarReserva(@PathVariable int id) {
         iReservaService.eliminarReserva(id);
     }

@@ -13,10 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.*;
-import java.text.SimpleDateFormat;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -144,6 +140,7 @@ public class ReservaService implements IReservaService {
             throw new IllegalArgumentException("Usuario o Espacio no encontrado");
         }
     }
+    @Override
     public void actualizarReserva(Reserva reserva) {
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
             String updateSQL = "UPDATE reservas SET usuario_id = ?, espacio_id = ?, tipo_reserva = ?, horario_reserva = ?, estado_reserva = ? WHERE id_reserva = ?";
@@ -159,7 +156,7 @@ public class ReservaService implements IReservaService {
             e.printStackTrace();
         }
     }
-
+    @Override
     public void eliminarReserva(int idReserva) {
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
             String deleteSQL = "DELETE FROM reservas WHERE id_reserva = ?";
@@ -170,7 +167,7 @@ public class ReservaService implements IReservaService {
             e.printStackTrace();
         }
     }
-
+    @Override
     public Reserva buscarReservaPorId(int idReserva) {
         Reserva reserva = null;
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
