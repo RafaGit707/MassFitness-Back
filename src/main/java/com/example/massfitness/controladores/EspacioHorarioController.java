@@ -37,7 +37,6 @@ public class EspacioHorarioController {
             response.put("capacidad_maxima", capacidadMaxima);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            logger.error("Error al obtener capacidad", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
