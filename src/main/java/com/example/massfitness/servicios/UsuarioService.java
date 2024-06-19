@@ -99,52 +99,45 @@ public class UsuarioService implements IUsuarioService {
     @Override
     public void actualizarUsuario(Usuario usuario) {
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
-            // Iniciar una transacción
             connection.setAutoCommit(false);
 
-            // Actualizar datos en la tabla Usuarios
-            String updateUsuariosSQL = "UPDATE Usuarios SET nombre = ?, correo_electronico = ?, contrasena = ?, progreso_fitness = ?, cantidad_puntos = ? WHERE id_usuario = ?";
-            PreparedStatement preparedStatementUsuarios = connection.prepareStatement(updateUsuariosSQL);
-            preparedStatementUsuarios.setString(1, usuario.getNombre());
-            preparedStatementUsuarios.setString(2, usuario.getCorreo_electronico());
-            preparedStatementUsuarios.setString(3, usuario.getContrasena());
-            preparedStatementUsuarios.setInt(4, usuario.getProgresoFitness());
-            preparedStatementUsuarios.setInt(5, usuario.getCantidadPuntos());
-            preparedStatementUsuarios.setInt(6, usuario.getIdUsuario());
-            preparedStatementUsuarios.executeUpdate();
+            String selectDatosPersonalesSQL = "SELECT datos_personales_id FROM Usuarios WHERE id_usuario = ?";
+            int datosPersonalesId = 0;
+            try (PreparedStatement preparedStatement = connection.prepareStatement(selectDatosPersonalesSQL)) {
+                preparedStatement.setInt(1, usuario.getIdUsuario());
+                ResultSet resultSet = preparedStatement.executeQuery();
+                if (resultSet.next()) {
+                    datosPersonalesId = resultSet.getInt("datos_personales_id");
+                } else {
+                    throw new SQLException("No se encontró el usuario con ID: " + usuario.getIdUsuario());
+                }
+            }
 
-            // Actualizar datos en la tabla datos_personales
             String updateDatosPersonalesSQL = "UPDATE datos_personales SET edad = ?, genero = ? WHERE id_datos_personales = ?";
-            PreparedStatement preparedStatementDatosPersonales = connection.prepareStatement(updateDatosPersonalesSQL);
-            preparedStatementDatosPersonales.setInt(1, usuario.getDatosPersonales().getEdad());
-            preparedStatementDatosPersonales.setString(2, usuario.getDatosPersonales().getGenero());
-            preparedStatementDatosPersonales.setInt(3, usuario.getDatosPersonales().getIdDatosPersonales());
-            preparedStatementDatosPersonales.executeUpdate();
+            try (PreparedStatement preparedStatement = connection.prepareStatement(updateDatosPersonalesSQL)) {
+                preparedStatement.setInt(1, 18);
+                preparedStatement.setString(2, "");
+                preparedStatement.setInt(3, datosPersonalesId);
+                preparedStatement.executeUpdate();
+            }
 
-            // Commit la transacción
+            String updateUsuariosSQL = "UPDATE Usuarios SET nombre = ?, correo_electronico = ?, contrasena = ?, progreso_fitness = ?, cantidad_puntos = ? WHERE id_usuario = ?";
+            try (PreparedStatement preparedStatementUsuarios = connection.prepareStatement(updateUsuariosSQL)) {
+                preparedStatementUsuarios.setString(1, usuario.getNombre());
+                preparedStatementUsuarios.setString(2, usuario.getCorreo_electronico());
+                preparedStatementUsuarios.setString(3, usuario.getContrasena());
+                preparedStatementUsuarios.setInt(4, 1);
+                preparedStatementUsuarios.setInt(5, 1);
+                preparedStatementUsuarios.setInt(6, usuario.getIdUsuario());
+                preparedStatementUsuarios.executeUpdate();
+            }
+
             connection.commit();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-//    @Override
-//    public void actualizarUsuario(Usuario usuario) {
-//        try (Connection connection = accesoBD.conectarPostgreSQL()) {
-//            String updateSQL = "UPDATE Usuarios SET nombre = ?, correo_electronico = ?, contrasena = ?, edad = ?, genero = ?, progreso_fitness = ?, cantidad_puntos = ? WHERE id_usuario = ?";
-//            PreparedStatement preparedStatement = connection.prepareStatement(updateSQL);
-//            preparedStatement.setString(1, usuario.getNombre());
-//            preparedStatement.setString(2, usuario.getCorreo_electronico());
-//            preparedStatement.setString(3, usuario.getContrasena());
-//            preparedStatement.setInt(4, usuario.getDatosPersonales().getEdad());
-//            preparedStatement.setString(5, usuario.getDatosPersonales().getGenero());
-//            preparedStatement.setInt(6, usuario.getProgresoFitness());
-//            preparedStatement.setInt(7, usuario.getCantidadPuntos());
-//            preparedStatement.setInt(8, usuario.getIdUsuario());
-//            preparedStatement.executeUpdate();
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//    }
+
     @Override
     public void eliminarUsuario(int idUsuario) {
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
@@ -160,6 +153,13 @@ public class UsuarioService implements IUsuarioService {
                 } else {
                     throw new SQLException("No se encontró el usuario con ID: " + idUsuario);
                 }
+            }
+
+            // Eliminar reservas asociadas al usuario
+            String deleteReservasSQL = "DELETE FROM Reservas WHERE usuario_id = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(deleteReservasSQL)) {
+                preparedStatement.setInt(1, idUsuario);
+                preparedStatement.executeUpdate();
             }
 
             String deleteUsuarioSQL = "DELETE FROM Usuarios WHERE id_usuario = ?";

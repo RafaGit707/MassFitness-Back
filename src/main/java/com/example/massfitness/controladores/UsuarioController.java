@@ -1,5 +1,6 @@
 package com.example.massfitness.controladores;
 
+import com.example.massfitness.entidades.DatosPersonales;
 import com.example.massfitness.entidades.Usuario;
 import com.example.massfitness.servicios.impl.IUsuarioService;
 import org.slf4j.Logger;

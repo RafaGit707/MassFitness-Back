@@ -15,9 +15,12 @@ public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idUsuario;
+    @JsonProperty("nombre")
+    @Column(name = "nombre")
     private String nombre;
     @JsonProperty("correo_electronico")
     private String correo_electronico;
+    @JsonProperty("contrasena")
     private String contrasena;
     private int progresoFitness;
     private int cantidadPuntos;
