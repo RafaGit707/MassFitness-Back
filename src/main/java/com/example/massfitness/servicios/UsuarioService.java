@@ -99,32 +99,88 @@ public class UsuarioService implements IUsuarioService {
     @Override
     public void actualizarUsuario(Usuario usuario) {
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
-            String updateSQL = "UPDATE Usuarios SET nombre = ?, correo_electronico = ?, contrasena = ?, edad = ?, genero = ?, progreso_fitness = ?, cantidad_puntos = ? WHERE id_usuario = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(updateSQL);
-            preparedStatement.setString(1, usuario.getNombre());
-            preparedStatement.setString(2, usuario.getCorreo_electronico());
-            preparedStatement.setString(3, usuario.getContrasena());
-            preparedStatement.setInt(4, usuario.getDatosPersonales().getEdad());
-            preparedStatement.setString(5, usuario.getDatosPersonales().getGenero());
-            preparedStatement.setInt(6, usuario.getProgresoFitness());
-            preparedStatement.setInt(7, usuario.getCantidadPuntos());
-            preparedStatement.setInt(8, usuario.getIdUsuario());
-            preparedStatement.executeUpdate();
+            // Iniciar una transacción
+            connection.setAutoCommit(false);
+
+            // Actualizar datos en la tabla Usuarios
+            String updateUsuariosSQL = "UPDATE Usuarios SET nombre = ?, correo_electronico = ?, contrasena = ?, progreso_fitness = ?, cantidad_puntos = ? WHERE id_usuario = ?";
+            PreparedStatement preparedStatementUsuarios = connection.prepareStatement(updateUsuariosSQL);
+            preparedStatementUsuarios.setString(1, usuario.getNombre());
+            preparedStatementUsuarios.setString(2, usuario.getCorreo_electronico());
+            preparedStatementUsuarios.setString(3, usuario.getContrasena());
+            preparedStatementUsuarios.setInt(4, usuario.getProgresoFitness());
+            preparedStatementUsuarios.setInt(5, usuario.getCantidadPuntos());
+            preparedStatementUsuarios.setInt(6, usuario.getIdUsuario());
+            preparedStatementUsuarios.executeUpdate();
+
+            // Actualizar datos en la tabla datos_personales
+            String updateDatosPersonalesSQL = "UPDATE datos_personales SET edad = ?, genero = ? WHERE id_datos_personales = ?";
+            PreparedStatement preparedStatementDatosPersonales = connection.prepareStatement(updateDatosPersonalesSQL);
+            preparedStatementDatosPersonales.setInt(1, usuario.getDatosPersonales().getEdad());
+            preparedStatementDatosPersonales.setString(2, usuario.getDatosPersonales().getGenero());
+            preparedStatementDatosPersonales.setInt(3, usuario.getDatosPersonales().getIdDatosPersonales());
+            preparedStatementDatosPersonales.executeUpdate();
+
+            // Commit la transacción
+            connection.commit();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+//    @Override
+//    public void actualizarUsuario(Usuario usuario) {
+//        try (Connection connection = accesoBD.conectarPostgreSQL()) {
+//            String updateSQL = "UPDATE Usuarios SET nombre = ?, correo_electronico = ?, contrasena = ?, edad = ?, genero = ?, progreso_fitness = ?, cantidad_puntos = ? WHERE id_usuario = ?";
+//            PreparedStatement preparedStatement = connection.prepareStatement(updateSQL);
+//            preparedStatement.setString(1, usuario.getNombre());
+//            preparedStatement.setString(2, usuario.getCorreo_electronico());
+//            preparedStatement.setString(3, usuario.getContrasena());
+//            preparedStatement.setInt(4, usuario.getDatosPersonales().getEdad());
+//            preparedStatement.setString(5, usuario.getDatosPersonales().getGenero());
+//            preparedStatement.setInt(6, usuario.getProgresoFitness());
+//            preparedStatement.setInt(7, usuario.getCantidadPuntos());
+//            preparedStatement.setInt(8, usuario.getIdUsuario());
+//            preparedStatement.executeUpdate();
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//    }
     @Override
     public void eliminarUsuario(int idUsuario) {
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
-            String deleteSQL = "DELETE FROM Usuarios WHERE id_usuario = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(deleteSQL);
-            preparedStatement.setInt(1, idUsuario);
-            preparedStatement.executeUpdate();
+            connection.setAutoCommit(false);
+
+            String selectDatosPersonalesSQL = "SELECT datos_personales_id FROM Usuarios WHERE id_usuario = ?";
+            int datosPersonalesId = 0;
+            try (PreparedStatement preparedStatement = connection.prepareStatement(selectDatosPersonalesSQL)) {
+                preparedStatement.setInt(1, idUsuario);
+                ResultSet resultSet = preparedStatement.executeQuery();
+                if (resultSet.next()) {
+                    datosPersonalesId = resultSet.getInt("datos_personales_id");
+                } else {
+                    throw new SQLException("No se encontró el usuario con ID: " + idUsuario);
+                }
+            }
+
+            String deleteUsuarioSQL = "DELETE FROM Usuarios WHERE id_usuario = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(deleteUsuarioSQL)) {
+                preparedStatement.setInt(1, idUsuario);
+                preparedStatement.executeUpdate();
+            }
+
+            String deleteDatosPersonalesSQL = "DELETE FROM datos_personales WHERE id_datos_personales = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(deleteDatosPersonalesSQL)) {
+                preparedStatement.setInt(1, datosPersonalesId);
+                preparedStatement.executeUpdate();
+            }
+
+            connection.commit();
         } catch (SQLException e) {
             e.printStackTrace();
+            throw new RuntimeException("Error al eliminar usuario", e);
         }
     }
+
     @Override
     public Usuario buscarUsuarioPorId(int idUsuario) {
         Usuario usuario = null;

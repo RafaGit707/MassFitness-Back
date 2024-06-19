@@ -26,13 +26,11 @@ public class UsuarioController {
         List<Usuario> usuarios = iUsuarioService.getUsuarios();
         return new ResponseEntity<>(usuarios, HttpStatus.OK);
     }
-
     @PostMapping("/addUsuario")
     public ResponseEntity<Integer> agregarUsuario(@RequestBody Usuario usuario) {
         int idCreado = iUsuarioService.addUsuario(usuario);
         return new ResponseEntity<>(idCreado, HttpStatus.CREATED);
     }
-
     @GetMapping("/{id}")
     public ResponseEntity<Usuario> obtenerUsuarioPorId(@PathVariable int id) {
         Usuario usuario = iUsuarioService.buscarUsuarioPorId(id);
@@ -42,8 +40,7 @@ public class UsuarioController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-
-    @PutMapping("/{id}")
+    @PutMapping("/actualizar/{id}")
     public ResponseEntity<Void> actualizarUsuario(@PathVariable int id, @RequestBody Usuario usuario) {
         if (usuario.getIdUsuario() == id) {
             iUsuarioService.actualizarUsuario(usuario);
@@ -52,13 +49,11 @@ public class UsuarioController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/eliminar/{id}")
     public ResponseEntity<Void> eliminarUsuario(@PathVariable int id) {
         iUsuarioService.eliminarUsuario(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
     @GetMapping("/correo/{correo_electronico}")
     public ResponseEntity<Usuario> obtenerUsuarioPorCorreo(@PathVariable String correo_electronico) {
         Usuario usuario = iUsuarioService.buscarUsuarioPorCorreo(correo_electronico);
@@ -68,31 +63,26 @@ public class UsuarioController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-
     @GetMapping("/existe")
     public ResponseEntity<Boolean> usuarioExiste(@RequestParam String correo_electronico, @RequestParam String contrasena) {
         boolean existe = iUsuarioService.usuarioExiste(correo_electronico, contrasena);
         return new ResponseEntity<>(existe, HttpStatus.OK);
     }
-
     @GetMapping("/{id}/progreso-fitness")
     public ResponseEntity<Integer> getProgresoFitnessUsuario(@PathVariable int id) {
         int progreso = iUsuarioService.getProgresoFitnessUsuario(id);
         return new ResponseEntity<>(progreso, HttpStatus.OK);
     }
-
     @PutMapping("/{id}/progreso-fitness")
     public ResponseEntity<Void> actualizarProgresoFitnessUsuario(@PathVariable int id, @RequestParam int nuevoProgresoFitness) {
         iUsuarioService.actualizarProgresoFitnessUsuario(id, nuevoProgresoFitness);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
     @GetMapping("/{id}/cantidad-puntos")
     public ResponseEntity<Integer> getCantidadPuntosUsuario(@PathVariable int id) {
         int puntos = iUsuarioService.getCantidadPuntosUsuario(id);
         return new ResponseEntity<>(puntos, HttpStatus.OK);
     }
-
     @PutMapping("/{id}/cantidad-puntos")
     public ResponseEntity<Void> actualizarCantidadPuntosUsuario(@PathVariable int id, @RequestParam int nuevaCantidadPuntos) {
         iUsuarioService.actualizarCantidadPuntosUsuario(id, nuevaCantidadPuntos);
