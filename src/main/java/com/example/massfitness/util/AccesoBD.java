@@ -98,6 +98,36 @@ public class AccesoBD {
                     "recompensa TEXT)";
             connection.createStatement().executeUpdate(createLogrosTableSQL);
 
+            ResultSet rs = connection.createStatement().executeQuery("SELECT COUNT(*) FROM entrenadores");
+            rs.next();
+            int countEntrenadores = rs.getInt(1);
+            rs.close();
+
+            if (countEntrenadores == 0) {
+                String insertEntrenadoresSQL = "INSERT INTO entrenadores (id_entrenador, nombre_entrenador, especializacion) " +
+                        "VALUES (1, 'Maikel', 'Boxeo'), " +
+                        "(2, 'Laura', 'Pilates'), " +
+                        "(3, 'Laura', 'Yoga'), " +
+                        "(4, 'John', 'Sala de Musculación'), " +
+                        "(5, 'Jose', 'Sala de Abdominales')";
+                connection.createStatement().executeUpdate(insertEntrenadoresSQL);
+            }
+
+            rs = connection.createStatement().executeQuery("SELECT COUNT(*) FROM espacios");
+            rs.next();
+            int countEspacios = rs.getInt(1);
+            rs.close();
+
+            if (countEspacios == 0) {
+                String insertEspaciosSQL = "INSERT INTO espacios (id_espacio, capacidad_maxima, nombre, entrenador_id) " +
+                        "VALUES (1, 15, 'Boxeo', 1), " +
+                        "(2, 20, 'Pilates', 2), " +
+                        "(3, 50, 'Sala de Musculación', 4), " +
+                        "(4, 15, 'Sala de Abdominales', 5), " +
+                        "(5, 20, 'Yoga', 3)";
+                connection.createStatement().executeUpdate(insertEspaciosSQL);
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
