@@ -99,7 +99,7 @@ public class ReservaService implements IReservaService {
                     try (PreparedStatement insertEspacioHorarioStmt = connection.prepareStatement(insertEspacioHorarioSQL)) {
                         insertEspacioHorarioStmt.setInt(1, espacioId);
                         insertEspacioHorarioStmt.setTimestamp(2, horarioReserva);
-                        insertEspacioHorarioStmt.setInt(3, 0); // Capacidad actual inicial
+                        insertEspacioHorarioStmt.setInt(3, 0);
                         insertEspacioHorarioStmt.executeUpdate();
                     }
                 } else if (capacidadActual >= capacidadMaxima) {
