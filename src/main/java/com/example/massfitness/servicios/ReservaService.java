@@ -69,7 +69,6 @@ public class ReservaService implements IReservaService {
             try (Connection connection = accesoBD.conectarPostgreSQL()) {
                 connection.setAutoCommit(false);
 
-                // Verificar capacidad máxima
                 int capacidadMaxima;
                 try (PreparedStatement selectMaxCapacityStmt = connection.prepareStatement(selectMaxCapacitySQL)) {
                     selectMaxCapacityStmt.setInt(1, espacioId);
@@ -81,7 +80,6 @@ public class ReservaService implements IReservaService {
                     }
                 }
 
-                // Verificar capacidad actual y agregar espacio_horario si no existe
                 int capacidadActual = 0;
                 boolean espacioHorarioExistente = false;
                 try (PreparedStatement selectCapacityStmt = connection.prepareStatement(selectCapacitySQL)) {
@@ -95,7 +93,6 @@ public class ReservaService implements IReservaService {
                 }
 
                 if (!espacioHorarioExistente) {
-                    // Insertar nuevo registro de espacio_horario
                     try (PreparedStatement insertEspacioHorarioStmt = connection.prepareStatement(insertEspacioHorarioSQL)) {
                         insertEspacioHorarioStmt.setInt(1, espacioId);
                         insertEspacioHorarioStmt.setTimestamp(2, horarioReserva);
@@ -106,7 +103,6 @@ public class ReservaService implements IReservaService {
                     throw new RuntimeException("La capacidad máxima del espacio en ese horario se ha alcanzado.");
                 }
 
-                // Insertar reserva
                 int idReserva;
                 try (PreparedStatement insertStmt = connection.prepareStatement(insertSQL)) {
                     insertStmt.setInt(1, usuarioId);
@@ -122,7 +118,6 @@ public class ReservaService implements IReservaService {
                     }
                 }
 
-                // Actualizar capacidad actual
                 try (PreparedStatement updateCapacityStmt = connection.prepareStatement(updateCapacitySQL)) {
                     updateCapacityStmt.setInt(1, espacioId);
                     updateCapacityStmt.setTimestamp(2, horarioReserva);

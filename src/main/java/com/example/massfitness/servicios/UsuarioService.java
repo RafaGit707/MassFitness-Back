@@ -155,7 +155,6 @@ public class UsuarioService implements IUsuarioService {
                 }
             }
 
-            // Eliminar reservas asociadas al usuario
             String deleteReservasSQL = "DELETE FROM Reservas WHERE usuario_id = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(deleteReservasSQL)) {
                 preparedStatement.setInt(1, idUsuario);

@@ -37,9 +37,8 @@ public class EspacioHorarioService implements IEspacioHorarioService {
                 return capacidadActual;
             } else {
                 logger.info("No records found for salaNombre={} and horarioReserva={}", salaNombre, horarioReserva);
-                // Insert default record
                 insertDefaultRecord(connection, salaNombre, horarioReserva);
-                return 0;  // Default capacity for new records
+                return 0;
             }
         } catch (SQLException e) {
             logger.error("Error executing query: {}", e.getMessage());
@@ -63,7 +62,6 @@ public class EspacioHorarioService implements IEspacioHorarioService {
                 return capacidadMaxima;
             } else {
                 logger.info("No records found for salaNombre={}", salaNombre);
-                // Return default capacity based on salaNombre
                 return getDefaultCapacidadMaxima(salaNombre);
             }
         } catch (SQLException e) {
