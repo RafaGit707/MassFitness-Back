@@ -69,6 +69,10 @@ public class ReservaService implements IReservaService {
             try (Connection connection = accesoBD.conectarPostgreSQL()) {
                 connection.setAutoCommit(false);
 
+                if (existeReserva(usuarioId, espacioId, horarioReserva)) {
+                    return -1;
+                }
+
                 int capacidadMaxima;
                 try (PreparedStatement selectMaxCapacityStmt = connection.prepareStatement(selectMaxCapacitySQL)) {
                     selectMaxCapacityStmt.setInt(1, espacioId);
@@ -134,6 +138,22 @@ public class ReservaService implements IReservaService {
         } else {
             throw new IllegalArgumentException("Usuario o Espacio no encontrado");
         }
+    }
+    public boolean existeReserva(Integer usuarioId, Integer espacioId, Timestamp horarioReserva) {
+        String selectSQL = "SELECT COUNT(*) FROM reservas WHERE usuario_id = ? AND espacio_id = ? AND horario_reserva = ?";
+        try (Connection connection = accesoBD.conectarPostgreSQL()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(selectSQL);
+            preparedStatement.setInt(1, usuarioId);
+            preparedStatement.setInt(2, espacioId);
+            preparedStatement.setTimestamp(3, horarioReserva);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
     @Override
     public void actualizarReserva(Reserva reserva) {
