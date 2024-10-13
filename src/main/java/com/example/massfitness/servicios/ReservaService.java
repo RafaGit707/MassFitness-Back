@@ -171,17 +171,71 @@ public class ReservaService implements IReservaService {
             e.printStackTrace();
         }
     }
-    @Override
     public void eliminarReserva(int idReserva) {
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
+            connection.setAutoCommit(false);
+
+            String selectSQL = "SELECT espacio_id, horario_reserva FROM reservas WHERE id_reserva = ?";
+            Integer espacioId = null;
+            Timestamp horarioReserva = null;
+
+            try (PreparedStatement selectStmt = connection.prepareStatement(selectSQL)) {
+                selectStmt.setInt(1, idReserva);
+                ResultSet rs = selectStmt.executeQuery();
+                if (rs.next()) {
+                    espacioId = rs.getInt("espacio_id");
+                    horarioReserva = rs.getTimestamp("horario_reserva");
+                } else {
+                    logger.warn("No se encontró reserva para eliminar: id_reserva = {}", idReserva);
+                    return;
+                }
+            }
+
             String deleteSQL = "DELETE FROM reservas WHERE id_reserva = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(deleteSQL);
-            preparedStatement.setInt(1, idReserva);
-            preparedStatement.executeUpdate();
+            try (PreparedStatement preparedStatement = connection.prepareStatement(deleteSQL)) {
+                preparedStatement.setInt(1, idReserva);
+                int rowsAffected = preparedStatement.executeUpdate();
+                if (rowsAffected > 0) {
+                    logger.info("Reserva eliminada con éxito: id_reserva = {}", idReserva);
+                } else {
+                    logger.warn("No se encontró reserva para eliminar: id_reserva = {}", idReserva);
+                }
+            }
+
+            String updateCapacitySQL = "UPDATE espacio_horario SET capacidad_actual = capacidad_actual - 1 WHERE espacio_id = ? AND horario_reserva = ?";
+            try (PreparedStatement updateCapacityStmt = connection.prepareStatement(updateCapacitySQL)) {
+                updateCapacityStmt.setInt(1, espacioId);
+                updateCapacityStmt.setTimestamp(2, horarioReserva);
+                updateCapacityStmt.executeUpdate();
+            }
+
+            String checkCapacitySQL = "SELECT capacidad_actual FROM espacio_horario WHERE espacio_id = ? AND horario_reserva = ?";
+            int capacidadActual = 0;
+            try (PreparedStatement checkCapacityStmt = connection.prepareStatement(checkCapacitySQL)) {
+                checkCapacityStmt.setInt(1, espacioId);
+                checkCapacityStmt.setTimestamp(2, horarioReserva);
+                ResultSet rs = checkCapacityStmt.executeQuery();
+                if (rs.next()) {
+                    capacidadActual = rs.getInt("capacidad_actual");
+                }
+            }
+
+            if (capacidadActual <= 0) {
+                String deleteEspacioHorarioSQL = "DELETE FROM espacio_horario WHERE espacio_id = ? AND horario_reserva = ?";
+                try (PreparedStatement deleteEspacioHorarioStmt = connection.prepareStatement(deleteEspacioHorarioSQL)) {
+                    deleteEspacioHorarioStmt.setInt(1, espacioId);
+                    deleteEspacioHorarioStmt.setTimestamp(2, horarioReserva);
+                    deleteEspacioHorarioStmt.executeUpdate();
+                    logger.info("Registro eliminado de espacio_horario para espacio_id = {} y horario_reserva = {}", espacioId, horarioReserva);
+                }
+            }
+
+            connection.commit();
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error al eliminar la reserva: id_reserva = {}, error = {}", idReserva, e.getMessage());
         }
     }
+
     @Override
     public Reserva buscarReservaPorId(int idReserva) {
         Reserva reserva = null;
