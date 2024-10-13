@@ -1,5 +1,6 @@
 package com.example.massfitness.entidades;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
@@ -27,6 +28,7 @@ public class Reserva {
     @JsonProperty("tipo_reserva")
     private String tipoReserva;
     @JsonProperty("horario_reserva")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss.S")
     @Column(name = "horario_reserva", columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private Timestamp horarioReserva;
     @JsonProperty("estado_reserva")
