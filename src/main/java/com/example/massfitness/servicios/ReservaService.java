@@ -1,7 +1,9 @@
 package com.example.massfitness.servicios;
 
+import com.example.massfitness.entidades.Clases;
 import com.example.massfitness.entidades.Espacio;
 import com.example.massfitness.entidades.Usuario;
+import com.example.massfitness.repositories.ClaseRepository;
 import com.example.massfitness.repositories.EspacioRepository;
 import com.example.massfitness.entidades.Reserva;
 import com.example.massfitness.repositories.UsuarioRepository;
@@ -26,6 +28,9 @@ public class ReservaService implements IReservaService {
 
     @Autowired
     private EspacioRepository espacioRepository;
+
+    @Autowired
+    private ClaseRepository claseRepository;
     @Autowired
     public ReservaService(AccesoBD accesoBD) {
         this.accesoBD = accesoBD;
@@ -55,7 +60,7 @@ public class ReservaService implements IReservaService {
         return reservas;
     }
     @Override
-    public int addReserva(Integer usuarioId, Integer espacioId, String tipoReserva, Timestamp horarioReserva, String estadoReserva) {
+    public int addReservaEspacio(Integer usuarioId, Integer espacioId, String tipoReserva, Timestamp horarioReserva, String estadoReserva) {
         Optional<Usuario> usuario = usuarioRepository.findById(usuarioId);
         Optional<Espacio> espacio = espacioRepository.findById(espacioId);
 
@@ -69,7 +74,7 @@ public class ReservaService implements IReservaService {
             try (Connection connection = accesoBD.conectarPostgreSQL()) {
                 connection.setAutoCommit(false);
 
-                if (existeReserva(usuarioId, espacioId, horarioReserva)) {
+                if (existeReservaEspacio(usuarioId, espacioId, horarioReserva)) {
                     return -1;
                 }
 
@@ -139,12 +144,113 @@ public class ReservaService implements IReservaService {
             throw new IllegalArgumentException("Usuario o Espacio no encontrado");
         }
     }
-    public boolean existeReserva(Integer usuarioId, Integer espacioId, Timestamp horarioReserva) {
+    @Override
+    public int addReservaClase(Integer usuarioId, Integer claseId, String tipoReserva, Timestamp horarioReserva, String estadoReserva) {
+        Optional<Usuario> usuario = usuarioRepository.findById(usuarioId);
+        Optional<Clases> clase = claseRepository.findById(claseId);
+
+        String selectCapacitySQL = "SELECT capacidad_actual FROM reserva_clase WHERE clase_id = ? AND horario_reserva = ?";
+        String selectMaxCapacitySQL = "SELECT capacidad_maxima FROM clases WHERE id_espacio = ?";
+        String insertEspacioHorarioSQL = "INSERT INTO reserva_clase (clase_id, horario_reserva, capacidad_actual) VALUES (?, ?, ?)";
+        String updateCapacitySQL = "UPDATE reserva_clase SET capacidad_actual = capacidad_actual + 1 WHERE clase_id = ? AND horario_reserva = ?";
+        String insertSQL = "INSERT INTO reservas (usuario_id, espacio_id, tipo_reserva, horario_reserva, estado_reserva) VALUES (?, ?, ?, ?, ?) RETURNING id_reserva";
+
+        if (usuario.isPresent() && clase.isPresent()) {
+            try (Connection connection = accesoBD.conectarPostgreSQL()) {
+                connection.setAutoCommit(false);
+
+                if (existeReservaClase(usuarioId, claseId, horarioReserva)) {
+                    return -1;
+                }
+
+                int capacidadMaxima;
+                try (PreparedStatement selectMaxCapacityStmt = connection.prepareStatement(selectMaxCapacitySQL)) {
+                    selectMaxCapacityStmt.setInt(1, claseId);
+                    ResultSet rs = selectMaxCapacityStmt.executeQuery();
+                    if (rs.next()) {
+                        capacidadMaxima = rs.getInt("capacidad_maxima");
+                    } else {
+                        throw new SQLException("No se pudo obtener la capacidad máxima de la clase.");
+                    }
+                }
+
+                int capacidadActual = 0;
+                boolean claseReservaExistente = false;
+                try (PreparedStatement selectCapacityStmt = connection.prepareStatement(selectCapacitySQL)) {
+                    selectCapacityStmt.setInt(1, claseId);
+                    selectCapacityStmt.setTimestamp(2, horarioReserva);
+                    ResultSet rs = selectCapacityStmt.executeQuery();
+                    if (rs.next()) {
+                        capacidadActual = rs.getInt("capacidad_actual");
+                        claseReservaExistente = true;
+                    }
+                }
+
+                if (!claseReservaExistente) {
+                    try (PreparedStatement insertReservaClaseStmt = connection.prepareStatement(insertEspacioHorarioSQL)) {
+                        insertReservaClaseStmt.setInt(1, claseId);
+                        insertReservaClaseStmt.setTimestamp(2, horarioReserva);
+                        insertReservaClaseStmt.setInt(3, 0);
+                        insertReservaClaseStmt.executeUpdate();
+                    }
+                } else if (capacidadActual >= capacidadMaxima) {
+                    throw new RuntimeException("La capacidad máxima de la clase en ese horario se ha alcanzado.");
+                }
+
+                int idReserva;
+                try (PreparedStatement insertStmt = connection.prepareStatement(insertSQL)) {
+                    insertStmt.setInt(1, usuarioId);
+                    insertStmt.setInt(2, claseId);
+                    insertStmt.setString(3, tipoReserva);
+                    insertStmt.setTimestamp(4, horarioReserva);
+                    insertStmt.setString(5, estadoReserva);
+                    ResultSet rs = insertStmt.executeQuery();
+                    if (rs.next()) {
+                        idReserva = rs.getInt(1);
+                    } else {
+                        throw new SQLException("No se pudo obtener el ID de la Reserva.");
+                    }
+                }
+
+                try (PreparedStatement updateCapacityStmt = connection.prepareStatement(updateCapacitySQL)) {
+                    updateCapacityStmt.setInt(1, claseId);
+                    updateCapacityStmt.setTimestamp(2, horarioReserva);
+                    updateCapacityStmt.executeUpdate();
+                }
+
+                connection.commit();
+                return idReserva;
+            } catch (SQLException e) {
+                e.printStackTrace();
+                throw new RuntimeException("Error al agregar Reserva", e);
+            }
+
+        } else {
+            throw new IllegalArgumentException("Usuario o Clase no encontrado");
+        }
+    }
+    public boolean existeReservaEspacio(Integer usuarioId, Integer espacioId, Timestamp horarioReserva) {
         String selectSQL = "SELECT COUNT(*) FROM reservas WHERE usuario_id = ? AND espacio_id = ? AND horario_reserva = ?";
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
             PreparedStatement preparedStatement = connection.prepareStatement(selectSQL);
             preparedStatement.setInt(1, usuarioId);
             preparedStatement.setInt(2, espacioId);
+            preparedStatement.setTimestamp(3, horarioReserva);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    public boolean existeReservaClase(Integer usuarioId, Integer claseId, Timestamp horarioReserva) {
+        String selectSQL = "SELECT COUNT(*) FROM reservas WHERE usuario_id = ? AND clase_id = ? AND horario_reserva = ?";
+        try (Connection connection = accesoBD.conectarPostgreSQL()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(selectSQL);
+            preparedStatement.setInt(1, usuarioId);
+            preparedStatement.setInt(2, claseId);
             preparedStatement.setTimestamp(3, horarioReserva);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {

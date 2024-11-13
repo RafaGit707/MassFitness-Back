@@ -91,32 +91,20 @@ public class EspacioHorarioService implements IEspacioHorarioService {
     }
     private int getDefaultCapacidadMaxima(String salaNombre) {
         switch (salaNombre) {
-            case "Boxeo":
-                return 15;
-            case "Pilates":
-                return 20;
             case "Sala de Musculación":
                 return 50;
             case "Sala de Abdominales":
                 return 15;
-            case "Yoga":
-                return 20;
             default:
                 return 0;
         }
     }
     private int obtenerCapacidad(String tipoReserva) {
         switch (tipoReserva) {
-            case "Boxeo":
-                return 1;
-            case "Pilates":
-                return 2;
             case "Sala de Musculación":
                 return 3;
             case "Sala de Abdominales":
                 return 4;
-            case "Yoga":
-                return 5;
             default:
                 return 0;
         }

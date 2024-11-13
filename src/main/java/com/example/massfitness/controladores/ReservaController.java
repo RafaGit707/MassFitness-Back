@@ -43,8 +43,39 @@ public class ReservaController {
 
         logger.info("Añadiendo reserva: Usuario ID = {}, Espacio ID = {}, Tipo = {}, Horario = {}, Estado = {}",
                 usuarioId, espacioId, tipoReserva, horarioReserva, estadoReserva);
-        int idReserva = iReservaService.addReserva(usuarioId, espacioId, tipoReserva, horarioReserva, estadoReserva);
-        return ResponseEntity.ok(idReserva);
+
+        int idReserva;
+        String tipo = obtenerTipoReserva(tipoReserva);
+        try {
+            if ("clase".equalsIgnoreCase(tipo)) {
+                idReserva = iReservaService.addReservaClase(usuarioId, espacioId, tipoReserva, horarioReserva, estadoReserva);
+            } else if ("espacio".equalsIgnoreCase(tipo)) {
+                idReserva = iReservaService.addReservaEspacio(usuarioId, espacioId, tipoReserva, horarioReserva, estadoReserva);
+            } else {
+                logger.error("Tipo de reserva no válido: {}", tipoReserva);
+                return ResponseEntity.badRequest().body(null);
+            }
+            return ResponseEntity.ok(idReserva);
+        } catch (Exception e) {
+            logger.error("Error al crear la reserva: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+    private String obtenerTipoReserva(String tipoReserva) {
+        switch (tipoReserva) {
+            case "Boxeo":
+                return "clase";
+            case "Pilates":
+                return "clase";
+            case "Sala de Musculación":
+                return "espacio";
+            case "Sala de Abdominales":
+                return "espacio";
+            case "Yoga":
+                return "clase";
+            default:
+                return "";
+        }
     }
     @GetMapping
     public ResponseEntity<List<Reserva>> getReservas() {
