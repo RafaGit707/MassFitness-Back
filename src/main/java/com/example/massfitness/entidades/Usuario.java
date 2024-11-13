@@ -34,7 +34,6 @@ public class Usuario {
     public Usuario() {
     }
 
-
     public Usuario(String nombre, String correo_electronico, String contrasena,int cantidadPuntos, DatosPersonales datos_personales, Set<Reserva> reservas, Set<UsuarioLogro> logros) {
         this.nombre = nombre;
         this.correo_electronico = correo_electronico;
