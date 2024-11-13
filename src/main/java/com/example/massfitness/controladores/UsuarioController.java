@@ -69,16 +69,6 @@ public class UsuarioController {
         boolean existe = iUsuarioService.usuarioExiste(correo_electronico, contrasena);
         return new ResponseEntity<>(existe, HttpStatus.OK);
     }
-    @GetMapping("/{id}/progreso-fitness")
-    public ResponseEntity<Integer> getProgresoFitnessUsuario(@PathVariable int id) {
-        int progreso = iUsuarioService.getProgresoFitnessUsuario(id);
-        return new ResponseEntity<>(progreso, HttpStatus.OK);
-    }
-    @PutMapping("/{id}/progreso-fitness")
-    public ResponseEntity<Void> actualizarProgresoFitnessUsuario(@PathVariable int id, @RequestParam int nuevoProgresoFitness) {
-        iUsuarioService.actualizarProgresoFitnessUsuario(id, nuevoProgresoFitness);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
     @GetMapping("/{id}/cantidad-puntos")
     public ResponseEntity<Integer> getCantidadPuntosUsuario(@PathVariable int id) {
         int puntos = iUsuarioService.getCantidadPuntosUsuario(id);

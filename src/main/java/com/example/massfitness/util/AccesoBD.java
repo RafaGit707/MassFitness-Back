@@ -52,7 +52,6 @@ public class AccesoBD {
                     "correo_electronico TEXT NOT NULL," +
                     "contrasena TEXT NOT NULL," +
                     "datos_personales_id INTEGER," +
-                    "progreso_fitness INTEGER DEFAULT 0," +
                     "cantidad_puntos INTEGER DEFAULT 0," +
                     "FOREIGN KEY (datos_personales_id) REFERENCES datos_personales(id_datos_personales))";
             connection.createStatement().executeUpdate(createUsuariosTableSQL);
@@ -62,7 +61,7 @@ public class AccesoBD {
                     "usuario_id INTEGER," +
                     "espacio_id INTEGER," +
                     "tipo_reserva TEXT," +
-                    "horario_reserva TIMESTAMP WITH TIME ZONE," +
+                    "horario_reserva TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP," +
                     "estado_reserva TEXT,"+
                     "FOREIGN KEY (usuario_id) REFERENCES usuarios(id_usuario)," +
                     "FOREIGN KEY (espacio_id) REFERENCES espacios(id_espacio))";
@@ -71,14 +70,23 @@ public class AccesoBD {
             String createEspaciosTableSQL = "CREATE TABLE IF NOT EXISTS espacios (" +
                     "id_espacio SERIAL PRIMARY KEY," +
                     "nombre TEXT," +
+                    "capacidad_maxima INTEGER," +
                     "entrenador_id INTEGER," +
                     "FOREIGN KEY (entrenador_id) REFERENCES entrenadores(id_entrenador))";
             connection.createStatement().executeUpdate(createEspaciosTableSQL);
 
+            String createClasesTableSQL = "CREATE TABLE IF NOT EXISTS clases (" +
+                    "id_clase SERIAL PRIMARY KEY," +
+                    "nombre TEXT," +
+                    "capacidad_maxima INTEGER," +
+                    "entrenador_id INTEGER," +
+                    "FOREIGN KEY (entrenador_id) REFERENCES entrenadores(id_entrenador))";
+            connection.createStatement().executeUpdate(createClasesTableSQL);
+
             String createEspacioHorarioTableSQL = "CREATE TABLE IF NOT EXISTS espacio_horario (" +
                     "id_espacio_horario SERIAL PRIMARY KEY," +
                     "espacio_id INTEGER," +
-                    "horario_reserva TIMESTAMP WITH TIME ZONE," +
+                    "horario_reserva TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP," +
                     "capacidad_actual INTEGER DEFAULT 0," +
                     "capacidad_maxima INTEGER," +
                     "FOREIGN KEY (espacio_id) REFERENCES espacios(id_espacio))";
@@ -97,6 +105,46 @@ public class AccesoBD {
                     "requisitos_puntos INTEGER," +
                     "recompensa TEXT)";
             connection.createStatement().executeUpdate(createLogrosTableSQL);
+
+/*            String createReservasClaseTableSQL = "CREATE TABLE IF NOT EXISTS reservas_clase (" +
+                    "id_reserva_clase SERIAL PRIMARY KEY," +
+                    "usuario_id INTEGER," +
+                    "clase_id INTEGER," +
+                    "horario TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP," +
+                    "estado_reserva TEXT," +
+                    "FOREIGN KEY (usuario_id) REFERENCES usuarios(id_usuario)," +
+                    "FOREIGN KEY (clase_id) REFERENCES clases(id_clase))";
+            connection.createStatement().executeUpdate(createReservasClaseTableSQL);
+
+            String createReservasEspacioTableSQL = "CREATE TABLE IF NOT EXISTS reservas_espacio (" +
+                    "id_reserva_espacio SERIAL PRIMARY KEY," +
+                    "usuario_id INTEGER," +
+                    "espacio_id INTEGER," +
+                    "horario TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP," +
+                    "estado_reserva TEXT," +
+                    "FOREIGN KEY (usuario_id) REFERENCES usuarios(id_usuario)," +
+                    "FOREIGN KEY (espacio_id) REFERENCES espacios(id_espacio))";
+            connection.createStatement().executeUpdate(createReservasEspacioTableSQL);*/
+
+            String createReservasEntrenadorTableSQL = "CREATE TABLE IF NOT EXISTS reservas_entrenador (" +
+                    "id_reserva_entrenador SERIAL PRIMARY KEY," +
+                    "usuario_id INTEGER," +
+                    "entrenador_id INTEGER," +
+                    "fecha_reserva TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP," +
+                    "tipo_servicio TEXT," +
+                    "estado_reserva TEXT," +
+                    "FOREIGN KEY (usuario_id) REFERENCES usuarios(id_usuario)," +
+                    "FOREIGN KEY (entrenador_id) REFERENCES entrenadores(id_entrenador))";
+            connection.createStatement().executeUpdate(createReservasEntrenadorTableSQL);
+
+            String createUsuarioLogrosTableSQL = "CREATE TABLE IF NOT EXISTS usuario_logro (" +
+                    "id_usuario_logro SERIAL PRIMARY KEY," +
+                    "usuario_id INTEGER," +
+                    "logro_id INTEGER," +
+                    "fecha_obtenido TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP," +
+                    "FOREIGN KEY (usuario_id) REFERENCES usuarios(id_usuario)," +
+                    "FOREIGN KEY (logro_id) REFERENCES logros(id_logro))";
+            connection.createStatement().executeUpdate(createUsuarioLogrosTableSQL);
 
             ResultSet rs = connection.createStatement().executeQuery("SELECT COUNT(*) FROM entrenadores");
             rs.next();
@@ -120,12 +168,33 @@ public class AccesoBD {
 
             if (countEspacios == 0) {
                 String insertEspaciosSQL = "INSERT INTO espacios (id_espacio, capacidad_maxima, nombre, entrenador_id) " +
+                        "VALUES (3, 50, 'Sala de Musculación', 4), " +
+                        "(4, 15, 'Sala de Abdominales', 5) ";
+                connection.createStatement().executeUpdate(insertEspaciosSQL);
+            }
+
+            rs = connection.createStatement().executeQuery("SELECT COUNT(*) FROM clases");
+            rs.next();
+            int countClases = rs.getInt(1);
+            rs.close();
+
+            if (countClases == 0) {
+                String insertClasesSQL = "INSERT INTO clases (id_clase, capacidad_maxima, nombre, entrenador_id) " +
                         "VALUES (1, 15, 'Boxeo', 1), " +
                         "(2, 20, 'Pilates', 2), " +
-                        "(3, 50, 'Sala de Musculación', 4), " +
-                        "(4, 15, 'Sala de Abdominales', 5), " +
                         "(5, 20, 'Yoga', 3)";
-                connection.createStatement().executeUpdate(insertEspaciosSQL);
+                connection.createStatement().executeUpdate(insertClasesSQL);
+            }
+
+            rs = connection.createStatement().executeQuery("SELECT COUNT(*) FROM logros");
+            rs.next();
+            int countLogros = rs.getInt(1);
+            if (countLogros == 0) {
+                String insertLogrosSQL = "INSERT INTO logros (nombre_logro, descripcion, requisitos_puntos, recompensa) VALUES " +
+                        "('Primer Paso', 'Completa tu primera reserva', 10, 'Medalla de Bienvenida')," +
+                        "('Frecuente', 'Realiza 10 reservas', 100, 'Descuento en próxima reserva')," +
+                        "('Leal', 'Haz una reserva por 4 semanas seguidas', 200, 'Mes gratis de membresía')";
+                connection.createStatement().executeUpdate(insertLogrosSQL);
             }
 
         } catch (SQLException e) {

@@ -55,8 +55,7 @@ public class UsuarioService implements IUsuarioService {
                 preparedStatementUsuario.setString(2, usuario.getCorreo_electronico());
                 preparedStatementUsuario.setString(3, usuario.getContrasena());
                 preparedStatementUsuario.setInt(4, datosPersonalesId);
-                preparedStatementUsuario.setInt(5, usuario.getProgresoFitness());
-                preparedStatementUsuario.setInt(6, usuario.getCantidadPuntos());
+                preparedStatementUsuario.setInt(5, usuario.getCantidadPuntos());
                 ResultSet rs = preparedStatementUsuario.executeQuery();
 
                 if (rs.next()) {
@@ -85,10 +84,9 @@ public class UsuarioService implements IUsuarioService {
                 String correo_electronico = resultSet.getString("correo_electronico");
                 String contrasena = resultSet.getString("contrasena");
                 int datos_personales_id = resultSet.getInt("datos_personales_id");
-                int progresoFitness = resultSet.getInt("progreso_fitness");
                 int cantidadPuntos = resultSet.getInt("cantidad_puntos");
 
-                Usuario usuario = new Usuario(id, nombre, correo_electronico, contrasena, progresoFitness, cantidadPuntos, new DatosPersonales(datos_personales_id), new HashSet<>(), new ArrayList<>());
+                Usuario usuario = new Usuario(id, nombre, correo_electronico, contrasena, cantidadPuntos, new DatosPersonales(datos_personales_id), new HashSet<>(), new HashSet<>());
                 usuarios.add(usuario);
             }
         } catch (SQLException e) {
@@ -121,14 +119,13 @@ public class UsuarioService implements IUsuarioService {
                 preparedStatement.executeUpdate();
             }
 
-            String updateUsuariosSQL = "UPDATE Usuarios SET nombre = ?, correo_electronico = ?, contrasena = ?, progreso_fitness = ?, cantidad_puntos = ? WHERE id_usuario = ?";
+            String updateUsuariosSQL = "UPDATE Usuarios SET nombre = ?, correo_electronico = ?, contrasena = ?, cantidad_puntos = ? WHERE id_usuario = ?";
             try (PreparedStatement preparedStatementUsuarios = connection.prepareStatement(updateUsuariosSQL)) {
                 preparedStatementUsuarios.setString(1, usuario.getNombre());
                 preparedStatementUsuarios.setString(2, usuario.getCorreo_electronico());
                 preparedStatementUsuarios.setString(3, usuario.getContrasena());
                 preparedStatementUsuarios.setInt(4, 1);
-                preparedStatementUsuarios.setInt(5, 1);
-                preparedStatementUsuarios.setInt(6, usuario.getIdUsuario());
+                preparedStatementUsuarios.setInt(5, usuario.getIdUsuario());
                 preparedStatementUsuarios.executeUpdate();
             }
 
@@ -193,9 +190,8 @@ public class UsuarioService implements IUsuarioService {
                 String correo_electronico = resultSet.getString("correo_electronico");
                 String contrasena = resultSet.getString("contrasena");
                 int datos_personales_id = resultSet.getInt("datos_personales_id");
-                int progresoFitness = resultSet.getInt("progreso_fitness");
                 int cantidadPuntos = resultSet.getInt("cantidad_puntos");
-                usuario = new Usuario(nombre, correo_electronico, contrasena, progresoFitness, cantidadPuntos, new DatosPersonales(datos_personales_id), new HashSet<>(), new ArrayList<>());            }
+                usuario = new Usuario(nombre, correo_electronico, contrasena, cantidadPuntos, new DatosPersonales(datos_personales_id), new HashSet<>(), new HashSet<>());            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -214,9 +210,8 @@ public class UsuarioService implements IUsuarioService {
                 String nombre = resultSet.getString("nombre");
                 String contrasena = resultSet.getString("contrasena");
                 int datos_personales_id = resultSet.getInt("datos_personales_id");
-                int progresoFitness = resultSet.getInt("progreso_fitness");
                 int cantidadPuntos = resultSet.getInt("cantidad_puntos");
-                usuario = new Usuario(idUsuario, nombre, correo_electronico, contrasena, progresoFitness, cantidadPuntos, new DatosPersonales(datos_personales_id), new HashSet<>(), new ArrayList<>());            }
+                usuario = new Usuario(idUsuario, nombre, correo_electronico, contrasena, cantidadPuntos, new DatosPersonales(datos_personales_id), new HashSet<>(), new HashSet<>());            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -239,34 +234,6 @@ public class UsuarioService implements IUsuarioService {
             e.printStackTrace();
         }
         return existe;
-    }
-    @Override
-    public int getProgresoFitnessUsuario(int idUsuario) {
-        int progresoFitness = 0;
-        try (Connection connection = accesoBD.conectarPostgreSQL()) {
-            String selectSQL = "SELECT progreso_fitness FROM Usuarios WHERE id_usuario = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(selectSQL);
-            preparedStatement.setInt(1, idUsuario);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                progresoFitness = resultSet.getInt("progreso_fitness");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return progresoFitness;
-    }
-    @Override
-    public void actualizarProgresoFitnessUsuario(int idUsuario, int nuevoProgresoFitness) {
-        try (Connection connection = accesoBD.conectarPostgreSQL()) {
-            String updateSQL = "UPDATE Usuarios SET progreso_fitness = ? WHERE id_usuario = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(updateSQL);
-            preparedStatement.setInt(1, nuevoProgresoFitness);
-            preparedStatement.setInt(2, idUsuario);
-            preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
     @Override
     public int getCantidadPuntosUsuario(int idUsuario) {

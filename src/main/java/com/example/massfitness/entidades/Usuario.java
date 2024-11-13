@@ -22,43 +22,38 @@ public class Usuario {
     private String correo_electronico;
     @JsonProperty("contrasena")
     private String contrasena;
-    private int progresoFitness;
     private int cantidadPuntos;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "datos_personales_id")
     private DatosPersonales datos_personales;
     @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY)
     private Set<Reserva> reservas;
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "usuario_logro",
-            joinColumns = @JoinColumn(name = "usuario_id"),
-            inverseJoinColumns = @JoinColumn(name = "logro_id"))
-    private List<Logro> logrosConseguidos;
+    @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY)
+    private Set<UsuarioLogro> logros;
 
     public Usuario() {
     }
 
-    public Usuario(String nombre, String correo_electronico, String contrasena, int progresoFitness, int cantidadPuntos, DatosPersonales datos_personales, Set<Reserva> reservas, List<Logro> logrosConseguidos) {
+
+    public Usuario(String nombre, String correo_electronico, String contrasena,int cantidadPuntos, DatosPersonales datos_personales, Set<Reserva> reservas, Set<UsuarioLogro> logros) {
         this.nombre = nombre;
         this.correo_electronico = correo_electronico;
         this.contrasena = contrasena;
-        this.progresoFitness = progresoFitness;
         this.cantidadPuntos = cantidadPuntos;
         this.datos_personales = datos_personales;
         this.reservas = reservas;
-        this.logrosConseguidos = logrosConseguidos;
+        this.logros = logros;
     }
 
-    public Usuario(int idUsuario, String nombre, String correo_electronico, String contrasena, int progresoFitness, int cantidadPuntos, DatosPersonales datos_personales, Set<Reserva> reservas, List<Logro> logrosConseguidos) {
+    public Usuario(int idUsuario, String nombre, String correo_electronico, String contrasena, int cantidadPuntos, DatosPersonales datos_personales, Set<Reserva> reservas, Set<UsuarioLogro> logros) {
         this.idUsuario = idUsuario;
         this.nombre = nombre;
         this.correo_electronico = correo_electronico;
         this.contrasena = contrasena;
-        this.progresoFitness = progresoFitness;
         this.cantidadPuntos = cantidadPuntos;
         this.datos_personales = datos_personales;
         this.reservas = new HashSet<>();
-        this.logrosConseguidos = new ArrayList<>();
+        this.logros = new HashSet<>();
     }
 
     public Usuario(int idUsuario) {
@@ -105,14 +100,6 @@ public class Usuario {
         this.datos_personales = datos_personales;
     }
 
-    public int getProgresoFitness() {
-        return progresoFitness;
-    }
-
-    public void setProgresoFitness(int progresoFitness) {
-        this.progresoFitness = progresoFitness;
-    }
-
     public int getCantidadPuntos() {
         return cantidadPuntos;
     }
@@ -121,12 +108,12 @@ public class Usuario {
         this.cantidadPuntos = cantidadPuntos;
     }
 
-    public List<Logro> getLogrosConseguidos() {
-        return logrosConseguidos;
+    public Set<UsuarioLogro> getLogros() {
+        return logros;
     }
 
-    public void setLogrosConseguidos(List<Logro> logrosConseguidos) {
-        this.logrosConseguidos = logrosConseguidos;
+    public void setLogros(Set<UsuarioLogro> logros) {
+        this.logros = logros;
     }
 
     public DatosPersonales getDatos_personales() {

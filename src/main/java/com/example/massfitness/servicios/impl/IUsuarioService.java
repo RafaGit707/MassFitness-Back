@@ -12,8 +12,6 @@ public interface IUsuarioService {
     Usuario buscarUsuarioPorId(int idUsuario);
     Usuario buscarUsuarioPorCorreo(String correo_electronico);
     boolean usuarioExiste(String correo_electronico, String contrasena);
-    int getProgresoFitnessUsuario(int idUsuario);
-    void actualizarProgresoFitnessUsuario(int idUsuario, int nuevoProgresoFitness);
     int getCantidadPuntosUsuario(int idUsuario);
     void actualizarCantidadPuntosUsuario(int idUsuario, int nuevaCantidadPuntos);
 }
