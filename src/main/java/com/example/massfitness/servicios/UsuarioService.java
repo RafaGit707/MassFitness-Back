@@ -33,7 +33,7 @@ public class UsuarioService implements IUsuarioService {
     public int addUsuario(Usuario usuario) {
         logger.info("Agregando nuevo usuario a la base de datos: {}", usuario);
         String insertDatosPersonalesSQL = "INSERT INTO datos_personales (edad, genero) VALUES (?, ?) RETURNING id_datos_personales";
-        String insertUsuarioSQL = "INSERT INTO usuarios (nombre, correo_electronico, contrasena, datos_personales_id, progreso_fitness, cantidad_puntos) VALUES (?, ?, ?, ?, ?, ?) RETURNING id_usuario";
+        String insertUsuarioSQL = "INSERT INTO usuarios (nombre, correo_electronico, contrasena, datos_personales_id, cantidad_puntos) VALUES (?, ?, ?, ?, ?) RETURNING id_usuario";
 
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
             int datosPersonalesId;

@@ -12,11 +12,11 @@ public class ReservaClase {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private int idReservaClase;
-        @Column(name = "clases_id")
-        @JsonProperty("clases_id")
+        @Column(name = "clase_id")
+        @JsonProperty("clase_id")
         private int clasesId;
         @ManyToOne(fetch = FetchType.EAGER)
-        @JoinColumn(name = "clases_id", referencedColumnName = "idClase", insertable = false, updatable = false)
+        @JoinColumn(name = "clase_id", referencedColumnName = "idClase", insertable = false, updatable = false)
         private Clases clase;
         @JsonProperty("horario_reserva")
         @Column(name = "horario_reserva", columnDefinition = "TIMESTAMP WITH TIME ZONE")

@@ -60,10 +60,12 @@ public class AccesoBD {
                     "id_reserva SERIAL PRIMARY KEY," +
                     "usuario_id INTEGER," +
                     "espacio_id INTEGER," +
+                    "clase_id INTEGER," +
                     "tipo_reserva TEXT," +
                     "horario_reserva TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP," +
                     "estado_reserva TEXT,"+
                     "FOREIGN KEY (usuario_id) REFERENCES usuarios(id_usuario)," +
+                    "FOREIGN KEY (clase_id) REFERENCES clases(id_clase)," +
                     "FOREIGN KEY (espacio_id) REFERENCES espacios(id_espacio))";
             connection.createStatement().executeUpdate(createReservasTableSQL);
 

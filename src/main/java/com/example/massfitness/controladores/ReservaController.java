@@ -45,7 +45,7 @@ public class ReservaController {
                 usuarioId, espacioId, tipoReserva, horarioReserva, estadoReserva);
 
         int idReserva;
-        String tipo = obtenerTipoReserva(tipoReserva);
+        String tipo = obtenerTipoReserva(espacioId);
         try {
             if ("clase".equalsIgnoreCase(tipo)) {
                 idReserva = iReservaService.addReservaClase(usuarioId, espacioId, tipoReserva, horarioReserva, estadoReserva);
@@ -61,17 +61,17 @@ public class ReservaController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
-    private String obtenerTipoReserva(String tipoReserva) {
+    private String obtenerTipoReserva(int tipoReserva) {
         switch (tipoReserva) {
-            case "Boxeo":
+            case 1:
                 return "clase";
-            case "Pilates":
+            case 2:
                 return "clase";
-            case "Sala de Musculación":
+            case 3:
                 return "espacio";
-            case "Sala de Abdominales":
+            case 4:
                 return "espacio";
-            case "Yoga":
+            case 5:
                 return "clase";
             default:
                 return "";
@@ -92,11 +92,14 @@ public class ReservaController {
         reserva.setIdReserva(id);
         iReservaService.actualizarReserva(reserva);
     }
-    @DeleteMapping("/eliminar/{id}")
-    public void eliminarReserva(@PathVariable int id) {
-        iReservaService.eliminarReserva(id);
+    @DeleteMapping("/eliminarEspacio/{id}")
+    public void eliminarReservaEspacio(@PathVariable int id) {
+        iReservaService.eliminarReservaEspacio(id);
     }
-
+    @DeleteMapping("/eliminarClase/{id}")
+    public void eliminarReservaClase(@PathVariable int id) {
+        iReservaService.eliminarReservaClase(id);
+    }
     @GetMapping("/usuario/{idUsuario}")
     public List<Reserva> getReservasPorUsuario(@PathVariable int idUsuario) {
         List<Reserva> reservas = iReservaService.getReservas();

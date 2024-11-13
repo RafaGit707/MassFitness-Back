@@ -10,6 +10,7 @@ public interface IReservaService {
     int addReservaEspacio(Integer usuarioId, Integer espacioId, String tipoReserva, Timestamp horarioReserva, String estadoReserva);
     int addReservaClase(Integer usuarioId, Integer espacioId, String tipoReserva, Timestamp horarioReserva, String estadoReserva);
     void actualizarReserva(Reserva reserva);
-    void eliminarReserva(int idReserva);
+    void eliminarReservaEspacio(int idReserva);
+    void eliminarReservaClase(int idReserva);
     Reserva buscarReservaPorId(int idReserva);
 }

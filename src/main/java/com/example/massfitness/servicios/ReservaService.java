@@ -47,11 +47,12 @@ public class ReservaService implements IReservaService {
                 int idReserva = resultSet.getInt("id_reserva");
                 int idUsuario = resultSet.getInt("usuario_id");
                 int idEspacio = resultSet.getInt("espacio_id");
+                int idClase = resultSet.getInt("clase_id");
                 String tipoReserva = resultSet.getString("tipo_reserva");
                 Timestamp horarioReserva = resultSet.getTimestamp("horario_reserva");
                 String estadoReserva = resultSet.getString("estado_reserva");
                 logger.info("Horario enviado: Horario = {}", horarioReserva);
-                Reserva reserva = new Reserva(idReserva, idUsuario, idEspacio, tipoReserva, horarioReserva, estadoReserva);
+                Reserva reserva = new Reserva(idReserva, idUsuario, idEspacio, idClase, tipoReserva, horarioReserva, estadoReserva);
                 reservas.add(reserva);
             }
         } catch (SQLException e) {
@@ -150,10 +151,10 @@ public class ReservaService implements IReservaService {
         Optional<Clases> clase = claseRepository.findById(claseId);
 
         String selectCapacitySQL = "SELECT capacidad_actual FROM reserva_clase WHERE clase_id = ? AND horario_reserva = ?";
-        String selectMaxCapacitySQL = "SELECT capacidad_maxima FROM clases WHERE id_espacio = ?";
+        String selectMaxCapacitySQL = "SELECT capacidad_maxima FROM clases WHERE id_clase = ?";
         String insertEspacioHorarioSQL = "INSERT INTO reserva_clase (clase_id, horario_reserva, capacidad_actual) VALUES (?, ?, ?)";
         String updateCapacitySQL = "UPDATE reserva_clase SET capacidad_actual = capacidad_actual + 1 WHERE clase_id = ? AND horario_reserva = ?";
-        String insertSQL = "INSERT INTO reservas (usuario_id, espacio_id, tipo_reserva, horario_reserva, estado_reserva) VALUES (?, ?, ?, ?, ?) RETURNING id_reserva";
+        String insertSQL = "INSERT INTO reservas (usuario_id, clase_id, tipo_reserva, horario_reserva, estado_reserva) VALUES (?, ?, ?, ?, ?) RETURNING id_reserva";
 
         if (usuario.isPresent() && clase.isPresent()) {
             try (Connection connection = accesoBD.conectarPostgreSQL()) {
@@ -277,7 +278,7 @@ public class ReservaService implements IReservaService {
             e.printStackTrace();
         }
     }
-    public void eliminarReserva(int idReserva) {
+    public void eliminarReservaEspacio(int idReserva) {
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
             connection.setAutoCommit(false);
 
@@ -342,6 +343,71 @@ public class ReservaService implements IReservaService {
         }
     }
 
+    public void eliminarReservaClase(int idReserva) {
+        try (Connection connection = accesoBD.conectarPostgreSQL()) {
+            connection.setAutoCommit(false);
+
+            String selectSQL = "SELECT clase_id, horario_reserva FROM reservas WHERE id_reserva = ?";
+            Integer clase_id = null;
+            Timestamp horarioReserva = null;
+
+            try (PreparedStatement selectStmt = connection.prepareStatement(selectSQL)) {
+                selectStmt.setInt(1, idReserva);
+                ResultSet rs = selectStmt.executeQuery();
+                if (rs.next()) {
+                    clase_id = rs.getInt("clase_id");
+                    horarioReserva = rs.getTimestamp("horario_reserva");
+                } else {
+                    logger.warn("No se encontró reserva para eliminar: id_reserva = {}", idReserva);
+                    return;
+                }
+            }
+
+            String deleteSQL = "DELETE FROM reservas WHERE id_reserva = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(deleteSQL)) {
+                preparedStatement.setInt(1, idReserva);
+                int rowsAffected = preparedStatement.executeUpdate();
+                if (rowsAffected > 0) {
+                    logger.info("Reserva eliminada con éxito: id_reserva = {}", idReserva);
+                } else {
+                    logger.warn("No se encontró reserva para eliminar: id_reserva = {}", idReserva);
+                }
+            }
+
+            String updateCapacitySQL = "UPDATE reserva_clase SET capacidad_actual = capacidad_actual - 1 WHERE clase_id = ? AND horario_reserva = ?";
+            try (PreparedStatement updateCapacityStmt = connection.prepareStatement(updateCapacitySQL)) {
+                updateCapacityStmt.setInt(1, clase_id);
+                updateCapacityStmt.setTimestamp(2, horarioReserva);
+                updateCapacityStmt.executeUpdate();
+            }
+
+            String checkCapacitySQL = "SELECT capacidad_actual FROM espacio_horario WHERE clase_id = ? AND horario_reserva = ?";
+            int capacidadActual = 0;
+            try (PreparedStatement checkCapacityStmt = connection.prepareStatement(checkCapacitySQL)) {
+                checkCapacityStmt.setInt(1, clase_id);
+                checkCapacityStmt.setTimestamp(2, horarioReserva);
+                ResultSet rs = checkCapacityStmt.executeQuery();
+                if (rs.next()) {
+                    capacidadActual = rs.getInt("capacidad_actual");
+                }
+            }
+
+            if (capacidadActual <= 0) {
+                String deleteEspacioHorarioSQL = "DELETE FROM clase_reserva WHERE clase_id = ? AND horario_reserva = ?";
+                try (PreparedStatement deleteEspacioHorarioStmt = connection.prepareStatement(deleteEspacioHorarioSQL)) {
+                    deleteEspacioHorarioStmt.setInt(1, clase_id);
+                    deleteEspacioHorarioStmt.setTimestamp(2, horarioReserva);
+                    deleteEspacioHorarioStmt.executeUpdate();
+                    logger.info("Registro eliminado de clase_reserva para clase_id = {} y horario_reserva = {}", clase_id, horarioReserva);
+                }
+            }
+
+            connection.commit();
+        } catch (SQLException e) {
+            logger.error("Error al eliminar la reserva: id_reserva = {}, error = {}", idReserva, e.getMessage());
+        }
+    }
+
     @Override
     public Reserva buscarReservaPorId(int idReserva) {
         Reserva reserva = null;
@@ -353,10 +419,11 @@ public class ReservaService implements IReservaService {
             if (resultSet.next()) {
                 int idUsuario = resultSet.getInt("usuario_id");
                 int idEspacio = resultSet.getInt("espacio_id");
+                int idClase = resultSet.getInt("clase_id");
                 String tipoReserva = resultSet.getString("tipo_reserva");
                 Timestamp horarioReserva = resultSet.getTimestamp("horario_reserva");
                 String estadoReserva = resultSet.getString("estado_reserva");
-                reserva = new Reserva(idReserva, idUsuario, idEspacio, tipoReserva, horarioReserva, estadoReserva);
+                reserva = new Reserva(idReserva, idUsuario, idEspacio, idClase, tipoReserva, horarioReserva, estadoReserva);
             }
         } catch (SQLException e) {
             e.printStackTrace();

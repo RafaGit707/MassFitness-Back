@@ -19,12 +19,18 @@ public class Reserva {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "espacio_id", insertable = false, updatable = false)
     private Espacio espacio;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "clase_id", insertable = false, updatable = false)
+    private Clases clase;
     @Column(name = "usuario_id")
     @JsonProperty("usuario_id")
     private int usuarioId;
     @Column(name = "espacio_id")
     @JsonProperty("espacio_id")
     private int espacioId;
+    @Column(name = "clase_id")
+    @JsonProperty("clase_id")
+    private int claseId;
     @JsonProperty("tipo_reserva")
     private String tipoReserva;
     @JsonProperty("horario_reserva")
@@ -36,10 +42,29 @@ public class Reserva {
 
     public Reserva() {
     }
-    public Reserva(int idReserva, int usuarioId, int espacioId, String tipoReserva, Timestamp horarioReserva, String estadoReserva) {
+/*    public Reserva(int idReserva, int usuarioId, int espacioId, String tipoReserva, Timestamp horarioReserva, String estadoReserva) {
         this.idReserva = idReserva;
         this.usuarioId = usuarioId;
         this.espacioId = espacioId;
+        this.tipoReserva = tipoReserva;
+        this.horarioReserva = horarioReserva;
+        this.estadoReserva = estadoReserva;
+    }
+
+    public Reserva(int idReserva, int usuarioId, int claseId, String tipoReserva, Timestamp horarioReserva, String estadoReserva) {
+        this.idReserva = idReserva;
+        this.usuarioId = usuarioId;
+        this.claseId = claseId;
+        this.tipoReserva = tipoReserva;
+        this.horarioReserva = horarioReserva;
+        this.estadoReserva = estadoReserva;
+    }*/
+
+    public Reserva(int idReserva, int usuarioId, int espacioId, int claseId, String tipoReserva, Timestamp horarioReserva, String estadoReserva) {
+        this.idReserva = idReserva;
+        this.usuarioId = usuarioId;
+        this.espacioId = espacioId;
+        this.claseId = claseId;
         this.tipoReserva = tipoReserva;
         this.horarioReserva = horarioReserva;
         this.estadoReserva = estadoReserva;
@@ -106,5 +131,21 @@ public class Reserva {
 
     public void setEspacio(Espacio espacio) {
         this.espacio = espacio;
+    }
+
+    public Clases getClase() {
+        return clase;
+    }
+
+    public void setClase(Clases clase) {
+        this.clase = clase;
+    }
+
+    public int getClaseId() {
+        return claseId;
+    }
+
+    public void setClaseId(int claseId) {
+        this.claseId = claseId;
     }
 }
