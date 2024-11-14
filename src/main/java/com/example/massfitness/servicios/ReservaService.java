@@ -381,7 +381,7 @@ public class ReservaService implements IReservaService {
                 updateCapacityStmt.executeUpdate();
             }
 
-            String checkCapacitySQL = "SELECT capacidad_actual FROM espacio_horario WHERE clase_id = ? AND horario_reserva = ?";
+            String checkCapacitySQL = "SELECT capacidad_actual FROM reserva_clase WHERE clase_id = ? AND horario_reserva = ?";
             int capacidadActual = 0;
             try (PreparedStatement checkCapacityStmt = connection.prepareStatement(checkCapacitySQL)) {
                 checkCapacityStmt.setInt(1, clase_id);
@@ -393,11 +393,11 @@ public class ReservaService implements IReservaService {
             }
 
             if (capacidadActual <= 0) {
-                String deleteEspacioHorarioSQL = "DELETE FROM clase_reserva WHERE clase_id = ? AND horario_reserva = ?";
-                try (PreparedStatement deleteEspacioHorarioStmt = connection.prepareStatement(deleteEspacioHorarioSQL)) {
-                    deleteEspacioHorarioStmt.setInt(1, clase_id);
-                    deleteEspacioHorarioStmt.setTimestamp(2, horarioReserva);
-                    deleteEspacioHorarioStmt.executeUpdate();
+                String deleteClaseReservaSQL = "DELETE FROM clase_reserva WHERE clase_id = ? AND horario_reserva = ?";
+                try (PreparedStatement deleteClaseReservaStmt = connection.prepareStatement(deleteClaseReservaSQL)) {
+                    deleteClaseReservaStmt.setInt(1, clase_id);
+                    deleteClaseReservaStmt.setTimestamp(2, horarioReserva);
+                    deleteClaseReservaStmt.executeUpdate();
                     logger.info("Registro eliminado de clase_reserva para clase_id = {} y horario_reserva = {}", clase_id, horarioReserva);
                 }
             }
