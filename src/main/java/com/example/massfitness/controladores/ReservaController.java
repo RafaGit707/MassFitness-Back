@@ -49,7 +49,9 @@ public class ReservaController {
         try {
             if ("clase".equalsIgnoreCase(tipo)) {
                 idReserva = iReservaService.addReservaClase(usuarioId, espacioId, tipoReserva, horarioReserva, estadoReserva);
+                logger.info("Añadiendo reserva tipo clase");
             } else if ("espacio".equalsIgnoreCase(tipo)) {
+                logger.info("Añadiendo reserva tipo espacio");
                 idReserva = iReservaService.addReservaEspacio(usuarioId, espacioId, tipoReserva, horarioReserva, estadoReserva);
             } else {
                 logger.error("Tipo de reserva no válido: {}", tipoReserva);

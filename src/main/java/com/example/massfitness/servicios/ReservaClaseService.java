@@ -74,7 +74,7 @@ public class ReservaClaseService implements IReservaClaseService {
         int capacidadMaxima = getDefaultCapacidadMaxima(salaNombre);
 
         if (claseId <= 0) {
-            throw new IllegalArgumentException("El espacio con el nombre " + salaNombre + " no existe.");
+            throw new IllegalArgumentException("La clase con el nombre " + salaNombre + " no existe.");
         }
 
         String insertQuery = "INSERT INTO reserva_clase (clase_id, horario_reserva, capacidad_actual) VALUES (?, ?, 0)";

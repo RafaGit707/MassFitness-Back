@@ -152,7 +152,7 @@ public class ReservaService implements IReservaService {
 
         String selectCapacitySQL = "SELECT capacidad_actual FROM reserva_clase WHERE clase_id = ? AND horario_reserva = ?";
         String selectMaxCapacitySQL = "SELECT capacidad_maxima FROM clases WHERE id_clase = ?";
-        String insertEspacioHorarioSQL = "INSERT INTO reserva_clase (clase_id, horario_reserva, capacidad_actual) VALUES (?, ?, ?)";
+        String insertReservaClaseSQL = "INSERT INTO reserva_clase (clase_id, horario_reserva, capacidad_actual) VALUES (?, ?, ?)";
         String updateCapacitySQL = "UPDATE reserva_clase SET capacidad_actual = capacidad_actual + 1 WHERE clase_id = ? AND horario_reserva = ?";
         String insertSQL = "INSERT INTO reservas (usuario_id, clase_id, tipo_reserva, horario_reserva, estado_reserva) VALUES (?, ?, ?, ?, ?) RETURNING id_reserva";
 
@@ -188,7 +188,7 @@ public class ReservaService implements IReservaService {
                 }
 
                 if (!claseReservaExistente) {
-                    try (PreparedStatement insertReservaClaseStmt = connection.prepareStatement(insertEspacioHorarioSQL)) {
+                    try (PreparedStatement insertReservaClaseStmt = connection.prepareStatement(insertReservaClaseSQL)) {
                         insertReservaClaseStmt.setInt(1, claseId);
                         insertReservaClaseStmt.setTimestamp(2, horarioReserva);
                         insertReservaClaseStmt.setInt(3, 0);
@@ -393,12 +393,12 @@ public class ReservaService implements IReservaService {
             }
 
             if (capacidadActual <= 0) {
-                String deleteClaseReservaSQL = "DELETE FROM clase_reserva WHERE clase_id = ? AND horario_reserva = ?";
+                String deleteClaseReservaSQL = "DELETE FROM reserva_clase WHERE clase_id = ? AND horario_reserva = ?";
                 try (PreparedStatement deleteClaseReservaStmt = connection.prepareStatement(deleteClaseReservaSQL)) {
                     deleteClaseReservaStmt.setInt(1, clase_id);
                     deleteClaseReservaStmt.setTimestamp(2, horarioReserva);
                     deleteClaseReservaStmt.executeUpdate();
-                    logger.info("Registro eliminado de clase_reserva para clase_id = {} y horario_reserva = {}", clase_id, horarioReserva);
+                    logger.info("Registro eliminado de reserva_clase para clase_id = {} y horario_reserva = {}", clase_id, horarioReserva);
                 }
             }
 
