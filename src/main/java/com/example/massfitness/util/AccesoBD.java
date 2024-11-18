@@ -69,6 +69,7 @@ public class AccesoBD {
                     "FOREIGN KEY (espacio_id) REFERENCES espacios(id_espacio))";
             connection.createStatement().executeUpdate(createReservasTableSQL);
 
+
             String createEspaciosTableSQL = "CREATE TABLE IF NOT EXISTS espacios (" +
                     "id_espacio SERIAL PRIMARY KEY," +
                     "nombre TEXT," +
