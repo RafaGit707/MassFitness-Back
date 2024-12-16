@@ -24,8 +24,8 @@ public class LogroController {
     }
 
     @GetMapping("/{id}")
-    public Logro getLogroPorId(@PathVariable int id) {
-        return iLogroService.buscarLogroPorId(id);
+    public List<Logro> getLogroPorUsuarioId(@PathVariable int id) {
+        return iLogroService.getLogrosByUserId(id);
     }
 
     @GetMapping

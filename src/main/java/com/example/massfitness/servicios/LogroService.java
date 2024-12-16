@@ -23,7 +23,7 @@ public class LogroService implements ILogroService {
     }
     public void addLogro(Logro logro) {
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
-            String insertSQL = "INSERT INTO Logros (nombre_Logro, descripcion, requisitos_Puntos, recompensa) VALUES (?, ?, ?, ?)";
+            String insertSQL = "INSERT INTO Logros (nombre_logro, descripcion, requisitos_puntos, recompensa) VALUES (?, ?, ?, ?)";
             PreparedStatement preparedStatement = connection.prepareStatement(insertSQL);
             preparedStatement.setString(1, logro.getNombreLogro());
             preparedStatement.setString(2, logro.getDescripcion());
@@ -37,7 +37,7 @@ public class LogroService implements ILogroService {
 
     public void actualizarLogro(Logro logro) {
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
-            String updateSQL = "UPDATE Logros SET nombre_Logro = ?, descripcion = ?, requisitos_Puntos = ?, recompensa = ? WHERE id_Logro = ?";
+            String updateSQL = "UPDATE Logros SET nombre_logro = ?, descripcion = ?, requisitos_puntos = ?, recompensa = ? WHERE id_Logro = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(updateSQL);
             preparedStatement.setString(1, logro.getNombreLogro());
             preparedStatement.setString(2, logro.getDescripcion());
@@ -68,9 +68,9 @@ public class LogroService implements ILogroService {
             ResultSet resultSet = connection.createStatement().executeQuery(selectSQL);
             while (resultSet.next()) {
                 int idLogro = resultSet.getInt("id_Logro");
-                String nombre = resultSet.getString("nombre_Logro");
+                String nombre = resultSet.getString("nombre_logro");
                 String descripcion = resultSet.getString("descripcion");
-                int requisitosPuntos = resultSet.getInt("requisitos_Puntos");
+                int requisitosPuntos = resultSet.getInt("requisitos_puntos");
                 String recompensa = resultSet.getString("recompensa");
                 Logro logro = new Logro(idLogro, nombre, descripcion, requisitosPuntos, recompensa);
                 logros.add(logro);
@@ -81,7 +81,7 @@ public class LogroService implements ILogroService {
         return logros;
     }
 
-    public Logro buscarLogroPorId(int idLogro) {
+/*    public Logro buscarLogroPorId(int idLogro) {
         Logro logro = null;
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
             String selectSQL = "SELECT * FROM Logros WHERE id_Logro = ?";
@@ -89,9 +89,9 @@ public class LogroService implements ILogroService {
             preparedStatement.setInt(1, idLogro);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                String nombre = resultSet.getString("nombre_Logro");
+                String nombre = resultSet.getString("nombre_logro");
                 String descripcion = resultSet.getString("descripcion");
-                int requisitosPuntos = resultSet.getInt("requisitos_Puntos");
+                int requisitosPuntos = resultSet.getInt("requisitos_puntos");
                 String recompensa = resultSet.getString("recompensa");
                 logro = new Logro(idLogro, nombre, descripcion, requisitosPuntos, recompensa);
             }
@@ -99,5 +99,34 @@ public class LogroService implements ILogroService {
             e.printStackTrace();
         }
         return logro;
+    }*/
+
+    public List<Logro> getLogrosByUserId(int idUsuario) {
+        List<Logro> logros = new ArrayList<>();
+        try (Connection connection = accesoBD.conectarPostgreSQL()) {
+            // Consulta para obtener los logros del usuario específico
+            String selectSQL = "SELECT id_logro, nombre_logro, descripcion, requisitos_puntos, recompensa " +
+                    "FROM logros " +
+                    "INNER JOIN usuario_logro ON id_logro = logro_id " +
+                    "WHERE usuario_id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(selectSQL);
+            preparedStatement.setInt(1, idUsuario);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                int idLogro = resultSet.getInt("id_logro");
+                String nombre = resultSet.getString("nombre_logro");
+                String descripcion = resultSet.getString("descripcion");
+                int requisitosPuntos = resultSet.getInt("requisitos_puntos");
+                String recompensa = resultSet.getString("recompensa");
+                Logro logro = new Logro(idLogro, nombre, descripcion, requisitosPuntos, recompensa);
+                logros.add(logro);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return logros;
     }
+
+
 }

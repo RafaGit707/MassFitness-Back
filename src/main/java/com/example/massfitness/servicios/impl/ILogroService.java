@@ -9,5 +9,5 @@ public interface ILogroService {
     void actualizarLogro(Logro logro);
     void eliminarLogro(int idLogro);
     List<Logro> getLogros();
-    Logro buscarLogroPorId(int idLogro);
+    List<Logro> getLogrosByUserId(int idUsuario);
 }
