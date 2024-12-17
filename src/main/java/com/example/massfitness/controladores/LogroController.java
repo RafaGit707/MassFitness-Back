@@ -1,6 +1,7 @@
 package com.example.massfitness.controladores;
 
 import com.example.massfitness.entidades.Logro;
+import com.example.massfitness.entidades.UsuarioLogro;
 import com.example.massfitness.servicios.LogroService;
 import com.example.massfitness.servicios.impl.ILogroService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ public class LogroController {
     }
 
     @GetMapping("/{id}")
-    public List<Logro> getLogroPorUsuarioId(@PathVariable int id) {
+    public List<UsuarioLogro> getLogroPorUsuarioId(@PathVariable int id) {
         return iLogroService.getLogrosByUserId(id);
     }
 

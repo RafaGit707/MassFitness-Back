@@ -1,15 +1,13 @@
 package com.example.massfitness.servicios;
 
 import com.example.massfitness.entidades.Logro;
+import com.example.massfitness.entidades.UsuarioLogro;
 import com.example.massfitness.servicios.impl.ILogroService;
 import com.example.massfitness.util.AccesoBD;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,19 +61,23 @@ public class LogroService implements ILogroService {
 
     public List<Logro> getLogros() {
         List<Logro> logros = new ArrayList<>();
-        try (Connection connection = accesoBD.conectarPostgreSQL()) {
-            String selectSQL = "SELECT * FROM Logros";
-            ResultSet resultSet = connection.createStatement().executeQuery(selectSQL);
+        try (Connection connection = accesoBD.conectarPostgreSQL();
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery("SELECT * FROM Logros")) {
+
             while (resultSet.next()) {
                 int idLogro = resultSet.getInt("id_Logro");
                 String nombre = resultSet.getString("nombre_logro");
                 String descripcion = resultSet.getString("descripcion");
                 int requisitosPuntos = resultSet.getInt("requisitos_puntos");
                 String recompensa = resultSet.getString("recompensa");
+
                 Logro logro = new Logro(idLogro, nombre, descripcion, requisitosPuntos, recompensa);
                 logros.add(logro);
             }
+
         } catch (SQLException e) {
+            System.err.println("Error al obtener los logros: " + e.getMessage());
             e.printStackTrace();
         }
         return logros;
@@ -101,32 +103,26 @@ public class LogroService implements ILogroService {
         return logro;
     }*/
 
-    public List<Logro> getLogrosByUserId(int idUsuario) {
-        List<Logro> logros = new ArrayList<>();
+    public List<UsuarioLogro> getLogrosByUserId(int idUsuario) {
+        List<UsuarioLogro> logros = new ArrayList<>();
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
             // Consulta para obtener los logros del usuario específico
-            String selectSQL = "SELECT id_logro, nombre_logro, descripcion, requisitos_puntos, recompensa " +
-                    "FROM logros " +
-                    "INNER JOIN usuario_logro ON id_logro = logro_id " +
-                    "WHERE usuario_id = ?";
+            String selectSQL = "SELECT id_usuario_logro, logro_id, fecha_obtenido " +
+                    "FROM usuario_logro WHERE usuario_id = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(selectSQL);
             preparedStatement.setInt(1, idUsuario);
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                int idLogro = resultSet.getInt("id_logro");
-                String nombre = resultSet.getString("nombre_logro");
-                String descripcion = resultSet.getString("descripcion");
-                int requisitosPuntos = resultSet.getInt("requisitos_puntos");
-                String recompensa = resultSet.getString("recompensa");
-                Logro logro = new Logro(idLogro, nombre, descripcion, requisitosPuntos, recompensa);
-                logros.add(logro);
+                int idUsuarioLogro = resultSet.getInt("id_usuario_logro");
+                int logro_id = resultSet.getInt("logro_id");
+                Timestamp fecha_obtenido = Timestamp.valueOf(resultSet.getString("fecha_obtenido"));
+                UsuarioLogro usuarioLogro = new UsuarioLogro(idUsuarioLogro, logro_id, fecha_obtenido);
+                logros.add(usuarioLogro);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return logros;
     }
-
-
 }

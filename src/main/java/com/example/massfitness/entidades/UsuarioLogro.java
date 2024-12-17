@@ -13,11 +13,17 @@ public class UsuarioLogro {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idUsuarioLogro;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "usuario_id")
+    @JoinColumn(name = "usuario_id", insertable = false, updatable = false)
     private Usuario usuario;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "logro_id")
+    @JoinColumn(name = "logro_id", insertable = false, updatable = false)
     private Logro logro;
+    @Column(name = "usuario_id")
+    @JsonProperty("usuario_id")
+    private int usuarioId;
+    @Column(name = "logro_id")
+    @JsonProperty("logro_id")
+    private int logroId;
     @JsonProperty("fecha_obtenido")
     @Column(name = "fecha_obtenido", columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private Timestamp fechaObtenido;
@@ -27,6 +33,12 @@ public class UsuarioLogro {
     public UsuarioLogro(Usuario usuario, Logro logro, Timestamp fechaObtenido) {
         this.usuario = usuario;
         this.logro = logro;
+        this.fechaObtenido = fechaObtenido;
+    }
+
+    public UsuarioLogro(int idUsuarioLogro, int logroId, Timestamp fechaObtenido) {
+        this.idUsuarioLogro = idUsuarioLogro;
+        this.logroId = logroId;
         this.fechaObtenido = fechaObtenido;
     }
 

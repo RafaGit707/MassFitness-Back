@@ -13,6 +13,7 @@ public class Logro {
     @JsonProperty("nombre_logro")
     private String nombreLogro;
     private String descripcion;
+    @JsonProperty("requisitos_puntos")
     private int requisitosPuntos;
     private String recompensa;
 
