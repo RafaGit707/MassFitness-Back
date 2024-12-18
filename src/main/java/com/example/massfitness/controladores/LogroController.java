@@ -7,6 +7,7 @@ import com.example.massfitness.servicios.impl.ILogroService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 @RestController
@@ -28,7 +29,16 @@ public class LogroController {
     public List<UsuarioLogro> getLogroPorUsuarioId(@PathVariable int id) {
         return iLogroService.getLogrosByUserId(id);
     }
-
+    @PostMapping("/addLogro/{usuarioId}/logro/{logroId}")
+    public void addUsuarioLogro(@PathVariable int usuarioId,
+                                @PathVariable int logroId,
+                                @RequestBody Timestamp fechaObtenido) {
+        iLogroService.addUsuarioLogro(usuarioId, logroId, fechaObtenido);
+    }
+    @DeleteMapping("/eliminarLogro/{usuarioId}/logro/{logroId}")
+    public void removeUsuarioLogro(@PathVariable int usuarioId, @PathVariable int logroId) {
+        iLogroService.removeUsuarioLogro(usuarioId, logroId);
+    }
     @GetMapping
     public List<Logro> getLogros() {
         return iLogroService.getLogros();

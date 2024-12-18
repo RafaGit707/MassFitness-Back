@@ -1,5 +1,6 @@
 package com.example.massfitness.entidades;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
@@ -14,9 +15,11 @@ public class UsuarioLogro {
     private int idUsuarioLogro;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", insertable = false, updatable = false)
+    @JsonIgnore
     private Usuario usuario;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "logro_id", insertable = false, updatable = false)
+    @JsonIgnore
     private Logro logro;
     @Column(name = "usuario_id")
     @JsonProperty("usuario_id")

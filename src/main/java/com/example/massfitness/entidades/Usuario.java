@@ -22,6 +22,7 @@ public class Usuario {
     private String correo_electronico;
     @JsonProperty("contrasena")
     private String contrasena;
+    @JsonProperty("cantidad_puntos")
     private int cantidadPuntos;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "datos_personales_id")

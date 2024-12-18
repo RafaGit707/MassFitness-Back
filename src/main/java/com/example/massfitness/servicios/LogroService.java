@@ -83,32 +83,10 @@ public class LogroService implements ILogroService {
         return logros;
     }
 
-/*    public Logro buscarLogroPorId(int idLogro) {
-        Logro logro = null;
-        try (Connection connection = accesoBD.conectarPostgreSQL()) {
-            String selectSQL = "SELECT * FROM Logros WHERE id_Logro = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(selectSQL);
-            preparedStatement.setInt(1, idLogro);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                String nombre = resultSet.getString("nombre_logro");
-                String descripcion = resultSet.getString("descripcion");
-                int requisitosPuntos = resultSet.getInt("requisitos_puntos");
-                String recompensa = resultSet.getString("recompensa");
-                logro = new Logro(idLogro, nombre, descripcion, requisitosPuntos, recompensa);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return logro;
-    }*/
-
     public List<UsuarioLogro> getLogrosByUserId(int idUsuario) {
         List<UsuarioLogro> logros = new ArrayList<>();
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
-            // Consulta para obtener los logros del usuario específico
-            String selectSQL = "SELECT id_usuario_logro, logro_id, fecha_obtenido " +
-                    "FROM usuario_logro WHERE usuario_id = ?";
+            String selectSQL = "SELECT id_usuario_logro, logro_id, fecha_obtenido FROM usuario_logro WHERE usuario_id = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(selectSQL);
             preparedStatement.setInt(1, idUsuario);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -116,7 +94,7 @@ public class LogroService implements ILogroService {
             while (resultSet.next()) {
                 int idUsuarioLogro = resultSet.getInt("id_usuario_logro");
                 int logro_id = resultSet.getInt("logro_id");
-                Timestamp fecha_obtenido = Timestamp.valueOf(resultSet.getString("fecha_obtenido"));
+                Timestamp fecha_obtenido = resultSet.getTimestamp("fecha_obtenido");
                 UsuarioLogro usuarioLogro = new UsuarioLogro(idUsuarioLogro, logro_id, fecha_obtenido);
                 logros.add(usuarioLogro);
             }
@@ -125,4 +103,31 @@ public class LogroService implements ILogroService {
         }
         return logros;
     }
+
+
+    public void addUsuarioLogro(int usuarioId, int logroId, Timestamp fechaObtenido) {
+        try (Connection connection = accesoBD.conectarPostgreSQL()) {
+            String insertSQL = "INSERT INTO usuario_logro (usuario_id, logro_id, fecha_obtenido) VALUES (?, ?, ?)";
+            PreparedStatement preparedStatement = connection.prepareStatement(insertSQL);
+            preparedStatement.setInt(1, usuarioId);
+            preparedStatement.setInt(2, logroId);
+            preparedStatement.setTimestamp(3, fechaObtenido);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void removeUsuarioLogro(int usuarioId, int logroId) {
+        try (Connection connection = accesoBD.conectarPostgreSQL()) {
+            String deleteSQL = "DELETE FROM usuario_logro WHERE usuario_id = ? AND logro_id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(deleteSQL);
+            preparedStatement.setInt(1, usuarioId);
+            preparedStatement.setInt(2, logroId);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

@@ -264,4 +264,5 @@ public class UsuarioService implements IUsuarioService {
             throw new RuntimeException("Error al actualizar cantidad de puntos de usuario", e);
         }
     }
+
 }

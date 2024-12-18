@@ -22,6 +22,7 @@ import java.util.Optional;
 @Service
 public class ReservaService implements IReservaService {
     private final AccesoBD accesoBD;
+    private final UsuarioService usuarioService;
 
     @Autowired
     private UsuarioRepository usuarioRepository;
@@ -32,8 +33,9 @@ public class ReservaService implements IReservaService {
     @Autowired
     private ClaseRepository claseRepository;
     @Autowired
-    public ReservaService(AccesoBD accesoBD) {
+    public ReservaService(AccesoBD accesoBD, UsuarioService usuarioService) {
         this.accesoBD = accesoBD;
+        this.usuarioService = usuarioService;
     }
     private static final Logger logger = LoggerFactory.getLogger(UsuarioService.class);
     @Override
@@ -134,6 +136,14 @@ public class ReservaService implements IReservaService {
                     updateCapacityStmt.executeUpdate();
                 }
 
+                try {
+                    int nuevaCantidadPuntos = usuario.get().getCantidadPuntos() + 1;
+                    usuarioService.actualizarCantidadPuntosUsuario(usuarioId, nuevaCantidadPuntos);
+                } catch (Exception e) {
+                    connection.rollback();
+                    throw new RuntimeException("Error al actualizar puntos del usuario", e);
+                }
+
                 connection.commit();
                 return idReserva;
             } catch (SQLException e) {
@@ -219,6 +229,14 @@ public class ReservaService implements IReservaService {
                     updateCapacityStmt.executeUpdate();
                 }
 
+                try {
+                    int nuevaCantidadPuntos = usuario.get().getCantidadPuntos() + 1;
+                    usuarioService.actualizarCantidadPuntosUsuario(usuarioId, nuevaCantidadPuntos);
+                } catch (Exception e) {
+                    connection.rollback();
+                    throw new RuntimeException("Error al actualizar puntos del usuario", e);
+                }
+
                 connection.commit();
                 return idReserva;
             } catch (SQLException e) {
@@ -282,9 +300,10 @@ public class ReservaService implements IReservaService {
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
             connection.setAutoCommit(false);
 
-            String selectSQL = "SELECT espacio_id, horario_reserva FROM reservas WHERE id_reserva = ?";
+            String selectSQL = "SELECT espacio_id, horario_reserva, usuario_id FROM reservas WHERE id_reserva = ?";
             Integer espacioId = null;
             Timestamp horarioReserva = null;
+            Integer usuarioId = null;
 
             try (PreparedStatement selectStmt = connection.prepareStatement(selectSQL)) {
                 selectStmt.setInt(1, idReserva);
@@ -292,6 +311,7 @@ public class ReservaService implements IReservaService {
                 if (rs.next()) {
                     espacioId = rs.getInt("espacio_id");
                     horarioReserva = rs.getTimestamp("horario_reserva");
+                    usuarioId = rs.getInt("usuario_id");
                 } else {
                     logger.warn("No se encontró reserva para eliminar: id_reserva = {}", idReserva);
                     return;
@@ -337,6 +357,15 @@ public class ReservaService implements IReservaService {
                 }
             }
 
+            String updatePointsSQL = "UPDATE usuarios SET cantidad_puntos = cantidad_puntos - ? WHERE id_usuario = ?";
+            try (PreparedStatement updatePointsStmt = connection.prepareStatement(updatePointsSQL)) {
+                int puntosARestar = 1;
+                updatePointsStmt.setInt(1, puntosARestar);
+                updatePointsStmt.setInt(2, usuarioId);
+                updatePointsStmt.executeUpdate();
+                logger.info("Puntos actualizados para usuario_id = {}. Se restaron {} puntos.", usuarioId, puntosARestar);
+            }
+
             connection.commit();
         } catch (SQLException e) {
             logger.error("Error al eliminar la reserva: id_reserva = {}, error = {}", idReserva, e.getMessage());
@@ -347,9 +376,10 @@ public class ReservaService implements IReservaService {
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
             connection.setAutoCommit(false);
 
-            String selectSQL = "SELECT clase_id, horario_reserva FROM reservas WHERE id_reserva = ?";
+            String selectSQL = "SELECT clase_id, horario_reserva, usuario_id FROM reservas WHERE id_reserva = ?";
             Integer clase_id = null;
             Timestamp horarioReserva = null;
+            Integer usuarioId = null;
 
             try (PreparedStatement selectStmt = connection.prepareStatement(selectSQL)) {
                 selectStmt.setInt(1, idReserva);
@@ -357,6 +387,8 @@ public class ReservaService implements IReservaService {
                 if (rs.next()) {
                     clase_id = rs.getInt("clase_id");
                     horarioReserva = rs.getTimestamp("horario_reserva");
+                    usuarioId = rs.getInt("usuario_id");
+
                 } else {
                     logger.warn("No se encontró reserva para eliminar: id_reserva = {}", idReserva);
                     return;
@@ -400,6 +432,15 @@ public class ReservaService implements IReservaService {
                     deleteClaseReservaStmt.executeUpdate();
                     logger.info("Registro eliminado de reserva_clase para clase_id = {} y horario_reserva = {}", clase_id, horarioReserva);
                 }
+            }
+
+            String updatePointsSQL = "UPDATE usuarios SET cantidad_puntos = cantidad_puntos - ? WHERE id_usuario = ?";
+            try (PreparedStatement updatePointsStmt = connection.prepareStatement(updatePointsSQL)) {
+                int puntosARestar = 1;
+                updatePointsStmt.setInt(1, puntosARestar);
+                updatePointsStmt.setInt(2, usuarioId);
+                updatePointsStmt.executeUpdate();
+                logger.info("Puntos actualizados para usuario_id = {}. Se restaron {} puntos.", usuarioId, puntosARestar);
             }
 
             connection.commit();
