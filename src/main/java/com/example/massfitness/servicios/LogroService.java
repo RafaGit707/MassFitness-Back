@@ -104,8 +104,7 @@ public class LogroService implements ILogroService {
         return logros;
     }
 
-
-    public void addUsuarioLogro(int usuarioId, int logroId, Timestamp fechaObtenido) {
+/*    public int addUsuarioLogro(int usuarioId, int logroId, Timestamp fechaObtenido) {
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
             String insertSQL = "INSERT INTO usuario_logro (usuario_id, logro_id, fecha_obtenido) VALUES (?, ?, ?)";
             PreparedStatement preparedStatement = connection.prepareStatement(insertSQL);
@@ -116,6 +115,33 @@ public class LogroService implements ILogroService {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return usuarioId;
+    }*/
+
+    public int addUsuarioLogro(int usuarioId, int logroId, Timestamp fechaObtenido) {
+        try (Connection connection = accesoBD.conectarPostgreSQL()) {
+            connection.setAutoCommit(false);
+            String insertSQL = "INSERT INTO usuario_logro (usuario_id, logro_id, fecha_obtenido) VALUES (?, ?, ?)";
+            int idUsuarioLogro;
+            try (PreparedStatement preparedStatement = connection.prepareStatement(insertSQL)) {
+                preparedStatement.setInt(1, usuarioId);
+                preparedStatement.setInt(2, logroId);
+                preparedStatement.setTimestamp(3, fechaObtenido);
+                preparedStatement.executeUpdate();
+                ResultSet rs = preparedStatement.executeQuery();
+                if (rs.next()) {
+                    idUsuarioLogro = rs.getInt(1);
+                } else {
+                    throw new SQLException("No se pudo obtener el ID del logro.");
+                }
+            }
+            connection.commit();
+            return idUsuarioLogro;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error al agregar logro", e);
+        }
+
     }
 
     public void removeUsuarioLogro(int usuarioId, int logroId) {

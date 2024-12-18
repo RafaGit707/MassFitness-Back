@@ -1,5 +1,6 @@
 package com.example.massfitness.entidades;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
@@ -28,6 +29,7 @@ public class UsuarioLogro {
     @JsonProperty("logro_id")
     private int logroId;
     @JsonProperty("fecha_obtenido")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss.S", timezone = "UTC")
     @Column(name = "fecha_obtenido", columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private Timestamp fechaObtenido;
 
@@ -39,8 +41,8 @@ public class UsuarioLogro {
         this.fechaObtenido = fechaObtenido;
     }
 
-    public UsuarioLogro(int idUsuarioLogro, int logroId, Timestamp fechaObtenido) {
-        this.idUsuarioLogro = idUsuarioLogro;
+    public UsuarioLogro(int usuarioId, int logroId, Timestamp fechaObtenido) {
+        this.usuarioId = usuarioId;
         this.logroId = logroId;
         this.fechaObtenido = fechaObtenido;
     }

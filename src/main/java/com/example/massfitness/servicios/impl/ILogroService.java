@@ -12,6 +12,6 @@ public interface ILogroService {
     void eliminarLogro(int idLogro);
     List<Logro> getLogros();
     List<UsuarioLogro> getLogrosByUserId(int idUsuario);
-    void addUsuarioLogro(int usuarioId, int logroId, Timestamp fechaObtenido);
+    int addUsuarioLogro(int usuarioId, int logroId, Timestamp fechaObtenido);
     void removeUsuarioLogro(int usuarioId, int logroId);
 }

@@ -3,8 +3,13 @@ package com.example.massfitness.controladores;
 import com.example.massfitness.entidades.Logro;
 import com.example.massfitness.entidades.UsuarioLogro;
 import com.example.massfitness.servicios.LogroService;
+import com.example.massfitness.servicios.UsuarioService;
 import com.example.massfitness.servicios.impl.ILogroService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
@@ -15,6 +20,7 @@ import java.util.List;
 public class LogroController {
 
     private final ILogroService iLogroService;
+    private static final Logger logger = LoggerFactory.getLogger(LogroService.class);
     @Autowired
     public LogroController(ILogroService iLogroService) {
         this.iLogroService = iLogroService;
@@ -30,10 +36,13 @@ public class LogroController {
         return iLogroService.getLogrosByUserId(id);
     }
     @PostMapping("/addLogro/{usuarioId}/logro/{logroId}")
-    public void addUsuarioLogro(@PathVariable int usuarioId,
+    public ResponseEntity<Integer> addUsuarioLogro(@PathVariable  int usuarioId,
                                 @PathVariable int logroId,
-                                @RequestBody Timestamp fechaObtenido) {
-        iLogroService.addUsuarioLogro(usuarioId, logroId, fechaObtenido);
+                                @RequestParam Timestamp fechaObtenido) {
+        logger.info("Añadiendo reserva: Usuario ID = {}, logroId ID = {}, fechaObtenido = {}",
+                usuarioId, logroId, fechaObtenido);
+        int idUsuarioLogro = iLogroService.addUsuarioLogro(usuarioId, logroId, fechaObtenido);
+        return ResponseEntity.ok(idUsuarioLogro);
     }
     @DeleteMapping("/eliminarLogro/{usuarioId}/logro/{logroId}")
     public void removeUsuarioLogro(@PathVariable int usuarioId, @PathVariable int logroId) {
