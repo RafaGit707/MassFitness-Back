@@ -180,9 +180,9 @@ public class AccesoBD {
             int countLogros = rs.getInt(1);
             if (countLogros == 0) {
                 String insertLogrosSQL = "INSERT INTO logros (nombre_logro, descripcion, requisitos_puntos, recompensa) VALUES " +
-                        "('Primer Paso', 'Completa tu primera reserva', 10, 'Medalla de Bienvenida')," +
-                        "('Frecuente', 'Realiza 10 reservas', 100, 'Descuento en próxima reserva')," +
-                        "('Leal', 'Haz una reserva por 4 semanas seguidas', 200, 'Mes gratis de membresía')";
+                        "('Primer Paso', 'Completa tu primera reserva', 1, 'Medalla de Bienvenida')," +
+                        "('Frecuente', 'Realiza 10 reservas', 10, 'Descuento en próxima reserva')," +
+                        "('Leal', 'Haz una reserva por 4 semanas seguidas', 20, 'Mes gratis de membresía')";
                 connection.createStatement().executeUpdate(insertLogrosSQL);
             }
 
