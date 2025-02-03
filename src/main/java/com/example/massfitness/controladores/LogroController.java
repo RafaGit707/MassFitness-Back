@@ -1,6 +1,7 @@
 package com.example.massfitness.controladores;
 
 import com.example.massfitness.entidades.Logro;
+import com.example.massfitness.entidades.Usuario;
 import com.example.massfitness.entidades.UsuarioLogro;
 import com.example.massfitness.servicios.LogroService;
 import com.example.massfitness.servicios.UsuarioService;
@@ -12,7 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 @RestController
@@ -30,19 +33,15 @@ public class LogroController {
     public void addLogro(@RequestBody Logro logro) {
         iLogroService.addLogro(logro);
     }
-
     @GetMapping("/{id}")
     public List<UsuarioLogro> getLogroPorUsuarioId(@PathVariable int id) {
         return iLogroService.getLogrosByUserId(id);
     }
     @PostMapping("/addLogro/{usuarioId}/logro/{logroId}")
-    public ResponseEntity<Integer> addUsuarioLogro(@PathVariable  int usuarioId,
-                                @PathVariable int logroId,
-                                @RequestParam Timestamp fechaObtenido) {
-        logger.info("Añadiendo reserva: Usuario ID = {}, logroId ID = {}, fechaObtenido = {}",
-                usuarioId, logroId, fechaObtenido);
-        int idUsuarioLogro = iLogroService.addUsuarioLogro(usuarioId, logroId, fechaObtenido);
-        return ResponseEntity.ok(idUsuarioLogro);
+    public ResponseEntity<Integer> addUsuarioLogro(@RequestBody UsuarioLogro usuarioLogro) {
+        logger.info("Añadiendo Logro: Usuario ID = {}, logroId ID = {}, fechaObtenido = {}", usuarioLogro);
+        int idCreado = iLogroService.addUsuarioLogro(usuarioLogro);
+        return new ResponseEntity<>(idCreado, HttpStatus.CREATED);
     }
     @DeleteMapping("/eliminarLogro/{usuarioId}/logro/{logroId}")
     public void removeUsuarioLogro(@PathVariable int usuarioId, @PathVariable int logroId) {
@@ -58,7 +57,6 @@ public class LogroController {
         logro.setIdLogro(id);
         iLogroService.actualizarLogro(logro);
     }
-
     @DeleteMapping("/{id}")
     public void eliminarLogro(@PathVariable int id) {
         iLogroService.eliminarLogro(id);

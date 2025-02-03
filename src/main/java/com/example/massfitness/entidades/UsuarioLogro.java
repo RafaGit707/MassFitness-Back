@@ -13,6 +13,8 @@ public class UsuarioLogro {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_usuario_logro")
+    @JsonProperty("id_usuario_logro")
     private int idUsuarioLogro;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", insertable = false, updatable = false)
@@ -31,20 +33,27 @@ public class UsuarioLogro {
     @JsonProperty("fecha_obtenido")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss.S", timezone = "UTC")
     @Column(name = "fecha_obtenido", columnDefinition = "TIMESTAMP WITH TIME ZONE")
-    private Timestamp fechaObtenido;
+    private Timestamp fecha_obtenido;
 
     public UsuarioLogro() {
     }
-    public UsuarioLogro(Usuario usuario, Logro logro, Timestamp fechaObtenido) {
+    public UsuarioLogro(Usuario usuario, Logro logro, Timestamp fecha_obtenido) {
         this.usuario = usuario;
         this.logro = logro;
-        this.fechaObtenido = fechaObtenido;
+        this.fecha_obtenido = fecha_obtenido;
     }
 
-    public UsuarioLogro(int usuarioId, int logroId, Timestamp fechaObtenido) {
+    public UsuarioLogro(int usuarioId, int logroId, Timestamp fecha_obtenido) {
         this.usuarioId = usuarioId;
         this.logroId = logroId;
-        this.fechaObtenido = fechaObtenido;
+        this.fecha_obtenido = fecha_obtenido;
+    }
+
+    public UsuarioLogro(int idUsuarioLogro, int usuarioId, int logroId, Timestamp fecha_obtenido) {
+        this.idUsuarioLogro = idUsuarioLogro;
+        this.usuarioId = usuarioId;
+        this.logroId = logroId;
+        this.fecha_obtenido = fecha_obtenido;
     }
 
     public int getIdUsuarioLogro() {
@@ -55,27 +64,27 @@ public class UsuarioLogro {
         this.idUsuarioLogro = idUsuarioLogro;
     }
 
-    public Usuario getUsuario() {
-        return usuario;
+    public int getUsuarioId() {
+        return usuarioId;
     }
 
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
+    public void setUsuarioId(int usuarioId) {
+        this.usuarioId = usuarioId;
     }
 
-    public Logro getLogro() {
-        return logro;
+    public int getLogroId() {
+        return logroId;
     }
 
-    public void setLogro(Logro logro) {
-        this.logro = logro;
+    public void setLogroId(int logroId) {
+        this.logroId = logroId;
     }
 
-    public Timestamp getFechaObtenido() {
-        return fechaObtenido;
+    public Timestamp getFecha_obtenido() {
+        return fecha_obtenido;
     }
 
-    public void setFechaObtenido(Timestamp fechaObtenido) {
-        this.fechaObtenido = fechaObtenido;
+    public void setFecha_obtenido(Timestamp fecha_obtenido) {
+        this.fecha_obtenido = fecha_obtenido;
     }
 }
