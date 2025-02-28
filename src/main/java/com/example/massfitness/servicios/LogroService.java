@@ -103,6 +103,30 @@ public class LogroService implements ILogroService {
         }
         return logros;
     }
+    public boolean isLogroAlreadySaved(int usuarioId, int logroId) {
+        try (Connection connection = accesoBD.conectarPostgreSQL()) {
+
+            String query = "SELECT COUNT(*) FROM usuario_logro WHERE usuario_id = ? AND logro_id = ?";
+
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setInt(1, usuarioId);
+                preparedStatement.setInt(2, logroId);
+
+                ResultSet resultSet = preparedStatement.executeQuery();
+
+                if (resultSet.next()) {
+                    return resultSet.getInt(1) > 0; // Si el resultado es mayor que 0, significa que ya está guardado
+                }
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return false;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error al checker logro de usuario " + usuarioId, e);
+        }
+    }
 
     public int addUsuarioLogro(UsuarioLogro usuarioLogro) {
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
@@ -128,6 +152,31 @@ public class LogroService implements ILogroService {
             throw new RuntimeException("Error al agregar logro", e);
         }
     }
+/* chatgpt */
+/*    public int addUsuarioLogro(UsuarioLogro usuarioLogro) {
+        try (Connection connection = accesoBD.conectarPostgreSQL()) {
+            connection.setAutoCommit(false);
+            String insertSQL = "INSERT INTO usuario_logro (usuario_id, logro_id, fecha_obtenido) VALUES (?, ?, ?) RETURNING id_usuario_logro";
+            int idUsuarioLogro;
+            try (PreparedStatement preparedStatement = connection.prepareStatement(insertSQL)) {
+                preparedStatement.setInt(1, usuarioLogro.getUsuarioId());
+                preparedStatement.setInt(2, usuarioLogro.getLogroId());
+                preparedStatement.setTimestamp(3, usuarioLogro.getFecha_obtenido());
+                ResultSet rs = preparedStatement.executeQuery();
+                if (rs.next()) {
+                    idUsuarioLogro = rs.getInt(1);
+                    connection.commit();
+                    return idUsuarioLogro;
+                } else {
+                    connection.rollback();
+                    throw new SQLException("No se pudo obtener el ID del logro.");
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al agregar logro", e);
+        }
+    }*/
+
 
     public void removeUsuarioLogro(int usuarioId, int logroId) {
         try (Connection connection = accesoBD.conectarPostgreSQL()) {

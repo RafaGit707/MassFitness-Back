@@ -17,11 +17,11 @@ public class UsuarioLogro {
     @JsonProperty("id_usuario_logro")
     private int idUsuarioLogro;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "usuario_id", insertable = false, updatable = false)
+    @JoinColumn(name = "usuario_id", referencedColumnName = "idUsuario", insertable = false, updatable = false)
     @JsonIgnore
     private Usuario usuario;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "logro_id", insertable = false, updatable = false)
+    @JoinColumn(name = "logro_id", referencedColumnName = "idLogro", insertable = false, updatable = false)
     @JsonIgnore
     private Logro logro;
     @Column(name = "usuario_id")
@@ -36,11 +36,6 @@ public class UsuarioLogro {
     private Timestamp fecha_obtenido;
 
     public UsuarioLogro() {
-    }
-    public UsuarioLogro(Usuario usuario, Logro logro, Timestamp fecha_obtenido) {
-        this.usuario = usuario;
-        this.logro = logro;
-        this.fecha_obtenido = fecha_obtenido;
     }
 
     public UsuarioLogro(int usuarioId, int logroId, Timestamp fecha_obtenido) {
@@ -86,5 +81,21 @@ public class UsuarioLogro {
 
     public void setFecha_obtenido(Timestamp fecha_obtenido) {
         this.fecha_obtenido = fecha_obtenido;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    public Logro getLogro() {
+        return logro;
+    }
+
+    public void setLogro(Logro logro) {
+        this.logro = logro;
     }
 }

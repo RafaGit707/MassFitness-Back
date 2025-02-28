@@ -14,4 +14,5 @@ public interface ILogroService {
     List<UsuarioLogro> getLogrosByUserId(int idUsuario);
     int addUsuarioLogro(UsuarioLogro usuarioLogro);
     void removeUsuarioLogro(int usuarioId, int logroId);
+    boolean isLogroAlreadySaved(int usuarioId, int logroId);
 }
