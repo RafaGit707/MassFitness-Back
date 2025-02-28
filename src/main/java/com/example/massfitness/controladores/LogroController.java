@@ -47,15 +47,6 @@ public class LogroController {
     public boolean verificarLogro(@PathVariable int usuarioId, @PathVariable int logroId) {
         return iLogroService.isLogroAlreadySaved(usuarioId, logroId);
     }
-    /* chatgpt */
-/*@PostMapping("/addLogro/{usuarioId}/logro/{logroId}")
-public ResponseEntity<Integer> addUsuarioLogro(@PathVariable int usuarioId, @PathVariable int logroId) {
-    Timestamp fechaObtenido = new Timestamp(System.currentTimeMillis());
-    UsuarioLogro usuarioLogro = new UsuarioLogro(usuarioId, logroId, fechaObtenido);
-    int idCreado = iLogroService.addUsuarioLogro(usuarioLogro);
-    return new ResponseEntity<>(idCreado, HttpStatus.CREATED);
-}*/
-
     @DeleteMapping("/eliminarLogro/{usuarioId}/logro/{logroId}")
     public void removeUsuarioLogro(@PathVariable int usuarioId, @PathVariable int logroId) {
         iLogroService.removeUsuarioLogro(usuarioId, logroId);
@@ -64,7 +55,6 @@ public ResponseEntity<Integer> addUsuarioLogro(@PathVariable int usuarioId, @Pat
     public List<Logro> getLogros() {
         return iLogroService.getLogros();
     }
-
     @PutMapping("/{id}")
     public void actualizarLogro(@PathVariable int id, @RequestBody Logro logro) {
         logro.setIdLogro(id);

@@ -152,32 +152,6 @@ public class LogroService implements ILogroService {
             throw new RuntimeException("Error al agregar logro", e);
         }
     }
-/* chatgpt */
-/*    public int addUsuarioLogro(UsuarioLogro usuarioLogro) {
-        try (Connection connection = accesoBD.conectarPostgreSQL()) {
-            connection.setAutoCommit(false);
-            String insertSQL = "INSERT INTO usuario_logro (usuario_id, logro_id, fecha_obtenido) VALUES (?, ?, ?) RETURNING id_usuario_logro";
-            int idUsuarioLogro;
-            try (PreparedStatement preparedStatement = connection.prepareStatement(insertSQL)) {
-                preparedStatement.setInt(1, usuarioLogro.getUsuarioId());
-                preparedStatement.setInt(2, usuarioLogro.getLogroId());
-                preparedStatement.setTimestamp(3, usuarioLogro.getFecha_obtenido());
-                ResultSet rs = preparedStatement.executeQuery();
-                if (rs.next()) {
-                    idUsuarioLogro = rs.getInt(1);
-                    connection.commit();
-                    return idUsuarioLogro;
-                } else {
-                    connection.rollback();
-                    throw new SQLException("No se pudo obtener el ID del logro.");
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Error al agregar logro", e);
-        }
-    }*/
-
-
     public void removeUsuarioLogro(int usuarioId, int logroId) {
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
             String deleteSQL = "DELETE FROM usuario_logro WHERE usuario_id = ? AND logro_id = ?";
