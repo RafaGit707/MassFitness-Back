@@ -20,7 +20,3 @@
 - **ORM**: JPA (Java Persistence API)
 - **Seguridad**: JSON Web Tokens (JWT)
 - **Herramientas de Construcción**: Gradle
-
-### Frontend
-
-
