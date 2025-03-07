@@ -2,18 +2,6 @@
 
 **MassFitness** es una aplicación web diseñada para facilitar la reserva de actividades en gimnasios, ofreciendo a los usuarios una experiencia eficiente y amigable.
 
-## 📋 Tabla de Contenidos
-
-- [Características](#características)
-- [Tecnologías Utilizadas](#tecnologías-utilizadas)
-- [Instalación y Configuración](#instalación-y-configuración)
-  - [Backend](#backend)
-  - [Frontend](#frontend)
-- [Uso](#uso)
-- [Contribuciones](#contribuciones)
-- [Licencia](#licencia)
-- [Contacto](#contacto)
-
 ## 🌟 Características
 
 - **Gestión de Usuarios**: Registro e inicio de sesión seguro para clientes y administradores.
@@ -36,7 +24,3 @@
 ### Frontend
 
 
-
-## ⚙️ Instalación y Configuración
-
-### Backend
