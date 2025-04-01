@@ -3,6 +3,7 @@ package com.example.massfitness.util;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Component;
 
 import java.sql.*;
@@ -40,21 +41,14 @@ public class AccesoBD {
     @PostConstruct
     public void initializeDatabase() {
         try (Connection connection = conectarPostgreSQL()) {
-            String createDatosPersonalesTableSQL = "CREATE TABLE IF NOT EXISTS datos_personales (" +
-                    "id_datos_personales SERIAL PRIMARY KEY," +
-                    "edad INTEGER," +
-                    "genero TEXT)";
-            connection.createStatement().executeUpdate(createDatosPersonalesTableSQL);
 
             String createUsuariosTableSQL = "CREATE TABLE IF NOT EXISTS usuarios (" +
                     "id_usuario SERIAL PRIMARY KEY," +
                     "nombre TEXT NOT NULL," +
                     "correo_electronico TEXT NOT NULL," +
                     "contrasena TEXT NOT NULL," +
-                    "datos_personales_id INTEGER," +
                     "cantidad_puntos INTEGER DEFAULT 0," +
-                    "rol TEXT NOT NULL DEFAULT 'USUARIO'," +
-                    "FOREIGN KEY (datos_personales_id) REFERENCES datos_personales(id_datos_personales))";
+                    "rol TEXT NOT NULL DEFAULT 'USUARIO')";
             connection.createStatement().executeUpdate(createUsuariosTableSQL);
 
             String createReservasTableSQL = "CREATE TABLE IF NOT EXISTS reservas (" +
@@ -143,8 +137,8 @@ public class AccesoBD {
 
             if (countAdmin == 0) {
                 /*String hashedPassword = BCrypt.hashpw("admin1234", BCrypt.gensalt());*/
-                String insertAdminSQL = "INSERT INTO usuarios (nombre, correo_electronico, contrasena, rol) " +
-                        "VALUES ('Admin', 'admin@gmail.com', 'admin1234', 'ADMIN')";
+                String insertAdminSQL = "INSERT INTO usuarios (nombre, correo_electronico, contrasena, cantidad_puntos, rol) " +
+                        "VALUES ('Admin', 'admin@gmail.com', '" + "admin1234" + "', 1,'ADMIN')";
                 connection.createStatement().executeUpdate(insertAdminSQL);
             }
 

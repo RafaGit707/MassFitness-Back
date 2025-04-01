@@ -24,9 +24,6 @@ public class Usuario {
     private String contrasena;
     @JsonProperty("cantidad_puntos")
     private int cantidadPuntos;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "datos_personales_id")
-    private DatosPersonales datos_personales;
     @JsonProperty("rol")
     @Column(name = "rol", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -39,45 +36,22 @@ public class Usuario {
     public Usuario() {
     }
 
-    public Usuario(String nombre, String correo_electronico, String contrasena,int cantidadPuntos, DatosPersonales datos_personales, Set<Reserva> reservas, Set<UsuarioLogro> logros) {
+    public Usuario(String nombre, String correo_electronico, String contrasena,int cantidadPuntos, Rol rol, Set<Reserva> reservas, Set<UsuarioLogro> logros) {
         this.nombre = nombre;
         this.correo_electronico = correo_electronico;
         this.contrasena = contrasena;
         this.cantidadPuntos = cantidadPuntos;
-        this.datos_personales = datos_personales;
-        this.reservas = reservas;
-        this.logros = logros;
-    }
-
-    public Usuario(int idUsuario, String nombre, String correo_electronico, String contrasena, int cantidadPuntos, DatosPersonales datos_personales, Set<Reserva> reservas, Set<UsuarioLogro> logros) {
-        this.idUsuario = idUsuario;
-        this.nombre = nombre;
-        this.correo_electronico = correo_electronico;
-        this.contrasena = contrasena;
-        this.cantidadPuntos = cantidadPuntos;
-        this.datos_personales = datos_personales;
-        this.reservas = new HashSet<>();
-        this.logros = new HashSet<>();
-    }
-
-    public Usuario(String nombre, String correo_electronico, String contrasena,int cantidadPuntos, DatosPersonales datos_personales, Rol rol, Set<Reserva> reservas, Set<UsuarioLogro> logros) {
-        this.nombre = nombre;
-        this.correo_electronico = correo_electronico;
-        this.contrasena = contrasena;
-        this.cantidadPuntos = cantidadPuntos;
-        this.datos_personales = datos_personales;
         this.rol = rol;
         this.reservas = reservas;
         this.logros = logros;
     }
 
-    public Usuario(int idUsuario, String nombre, String correo_electronico, String contrasena, int cantidadPuntos, DatosPersonales datos_personales, Rol rol, Set<Reserva> reservas, Set<UsuarioLogro> logros) {
+    public Usuario(int idUsuario, String nombre, String correo_electronico, String contrasena, int cantidadPuntos, Rol rol, Set<Reserva> reservas, Set<UsuarioLogro> logros) {
         this.idUsuario = idUsuario;
         this.nombre = nombre;
         this.correo_electronico = correo_electronico;
         this.contrasena = contrasena;
         this.cantidadPuntos = cantidadPuntos;
-        this.datos_personales = datos_personales;
         this.rol = rol;
         this.reservas = new HashSet<>();
         this.logros = new HashSet<>();
@@ -119,14 +93,6 @@ public class Usuario {
         this.contrasena = contrasena;
     }
 
-    public DatosPersonales getDatosPersonales() {
-        return datos_personales;
-    }
-
-    public void setDatosPersonales(DatosPersonales datos_personales) {
-        this.datos_personales = datos_personales;
-    }
-
     public int getCantidadPuntos() {
         return cantidadPuntos;
     }
@@ -141,14 +107,6 @@ public class Usuario {
 
     public void setLogros(Set<UsuarioLogro> logros) {
         this.logros = logros;
-    }
-
-    public DatosPersonales getDatos_personales() {
-        return datos_personales;
-    }
-
-    public void setDatos_personales(DatosPersonales datos_personales) {
-        this.datos_personales = datos_personales;
     }
 
     public Set<Reserva> getReservas() {

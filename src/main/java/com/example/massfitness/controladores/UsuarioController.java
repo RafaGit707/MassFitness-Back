@@ -1,6 +1,5 @@
 package com.example.massfitness.controladores;
 
-import com.example.massfitness.entidades.DatosPersonales;
 import com.example.massfitness.entidades.Rol;
 import com.example.massfitness.entidades.Usuario;
 import com.example.massfitness.servicios.impl.IUsuarioService;
@@ -71,6 +70,7 @@ public class UsuarioController {
     @GetMapping("/existe")
     public ResponseEntity<Boolean> usuarioExiste(@RequestParam String correo_electronico, @RequestParam String contrasena) {
         boolean existe = iUsuarioService.usuarioExiste(correo_electronico, contrasena);
+        logger.info("Verificando usuario: {} - {}", correo_electronico, existe);
         return new ResponseEntity<>(existe, HttpStatus.OK);
     }
     @GetMapping("/{id}/cantidad_puntos")
@@ -84,10 +84,10 @@ public class UsuarioController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @Modifying
-    @Query("UPDATE Usuario u SET u.rol = :rol WHERE u.email = :email")
-    void actualizarRol(@Param("email") String email, @Param("rol") Rol rol) {
+/*    @Modifying
+    @Query("UPDATE Usuario u SET u.rol = :rol WHERE u.correo_electronico = :correo_electronico")
+    void actualizarRol(@Param("correo_electronico") String correo_electronico, @Param("rol") Rol rol) {
 
-    }
+    }*/
 
 }

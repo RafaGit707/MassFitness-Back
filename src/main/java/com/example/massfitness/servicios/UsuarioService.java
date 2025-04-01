@@ -1,7 +1,7 @@
 package com.example.massfitness.servicios;
 
+import com.example.massfitness.entidades.Rol;
 import com.example.massfitness.repositories.UsuarioRepository;
-import com.example.massfitness.entidades.DatosPersonales;
 import com.example.massfitness.entidades.Usuario;
 import com.example.massfitness.servicios.impl.IUsuarioService;
 import com.example.massfitness.util.AccesoBD;
@@ -32,31 +32,16 @@ public class UsuarioService implements IUsuarioService {
     @Override
     public int addUsuario(Usuario usuario) {
         logger.info("Agregando nuevo usuario a la base de datos: {}", usuario);
-        String insertDatosPersonalesSQL = "INSERT INTO datos_personales (edad, genero) VALUES (?, ?) RETURNING id_datos_personales";
-        String insertUsuarioSQL = "INSERT INTO usuarios (nombre, correo_electronico, contrasena, datos_personales_id, cantidad_puntos, rol) VALUES (?, ?, ?, ?, ?, ?) RETURNING id_usuario";
+        String insertUsuarioSQL = "INSERT INTO usuarios (nombre, correo_electronico, contrasena,  cantidad_puntos, rol) VALUES (?, ?, ?, ?, ?) RETURNING id_usuario";
 
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
-            int datosPersonalesId;
-            try (PreparedStatement preparedStatementDatosPersonales = connection.prepareStatement(insertDatosPersonalesSQL)) {
-                preparedStatementDatosPersonales.setInt(1, 0);
-                preparedStatementDatosPersonales.setString(2, "");
-                ResultSet rs = preparedStatementDatosPersonales.executeQuery();
-
-                if (rs.next()) {
-                    datosPersonalesId = rs.getInt(1);
-                } else {
-                    throw new SQLException("No se pudo obtener el ID de DatosPersonales.");
-                }
-            }
-
             int usuarioId;
             try (PreparedStatement preparedStatementUsuario = connection.prepareStatement(insertUsuarioSQL)) {
                 preparedStatementUsuario.setString(1, usuario.getNombre());
                 preparedStatementUsuario.setString(2, usuario.getCorreo_electronico());
                 preparedStatementUsuario.setString(3, usuario.getContrasena());
-                preparedStatementUsuario.setInt(4, datosPersonalesId);
-                preparedStatementUsuario.setInt(5, usuario.getCantidadPuntos());
-                preparedStatementUsuario.setString(6, usuario.getRol() != null ? usuario.getRol().name() : "USUARIO");
+                preparedStatementUsuario.setInt(4, usuario.getCantidadPuntos());
+                preparedStatementUsuario.setString(5, usuario.getRol().name() != null ? usuario.getRol().name() : "USUARIO");
 
                 ResultSet rs = preparedStatementUsuario.executeQuery();
 
@@ -85,10 +70,10 @@ public class UsuarioService implements IUsuarioService {
                 String nombre = resultSet.getString("nombre");
                 String correo_electronico = resultSet.getString("correo_electronico");
                 String contrasena = resultSet.getString("contrasena");
-                int datos_personales_id = resultSet.getInt("datos_personales_id");
                 int cantidadPuntos = resultSet.getInt("cantidad_puntos");
+                Rol rol = Rol.valueOf(resultSet.getString("rol"));
 
-                Usuario usuario = new Usuario(id, nombre, correo_electronico, contrasena, cantidadPuntos, new DatosPersonales(datos_personales_id), new HashSet<>(), new HashSet<>());
+                Usuario usuario = new Usuario(id, nombre, correo_electronico, contrasena, cantidadPuntos, rol, new HashSet<>(), new HashSet<>());
                 usuarios.add(usuario);
             }
         } catch (SQLException e) {
@@ -100,26 +85,6 @@ public class UsuarioService implements IUsuarioService {
     public void actualizarUsuario(Usuario usuario) {
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
             connection.setAutoCommit(false);
-
-            String selectDatosPersonalesSQL = "SELECT datos_personales_id FROM Usuarios WHERE id_usuario = ?";
-            int datosPersonalesId = 0;
-            try (PreparedStatement preparedStatement = connection.prepareStatement(selectDatosPersonalesSQL)) {
-                preparedStatement.setInt(1, usuario.getIdUsuario());
-                ResultSet resultSet = preparedStatement.executeQuery();
-                if (resultSet.next()) {
-                    datosPersonalesId = resultSet.getInt("datos_personales_id");
-                } else {
-                    throw new SQLException("No se encontró el usuario con ID: " + usuario.getIdUsuario());
-                }
-            }
-
-            String updateDatosPersonalesSQL = "UPDATE datos_personales SET edad = ?, genero = ? WHERE id_datos_personales = ?";
-            try (PreparedStatement preparedStatement = connection.prepareStatement(updateDatosPersonalesSQL)) {
-                preparedStatement.setInt(1, 18);
-                preparedStatement.setString(2, "");
-                preparedStatement.setInt(3, datosPersonalesId);
-                preparedStatement.executeUpdate();
-            }
 
             String updateUsuariosSQL = "UPDATE Usuarios SET nombre = ?, correo_electronico = ?, contrasena = ?, cantidad_puntos = ?, rol = ? WHERE id_usuario = ?";
 
@@ -144,18 +109,6 @@ public class UsuarioService implements IUsuarioService {
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
             connection.setAutoCommit(false);
 
-            String selectDatosPersonalesSQL = "SELECT datos_personales_id FROM Usuarios WHERE id_usuario = ?";
-            int datosPersonalesId = 0;
-            try (PreparedStatement preparedStatement = connection.prepareStatement(selectDatosPersonalesSQL)) {
-                preparedStatement.setInt(1, idUsuario);
-                ResultSet resultSet = preparedStatement.executeQuery();
-                if (resultSet.next()) {
-                    datosPersonalesId = resultSet.getInt("datos_personales_id");
-                } else {
-                    throw new SQLException("No se encontró el usuario con ID: " + idUsuario);
-                }
-            }
-
             String deleteReservasSQL = "DELETE FROM Reservas WHERE usuario_id = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(deleteReservasSQL)) {
                 preparedStatement.setInt(1, idUsuario);
@@ -165,12 +118,6 @@ public class UsuarioService implements IUsuarioService {
             String deleteUsuarioSQL = "DELETE FROM Usuarios WHERE id_usuario = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(deleteUsuarioSQL)) {
                 preparedStatement.setInt(1, idUsuario);
-                preparedStatement.executeUpdate();
-            }
-
-            String deleteDatosPersonalesSQL = "DELETE FROM datos_personales WHERE id_datos_personales = ?";
-            try (PreparedStatement preparedStatement = connection.prepareStatement(deleteDatosPersonalesSQL)) {
-                preparedStatement.setInt(1, datosPersonalesId);
                 preparedStatement.executeUpdate();
             }
 
@@ -193,9 +140,10 @@ public class UsuarioService implements IUsuarioService {
                 String nombre = resultSet.getString("nombre");
                 String correo_electronico = resultSet.getString("correo_electronico");
                 String contrasena = resultSet.getString("contrasena");
-                int datos_personales_id = resultSet.getInt("datos_personales_id");
                 int cantidadPuntos = resultSet.getInt("cantidad_puntos");
-                usuario = new Usuario(nombre, correo_electronico, contrasena, cantidadPuntos, new DatosPersonales(datos_personales_id), new HashSet<>(), new HashSet<>());            }
+                Rol rol = Rol.valueOf(resultSet.getString("rol"));
+
+                usuario = new Usuario(nombre, correo_electronico, contrasena, cantidadPuntos, rol, new HashSet<>(), new HashSet<>());            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -213,9 +161,11 @@ public class UsuarioService implements IUsuarioService {
                 int idUsuario = resultSet.getInt("id_usuario");
                 String nombre = resultSet.getString("nombre");
                 String contrasena = resultSet.getString("contrasena");
-                int datos_personales_id = resultSet.getInt("datos_personales_id");
                 int cantidadPuntos = resultSet.getInt("cantidad_puntos");
-                usuario = new Usuario(idUsuario, nombre, correo_electronico, contrasena, cantidadPuntos, new DatosPersonales(datos_personales_id), new HashSet<>(), new HashSet<>());            }
+                Rol rol = Rol.valueOf(resultSet.getString("rol"));
+                logger.info("rol", rol);
+
+                usuario = new Usuario(idUsuario, nombre, correo_electronico, contrasena, cantidadPuntos, rol, new HashSet<>(), new HashSet<>());            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -237,6 +187,7 @@ public class UsuarioService implements IUsuarioService {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        logger.info("Verificando usuario: {} - {}", correo_electronico, existe);
         return existe;
     }
     @Override
