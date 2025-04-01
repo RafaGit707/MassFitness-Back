@@ -33,7 +33,7 @@ public class UsuarioService implements IUsuarioService {
     public int addUsuario(Usuario usuario) {
         logger.info("Agregando nuevo usuario a la base de datos: {}", usuario);
         String insertDatosPersonalesSQL = "INSERT INTO datos_personales (edad, genero) VALUES (?, ?) RETURNING id_datos_personales";
-        String insertUsuarioSQL = "INSERT INTO usuarios (nombre, correo_electronico, contrasena, datos_personales_id, cantidad_puntos) VALUES (?, ?, ?, ?, ?) RETURNING id_usuario";
+        String insertUsuarioSQL = "INSERT INTO usuarios (nombre, correo_electronico, contrasena, datos_personales_id, cantidad_puntos, rol) VALUES (?, ?, ?, ?, ?, ?) RETURNING id_usuario";
 
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
             int datosPersonalesId;
@@ -56,6 +56,8 @@ public class UsuarioService implements IUsuarioService {
                 preparedStatementUsuario.setString(3, usuario.getContrasena());
                 preparedStatementUsuario.setInt(4, datosPersonalesId);
                 preparedStatementUsuario.setInt(5, usuario.getCantidadPuntos());
+                preparedStatementUsuario.setString(6, usuario.getRol() != null ? usuario.getRol().name() : "USUARIO");
+
                 ResultSet rs = preparedStatementUsuario.executeQuery();
 
                 if (rs.next()) {
@@ -119,13 +121,15 @@ public class UsuarioService implements IUsuarioService {
                 preparedStatement.executeUpdate();
             }
 
-            String updateUsuariosSQL = "UPDATE Usuarios SET nombre = ?, correo_electronico = ?, contrasena = ?, cantidad_puntos = ? WHERE id_usuario = ?";
+            String updateUsuariosSQL = "UPDATE Usuarios SET nombre = ?, correo_electronico = ?, contrasena = ?, cantidad_puntos = ?, rol = ? WHERE id_usuario = ?";
+
             try (PreparedStatement preparedStatementUsuarios = connection.prepareStatement(updateUsuariosSQL)) {
                 preparedStatementUsuarios.setString(1, usuario.getNombre());
                 preparedStatementUsuarios.setString(2, usuario.getCorreo_electronico());
                 preparedStatementUsuarios.setString(3, usuario.getContrasena());
                 preparedStatementUsuarios.setInt(4, 1);
-                preparedStatementUsuarios.setInt(5, usuario.getIdUsuario());
+                preparedStatementUsuarios.setString(5, usuario.getRol().name());
+                preparedStatementUsuarios.setInt(6, usuario.getIdUsuario());
                 preparedStatementUsuarios.executeUpdate();
             }
 

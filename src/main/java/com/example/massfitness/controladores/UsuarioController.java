@@ -1,11 +1,15 @@
 package com.example.massfitness.controladores;
 
 import com.example.massfitness.entidades.DatosPersonales;
+import com.example.massfitness.entidades.Rol;
 import com.example.massfitness.entidades.Usuario;
 import com.example.massfitness.servicios.impl.IUsuarioService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -79,4 +83,11 @@ public class UsuarioController {
         iUsuarioService.actualizarCantidadPuntosUsuario(id, nuevaCantidadPuntos);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @Modifying
+    @Query("UPDATE Usuario u SET u.rol = :rol WHERE u.email = :email")
+    void actualizarRol(@Param("email") String email, @Param("rol") Rol rol) {
+
+    }
+
 }

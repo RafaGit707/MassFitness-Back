@@ -53,6 +53,7 @@ public class AccesoBD {
                     "contrasena TEXT NOT NULL," +
                     "datos_personales_id INTEGER," +
                     "cantidad_puntos INTEGER DEFAULT 0," +
+                    "rol TEXT NOT NULL DEFAULT 'USUARIO'," +
                     "FOREIGN KEY (datos_personales_id) REFERENCES datos_personales(id_datos_personales))";
             connection.createStatement().executeUpdate(createUsuariosTableSQL);
 
@@ -134,6 +135,18 @@ public class AccesoBD {
                     "FOREIGN KEY (usuario_id) REFERENCES usuarios(id_usuario)," +
                     "FOREIGN KEY (logro_id) REFERENCES logros(id_logro))";
             connection.createStatement().executeUpdate(createUsuarioLogrosTableSQL);
+
+            ResultSet rsAdmin = connection.createStatement().executeQuery("SELECT COUNT(*) FROM usuarios WHERE correo_electronico = 'admin@gmail.com'");
+            rsAdmin.next();
+            int countAdmin = rsAdmin.getInt(1);
+            rsAdmin.close();
+
+            if (countAdmin == 0) {
+                /*String hashedPassword = BCrypt.hashpw("admin1234", BCrypt.gensalt());*/
+                String insertAdminSQL = "INSERT INTO usuarios (nombre, correo_electronico, contrasena, rol) " +
+                        "VALUES ('Admin', 'admin@gmail.com', 'admin1234', 'ADMIN')";
+                connection.createStatement().executeUpdate(insertAdminSQL);
+            }
 
             ResultSet rs = connection.createStatement().executeQuery("SELECT COUNT(*) FROM entrenadores");
             rs.next();

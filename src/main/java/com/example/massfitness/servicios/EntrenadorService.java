@@ -21,7 +21,7 @@ public class EntrenadorService implements IEntrenadorService {
     public EntrenadorService(AccesoBD accesoBD) {
         this.accesoBD = accesoBD;
     }
-    public void addEntrenador(Entrenador entrenador) {
+    public Entrenador addEntrenador(Entrenador entrenador) {
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
             String insertSQL = "INSERT INTO Entrenadores (nombre_Entrenador, especializacion) VALUES (?, ?)";
             PreparedStatement preparedStatement = connection.prepareStatement(insertSQL);
@@ -31,6 +31,7 @@ public class EntrenadorService implements IEntrenadorService {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return entrenador;
     }
 
     public void actualizarEntrenador(Entrenador entrenador) {

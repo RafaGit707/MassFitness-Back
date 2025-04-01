@@ -5,7 +5,7 @@ import com.example.massfitness.entidades.Entrenador;
 import java.util.List;
 
 public interface IEntrenadorService {
-    void addEntrenador(Entrenador entrenador);
+    Entrenador addEntrenador(Entrenador entrenador);
     void actualizarEntrenador(Entrenador entrenador);
     void eliminarEntrenador(int idEntrenador);
     List<Entrenador> getEntrenadores();

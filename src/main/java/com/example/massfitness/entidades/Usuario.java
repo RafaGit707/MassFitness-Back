@@ -27,6 +27,10 @@ public class Usuario {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "datos_personales_id")
     private DatosPersonales datos_personales;
+    @JsonProperty("rol")
+    @Column(name = "rol", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Rol rol = Rol.USUARIO;
     @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY)
     private Set<Reserva> reservas;
     @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY)
@@ -52,6 +56,29 @@ public class Usuario {
         this.contrasena = contrasena;
         this.cantidadPuntos = cantidadPuntos;
         this.datos_personales = datos_personales;
+        this.reservas = new HashSet<>();
+        this.logros = new HashSet<>();
+    }
+
+    public Usuario(String nombre, String correo_electronico, String contrasena,int cantidadPuntos, DatosPersonales datos_personales, Rol rol, Set<Reserva> reservas, Set<UsuarioLogro> logros) {
+        this.nombre = nombre;
+        this.correo_electronico = correo_electronico;
+        this.contrasena = contrasena;
+        this.cantidadPuntos = cantidadPuntos;
+        this.datos_personales = datos_personales;
+        this.rol = rol;
+        this.reservas = reservas;
+        this.logros = logros;
+    }
+
+    public Usuario(int idUsuario, String nombre, String correo_electronico, String contrasena, int cantidadPuntos, DatosPersonales datos_personales, Rol rol, Set<Reserva> reservas, Set<UsuarioLogro> logros) {
+        this.idUsuario = idUsuario;
+        this.nombre = nombre;
+        this.correo_electronico = correo_electronico;
+        this.contrasena = contrasena;
+        this.cantidadPuntos = cantidadPuntos;
+        this.datos_personales = datos_personales;
+        this.rol = rol;
         this.reservas = new HashSet<>();
         this.logros = new HashSet<>();
     }
@@ -130,5 +157,12 @@ public class Usuario {
 
     public void setReservas(Set<Reserva> reservas) {
         this.reservas = reservas;
+    }
+    public Rol getRol() {
+        return rol;
+    }
+
+    public void setRol(Rol rol) {
+        this.rol = rol;
     }
 }

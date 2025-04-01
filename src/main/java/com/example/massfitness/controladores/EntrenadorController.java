@@ -4,6 +4,8 @@ import com.example.massfitness.entidades.Entrenador;
 import com.example.massfitness.servicios.EntrenadorService;
 import com.example.massfitness.servicios.impl.IEntrenadorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,9 +20,11 @@ public class EntrenadorController {
         this.iEntrenadorService = iEntrenadorService;
     }
 
-    @PostMapping
-    public void addEntrenador(@RequestBody Entrenador entrenador) {
-        iEntrenadorService.addEntrenador(entrenador);
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PostMapping("/entrenadores")
+    public ResponseEntity<Entrenador> agregarEntrenador(@RequestBody Entrenador entrenador) {
+        Entrenador nuevoEntrenador = iEntrenadorService.addEntrenador(entrenador);
+        return ResponseEntity.ok(nuevoEntrenador);
     }
 
     @GetMapping("/{id}")
