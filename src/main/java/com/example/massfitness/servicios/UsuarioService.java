@@ -92,7 +92,7 @@ public class UsuarioService implements IUsuarioService {
                 preparedStatementUsuarios.setString(1, usuario.getNombre());
                 preparedStatementUsuarios.setString(2, usuario.getCorreo_electronico());
                 preparedStatementUsuarios.setString(3, usuario.getContrasena());
-                preparedStatementUsuarios.setInt(4, 1);
+                preparedStatementUsuarios.setInt(4, 0);
                 preparedStatementUsuarios.setString(5, usuario.getRol().name());
                 preparedStatementUsuarios.setInt(6, usuario.getIdUsuario());
                 preparedStatementUsuarios.executeUpdate();
@@ -163,7 +163,6 @@ public class UsuarioService implements IUsuarioService {
                 String contrasena = resultSet.getString("contrasena");
                 int cantidadPuntos = resultSet.getInt("cantidad_puntos");
                 Rol rol = Rol.valueOf(resultSet.getString("rol"));
-                logger.info("rol", rol);
 
                 usuario = new Usuario(idUsuario, nombre, correo_electronico, contrasena, cantidadPuntos, rol, new HashSet<>(), new HashSet<>());            }
         } catch (SQLException e) {
