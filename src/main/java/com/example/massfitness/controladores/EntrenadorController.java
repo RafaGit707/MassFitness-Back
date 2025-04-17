@@ -21,7 +21,7 @@ public class EntrenadorController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @PostMapping("/entrenadores")
+    @PostMapping
     public ResponseEntity<Entrenador> agregarEntrenador(@RequestBody Entrenador entrenador) {
         Entrenador nuevoEntrenador = iEntrenadorService.addEntrenador(entrenador);
         return ResponseEntity.ok(nuevoEntrenador);

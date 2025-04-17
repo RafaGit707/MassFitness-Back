@@ -35,6 +35,13 @@ public class Clases {
         this.reservas = reservas;
     }
 
+    public Clases(int idClase, String nombre, int capacidadMaxima, Entrenador entrenador) {
+        this.idClase = idClase;
+        this.nombre = nombre;
+        this.capacidadMaxima = capacidadMaxima;
+        this.entrenador = entrenador;
+    }
+
     public Clases(int idClase, String nombre, int capacidadMaxima) {
         this.idClase = idClase;
         this.nombre = nombre;

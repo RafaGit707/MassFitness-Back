@@ -112,7 +112,7 @@ public class AccesoBD {
                     "recompensa TEXT)";
             connection.createStatement().executeUpdate(createLogrosTableSQL);
 
-            String createReservasEntrenadorTableSQL = "CREATE TABLE IF NOT EXISTS reservas_entrenador (" +
+            String createReservasEntrenadorTableSQL = "CREATE TABLE IF NOT EXISTS reserva_entrenador (" +
                     "id_reserva_entrenador SERIAL PRIMARY KEY," +
                     "entrenador_id INTEGER," +
                     "fecha_reserva TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP," +

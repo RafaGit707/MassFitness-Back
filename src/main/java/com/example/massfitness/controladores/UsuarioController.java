@@ -84,10 +84,4 @@ public class UsuarioController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @Modifying
-    @Query("UPDATE Usuario u SET u.rol = :rol WHERE u.correo_electronico = :correo_electronico")
-    void actualizarRol(@Param("correo_electronico") String correo_electronico, @Param("rol") Rol rol) {
-
-    }
-
 }
