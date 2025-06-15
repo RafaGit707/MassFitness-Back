@@ -102,9 +102,9 @@ public class EspacioHorarioService implements IEspacioHorarioService {
     private int obtenerCapacidad(String tipoReserva) {
         switch (tipoReserva) {
             case "Sala de Musculación":
-                return 3;
-            case "Sala de Abdominales":
                 return 4;
+            case "Sala de Abdominales":
+                return 5;
             default:
                 return 0;
         }

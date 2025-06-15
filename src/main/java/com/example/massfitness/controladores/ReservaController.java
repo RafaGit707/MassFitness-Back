@@ -45,7 +45,7 @@ public class ReservaController {
                 usuarioId, espacioId, tipoReserva, horarioReserva, estadoReserva);
 
         int idReserva;
-        String tipo = obtenerTipoReserva(espacioId);
+        String tipo = obtenerTipoReserva(tipoReserva);
         try {
             if ("clase".equalsIgnoreCase(tipo)) {
                 idReserva = iReservaService.addReservaClase(usuarioId, espacioId, tipoReserva, horarioReserva, estadoReserva);
@@ -63,18 +63,18 @@ public class ReservaController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
-    private String obtenerTipoReserva(int tipoReserva) {
+    private String obtenerTipoReserva(String tipoReserva) {
         switch (tipoReserva) {
-            case 1:
+            case "BOXEO":
                 return "clase";
-            case 2:
+            case "PILATES":
                 return "clase";
-            case 3:
+            case "YOGA":
+                return "clase";
+            case "MUSCULACIÓN":
                 return "espacio";
-            case 4:
+            case "ABDOMINALES":
                 return "espacio";
-            case 5:
-                return "clase";
             default:
                 return "";
         }

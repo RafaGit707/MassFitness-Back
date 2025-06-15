@@ -107,7 +107,7 @@ public class ReservaClaseService implements IReservaClaseService {
             case "Pilates":
                 return 2;
             case "Yoga":
-                return 5;
+                return 3;
             default:
                 return 0;
         }

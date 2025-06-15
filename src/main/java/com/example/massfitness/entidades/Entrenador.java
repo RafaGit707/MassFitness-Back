@@ -13,6 +13,7 @@ public class Entrenador {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idEntrenador;
     @JsonProperty("nombre_entrenador")
+    @Column(name = "nombre_entrenador")
     private String nombreEntrenador;
     private String especializacion;
     @OneToMany(mappedBy = "entrenador", cascade = CascadeType.ALL)

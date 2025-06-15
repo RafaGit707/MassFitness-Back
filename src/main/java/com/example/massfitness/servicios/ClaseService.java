@@ -6,6 +6,7 @@ import com.example.massfitness.servicios.impl.IClaseService;
 import com.example.massfitness.util.AccesoBD;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ public class ClaseService implements IClaseService {
         return clase;
     }
 
-    public void actualizarClase(Clases clase) {
+/*    public void actualizarClase(Clases clase) {
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
             String updateSQL = "UPDATE Clases SET nombre = ?, capacidad_maxima = ?, entrenador_id = ? WHERE id_clase = ?";
             PreparedStatement ps = connection.prepareStatement(updateSQL);
@@ -46,8 +47,72 @@ public class ClaseService implements IClaseService {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
+    }*/
+/*@Override
+public boolean actualizarClase(int idClase, String nombre, int capacidadMaxima, String entrenadorIdStr) throws SQLException {
+    String updateSQL = "UPDATE Clases SET nombre = ?, capacidad_maxima = ?, entrenador_id = ? WHERE id_clase = ?";
+    Integer entrenadorIdParaDb = null; // Usamos Integer para poder representar NULL
 
+    // Intentamos convertir el ID del entrenador si se proporcionó y no está vacío
+    if (StringUtils.hasText(entrenadorIdStr)) { // Si no es null ni vacío ""
+        try {
+            entrenadorIdParaDb = Integer.parseInt(entrenadorIdStr);
+            // Opcional: Si quieres que ID 0 signifique NULL en la BD
+            // if (entrenadorIdParaDb == 0) {
+            //    entrenadorIdParaDb = null;
+            // }
+        } catch (NumberFormatException e) {
+            // El ID recibido no era un número válido. Lanza la excepción
+            // para que el controlador devuelva BadRequest.
+            System.err.println("Error: entrenador_id inválido: " + entrenadorIdStr);
+            throw e; // Re-lanza para que el controlador la capture
+        }
+    }
+    // Si entrenadorIdStr era null o vacío, entrenadorIdParaDb sigue siendo null.
+
+    try (Connection connection = accesoBD.conectarPostgreSQL();
+         PreparedStatement ps = connection.prepareStatement(updateSQL)) {
+
+        ps.setString(1, nombre);
+        ps.setInt(2, capacidadMaxima);
+
+        // Usamos setObject para manejar correctamente el Integer null
+        if (entrenadorIdParaDb != null) {
+            ps.setInt(3, entrenadorIdParaDb);
+        } else {
+            ps.setNull(3, Types.INTEGER); // ¡Importante para enviar NULL a la BD!
+        }
+
+        ps.setInt(4, idClase); // El ID de la clase a actualizar
+
+        int filasAfectadas = ps.executeUpdate();
+        return filasAfectadas > 0; // Devuelve true si se actualizó al menos una fila
+
+    } catch (SQLException e) {
+        System.err.println("Error SQL en actualizarClaseDesdeParams: " + e.getMessage());
+        e.printStackTrace(); // Loguea el error
+        throw e; // Re-lanza para que el controlador sepa que hubo un error SQL
+    }
+}*/
+@Override
+public Clases actualizarClase(Clases clase) {
+    String sql = "UPDATE Clases SET nombre = ?, capacidad_maxima = ?, entrenador_id = ? WHERE id_clase = ?";
+    try (Connection conn = accesoBD.conectarPostgreSQL(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setString(1, clase.getNombre());
+        ps.setInt(2, clase.getCapacidadMaxima());
+        if (clase.getEntrenador() != null && clase.getEntrenador().getIdEntrenador() > 0) {
+            ps.setInt(3, clase.getEntrenador().getIdEntrenador());
+        } else {
+            ps.setNull(3, java.sql.Types.INTEGER);
+        }
+        ps.setInt(4, clase.getIdClase());
+        int filasAfectadas = ps.executeUpdate();
+        return (filasAfectadas > 0) ? clase : null;
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return null;
+    }
+}
     public void eliminarClase(int idClase) {
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
             String deleteSQL = "DELETE FROM Clases WHERE id_clase = ?";
@@ -94,6 +159,46 @@ public class ClaseService implements IClaseService {
         }
         return clases;
     }
+
+   /* @Override
+    public List<Clases> getClases() {
+        List<Clases> clases = new ArrayList<>();
+        // Usamos LEFT JOIN para incluir clases aunque no tengan entrenador asignado
+        String selectSQL = """
+        SELECT
+            c.id_clase, c.nombre, c.capacidad_maxima,
+            e.id_entrenador, e.nombre_entrenador, e.especializacion
+        FROM Clases c
+        LEFT JOIN Entrenadores e ON c.entrenador_id = e.id_entrenador
+        ORDER BY c.nombre
+    """;
+        try (Connection connection = accesoBD.conectarPostgreSQL();
+             Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(selectSQL)) {
+
+            while (rs.next()) {
+                Clases clase = new Clases();
+                clase.setIdClase(rs.getInt("id_clase"));
+                clase.setNombre(rs.getString("nombre"));
+                clase.setCapacidadMaxima(rs.getInt("capacidad_maxima"));
+
+                int entrenadorId = rs.getInt("id_entrenador");
+                // Si el ID del entrenador no es NULL (es decir, el JOIN encontró una coincidencia)
+                if (!rs.wasNull()) {
+                    Entrenador entrenador = new Entrenador(
+                            entrenadorId,
+                            rs.getString("nombre_entrenador"),
+                            rs.getString("especializacion")
+                    );
+                    clase.setEntrenador(entrenador);
+                }
+                clases.add(clase);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return clases;
+    }*/
 
     public Clases buscarClasePorId(int idClase) {
         Clases clase = null;

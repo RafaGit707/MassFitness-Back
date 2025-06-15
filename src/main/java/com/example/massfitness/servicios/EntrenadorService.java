@@ -21,7 +21,7 @@ public class EntrenadorService implements IEntrenadorService {
     public EntrenadorService(AccesoBD accesoBD) {
         this.accesoBD = accesoBD;
     }
-    public Entrenador addEntrenador(Entrenador entrenador) {
+/*    public Entrenador addEntrenador(Entrenador entrenador) {
         try (Connection connection = accesoBD.conectarPostgreSQL()) {
             String insertSQL = "INSERT INTO Entrenadores (nombre_Entrenador, especializacion) VALUES (?, ?)";
             PreparedStatement preparedStatement = connection.prepareStatement(insertSQL);
@@ -32,18 +32,47 @@ public class EntrenadorService implements IEntrenadorService {
             e.printStackTrace();
         }
         return entrenador;
-    }
+    }*/
 
-    public void actualizarEntrenador(Entrenador entrenador) {
-        try (Connection connection = accesoBD.conectarPostgreSQL()) {
-            String updateSQL = "UPDATE Entrenadores SET nombre_Entrenador = ?, especializacion = ? WHERE id_Entrenador = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(updateSQL);
-            preparedStatement.setString(1, entrenador.getNombreEntrenador());
-            preparedStatement.setString(2, entrenador.getEspecializacion());
-            preparedStatement.setInt(3, entrenador.getIdEntrenador());
-            preparedStatement.executeUpdate();
+    @Override
+    public Entrenador addEntrenador(Entrenador entrenador) {
+        // La sentencia INSERT ahora pide que se devuelva el ID generado
+        String insertSQL = "INSERT INTO Entrenadores (nombre_entrenador, especializacion) VALUES (?, ?) RETURNING id_entrenador";
+        try (Connection connection = accesoBD.conectarPostgreSQL();
+             PreparedStatement ps = connection.prepareStatement(insertSQL)) {
+
+            ps.setString(1, entrenador.getNombreEntrenador());
+            ps.setString(2, entrenador.getEspecializacion());
+
+            // Usamos executeQuery porque RETURNING devuelve un resultado
+            ResultSet rs = ps.executeQuery();
+
+            // Si la inserción fue exitosa y devolvió un ID...
+            if (rs.next()) {
+                // ...obtenemos ese ID y lo asignamos al objeto que vamos a devolver.
+                int nuevoId = rs.getInt(1);
+                entrenador.setIdEntrenador(nuevoId);
+                return entrenador;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+        // Si algo falla, devolvemos null
+        return null;
+    }
+
+    @Override
+    public Entrenador actualizarEntrenador(Entrenador entrenador) {
+        String sql = "UPDATE Entrenadores SET nombre_entrenador = ?, especializacion = ? WHERE id_entrenador = ?";
+        try (Connection conn = accesoBD.conectarPostgreSQL(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, entrenador.getNombreEntrenador());
+            ps.setString(2, entrenador.getEspecializacion());
+            ps.setInt(3, entrenador.getIdEntrenador());
+            int filasAfectadas = ps.executeUpdate();
+            return (filasAfectadas > 0) ? entrenador : null;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
